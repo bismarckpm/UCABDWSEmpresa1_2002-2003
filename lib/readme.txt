@@ -1,0 +1,1 @@
+Esta carpeta contendrá librerias necesarias para el funcionamiento del proyecto, conectores a datos, plataformas externas, etc.

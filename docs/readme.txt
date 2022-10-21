@@ -1,0 +1,1 @@
+Esta carpeta contendrá los documentos requeridos para el proyecto, ERS, diagramas, modelos de datos.
