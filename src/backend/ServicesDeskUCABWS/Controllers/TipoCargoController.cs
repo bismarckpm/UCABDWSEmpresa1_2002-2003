@@ -25,7 +25,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPost]
         [Route("CreateTCargo/")]
-        public ActionResult<TipoCargoDTO> AgregarTipoCargo([Required][FromBody] TipoCargoDTO dto1)
+        public ActionResult<TipoCargoDTO> AgregarTipoCargo([FromBody] TipoCargoDTO dto1)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace ServicesDeskUCABWS.Controllers
                     
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message + " | [Separador] | " + ex.StackTrace);
+           
                 throw ex.InnerException!;
             }
         }
@@ -48,7 +48,7 @@ namespace ServicesDeskUCABWS.Controllers
                 return _dao.ConsultarTipoCargoDAO();
             }catch(Exception ex)
             {
-                  Console.WriteLine(ex.Message + " : " + ex.StackTrace);  
+        
                 throw ex.InnerException!;
             }
         }
@@ -80,6 +80,6 @@ namespace ServicesDeskUCABWS.Controllers
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
-        }
+        }        
     }
 }

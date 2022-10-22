@@ -12,7 +12,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     {
         private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
         public readonly IMigrationDbContext _context = design.CreateDbContext(null);
-
         public TipoCargoDTO AgregarTipoCargoDAO(TipoCargo tipo)
         {
             try
@@ -77,7 +76,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
                 throw new Exception("Fallo al actualizar: " + tipoCargo.nombre, ex);
             }
-        }
+        } 
 
         public TipoCargoDTO EliminarTipoCargoDAO(int id)
         {
@@ -96,6 +95,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
                     throw new Exception("Fallo al Eliminar por id: " + id, ex);
             }
-        }
+        }               
     }
 }

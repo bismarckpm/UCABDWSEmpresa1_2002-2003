@@ -82,7 +82,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                     var prioridad = (Prioridad) _context.Prioridades.Where(
                         p=> p.id == id).First();
-
                         _context.Prioridades.Remove(prioridad);
                         _context.DbContext.SaveChanges();
 
@@ -91,7 +90,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-                throw new Exception("Error al Eliminar por el Id: " + id, ex);
+                PrioridadDTO errorDTO = new PrioridadDTO();
+                errorDTO.Nombre = "Error al Eliminar Prioridad";
+                return errorDTO;
             }
         }
     }

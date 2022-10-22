@@ -8,9 +8,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         public List<TipoCargoDTO> ConsultarTipoCargoDAO();
 
         public TipoCargoDTO AgregarTipoCargoDAO(TipoCargo tipo);
-
         public TipoCargoDTO ActualizarTipoCargoDAO(TipoCargo tipoCargo);
 
-        public TipoCargoDTO EliminarTipoCargoDAO(int id);
+        public TipoCargoDTO EliminarTipoCargoDAO(int id);        
     }
 }
