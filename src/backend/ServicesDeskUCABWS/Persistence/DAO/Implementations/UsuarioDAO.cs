@@ -29,9 +29,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 return map.EntityToDto(user); 
             }
             catch (Exception ex)
-            {
-                
-                throw ex;
+            { 
+                throw new Exception("Transaccion fallo",ex);
             }
         } 
   

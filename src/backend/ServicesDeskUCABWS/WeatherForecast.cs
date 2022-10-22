@@ -1,4 +1,4 @@
-namespace APINotificacion;
+namespace ServicesDeskUCABWS;
 
 public class WeatherForecast
 {

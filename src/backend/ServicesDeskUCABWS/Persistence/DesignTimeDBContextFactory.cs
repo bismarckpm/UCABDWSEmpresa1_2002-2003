@@ -15,7 +15,7 @@ namespace ServicesDeskUCABWS.Persistence
             IConfiguration _config = builder0.Build();
 
             Appsettings config = new Appsettings(_config);
-            var connectionString = config.DbConnectionString();
+            string connectionString = config.DbConnectionString();
             builder.UseSqlServer(connectionString);
             return new MigrationDbContext(builder.Options);
         }

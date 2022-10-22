@@ -40,6 +40,7 @@ namespace ServicesDeskUCABWS
                 services.AddTransient<IUsuarioDao,UsuarioDAO>();
                 services.AddTransient<IPrioridadDAO,PrioridadDAO>();
                 services.AddTransient<INotificacionDAO,NotificacionDAO>();
+                services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

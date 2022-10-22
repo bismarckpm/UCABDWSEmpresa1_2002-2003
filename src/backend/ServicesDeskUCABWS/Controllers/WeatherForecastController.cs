@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace APINotificacion.Controllers;
+namespace ServicesDeskUCABWS.Controllers;
 
 [ApiController]
 [Route("[controller]")]
