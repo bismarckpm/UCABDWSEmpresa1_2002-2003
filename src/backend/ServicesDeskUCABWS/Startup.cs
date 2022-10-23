@@ -31,7 +31,7 @@ namespace ServicesDeskUCABWS
         {
             services.AddControllers();
             services.AddDbContext<MigrationDbContext>(options => 
-            options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));    
+            options.UseSqlServer(Configuration["ConnectionString"]));    
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo{ Title="ServicesDeskUcabWs", Version= "v1"});

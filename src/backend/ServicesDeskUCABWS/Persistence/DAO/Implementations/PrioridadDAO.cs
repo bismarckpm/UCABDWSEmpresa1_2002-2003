@@ -10,8 +10,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class PrioridadDAO : IPrioridadDAO
     {
-        private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
-        public readonly IMigrationDbContext _context = design.CreateDbContext(null);
+        private readonly IMigrationDbContext _context;
+
+        public PrioridadDAO(IMigrationDbContext context)
+        {
+            this._context = context;
+        }
 
         public PrioridadDTO AgregarPrioridadDAO(Prioridad prioridad)
         {

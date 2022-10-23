@@ -10,8 +10,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class TipoCargoDAO : ITipoCargoDAO
     {
-        private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
-        public readonly IMigrationDbContext _context = design.CreateDbContext(null);
+        private readonly IMigrationDbContext _context;
+
+        public TipoCargoDAO(IMigrationDbContext context)
+        {
+            this._context = context;
+        }
         public TipoCargoDTO AgregarTipoCargoDAO(TipoCargo tipo)
         {
             try
