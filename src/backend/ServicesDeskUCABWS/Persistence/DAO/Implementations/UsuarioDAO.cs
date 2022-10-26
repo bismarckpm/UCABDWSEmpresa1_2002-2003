@@ -12,27 +12,16 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     public class UsuarioDAO : IUsuarioDao
     {
         private readonly IMigrationDbContext _context;
-        public UsuarioDAO(IMigrationDbContext context)
-        {
-                _context = context;
+        public UsuarioDAO(MigrationDbContext context ){
+            _context = context;
+
         }
-
-        public UsuarioDTO AgregarUsuario(Usuario user)
+         public  ICollection<Usuario> GetUsuarios()
         {
-            try
-            {
-                     _context.Usuario.Add(user);
-                      _context.DbContext.SaveChanges();          
-                    UsuarioMapper map = new UsuarioMapper();
+         return _context.Usuario.OrderBy(p=>p.id).ToList();
+         }
 
 
-                return map.EntityToDto(user); 
-            }
-            catch (Exception ex)
-            { 
-                throw new Exception("Transaccion fallo",ex);
-            }
-        } 
-  
+
     }
 }

@@ -6,6 +6,6 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public string? nombre {get; set;}
 
-        public Cargo? cargo_ {get; set;}
+       
     }
 }

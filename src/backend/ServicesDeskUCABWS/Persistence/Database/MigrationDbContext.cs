@@ -40,6 +40,18 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+     public virtual DbSet<administrador> Administradores
+        {
+            get; set;
+        }
+       public virtual   DbSet<Empleado> Empleados
+        {
+            get; set;
+        }
+       public virtual     DbSet<Cliente> clientes
+        {
+            get; set;
+        }
     }
     
 }

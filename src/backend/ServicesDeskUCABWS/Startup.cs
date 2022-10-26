@@ -31,20 +31,24 @@ namespace ServicesDeskUCABWS
         {
             services.AddControllers();
             services.AddDbContext<MigrationDbContext>(options => 
-            options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));    
+            options.UseSqlServer(Configuration["ConnectionString"]));    
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo{ Title="ServicesDeskUcabWs", Version= "v1"});
             });   
                 services.AddTransient<IMigrationDbContext, MigrationDbContext>();
-                services.AddTransient<IUsuarioDao,UsuarioDAO>();
+                services.AddScoped<IUsuarioDao,UsuarioDAO>();
                 services.AddTransient<IPrioridadDAO,PrioridadDAO>();
-                services.AddTransient<INotificacionDAO,NotificacionDAO>();
                 services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using(var scope = app.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<MigrationDbContext>();
+                context.Database.Migrate();
+            }
          if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

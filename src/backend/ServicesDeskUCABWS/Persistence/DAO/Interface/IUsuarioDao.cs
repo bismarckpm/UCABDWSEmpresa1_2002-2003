@@ -5,6 +5,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IUsuarioDao
     {
-        public UsuarioDTO AgregarUsuario(Usuario user);
+        ICollection<Usuario> GetUsuarios();
+        
     }
 }

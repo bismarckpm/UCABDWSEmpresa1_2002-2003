@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicesDeskUCABWS.Persistence.Database;
 
@@ -11,13 +12,14 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221025010112_AgregarUsuarios")]
+    partial class AgregarUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -30,15 +32,22 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("tipocargoid")
+                    b.Property<int>("tipoCargoId")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("tipocargoid");
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("tipoCargoId")
+                        .IsUnique();
 
                     b.ToTable("Cargo");
                 });
@@ -186,9 +195,6 @@ namespace ServicesDeskUCABWS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("cargoid")
-                        .HasColumnType("int");
-
                     b.Property<string>("email")
                         .HasColumnType("nvarchar(max)");
 
@@ -199,8 +205,6 @@ namespace ServicesDeskUCABWS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
-
-                    b.HasIndex("cargoid");
 
                     b.ToTable("Usuario");
 
@@ -223,13 +227,21 @@ namespace ServicesDeskUCABWS.Migrations
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", "tipocargo")
-                        .WithMany()
-                        .HasForeignKey("tipocargoid")
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "user")
+                        .WithOne("cargo")
+                        .HasForeignKey("ServicesDeskUCABWS.Persistence.Entity.Cargo", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("tipocargo");
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", "tipoCargo")
+                        .WithOne("cargo_")
+                        .HasForeignKey("ServicesDeskUCABWS.Persistence.Entity.Cargo", "tipoCargoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("tipoCargo");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
@@ -264,20 +276,15 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Navigation("usuario");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Cargo", "cargo")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("cargoid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("cargo");
+                    b.Navigation("cargo_");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
                 {
-                    b.Navigation("Usuarios");
+                    b.Navigation("cargo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

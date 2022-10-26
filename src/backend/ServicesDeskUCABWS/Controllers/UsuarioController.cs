@@ -10,30 +10,25 @@ namespace ServicesDeskUCABWS.Controllers
 {
     [ApiController]
     [Route("/Usuario")]
-    public class UsuarioController
+    public class UsuarioController : Controller
     {
-        private readonly ILogger<UsuarioController> _logger;
-        private readonly IUsuarioDao _userDao;
-        public UsuarioController(ILogger<UsuarioController> logger, IUsuarioDao usuarioDao)
-        {
-            _logger = logger;
-            _userDao = usuarioDao;
-        }
+        public readonly IUsuarioDao _UsuarioRepository;
+                        
+        
 
-        [HttpPost]
-        [Route("/CreateUser/")]
-        public UsuarioDTO AgregarUsuario([FromBody] UsuarioDTO userDTO)
-        {   
-            try
-            {
-                UsuarioMapper mapper = new UsuarioMapper();
-                var user = mapper.DtoToEntity(userDTO);
-                   return _userDao.AgregarUsuario(user);
-            }catch(Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                    throw ex.InnerException!;
-            }
+        public UsuarioController(IUsuarioDao usuarioRepository)
+        {
+            _UsuarioRepository = usuarioRepository;
+        }
+     
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Usuario>))]
+        public IActionResult GetCollection(){
+            var usuarios= _UsuarioRepository.GetUsuarios();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            return Ok(usuarios);
         }
     }
 }
