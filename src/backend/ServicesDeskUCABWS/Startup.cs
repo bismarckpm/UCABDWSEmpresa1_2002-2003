@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace ServicesDeskUCABWS
 {
@@ -35,9 +36,11 @@ namespace ServicesDeskUCABWS
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo{ Title="ServicesDeskUcabWs", Version= "v1"});
-            });   
+            });  
+                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
                 services.AddTransient<IMigrationDbContext, MigrationDbContext>();
                 services.AddScoped<IUsuarioDao,UsuarioDAO>();
+                services.AddScoped<ICargoDAO,CargoDao>();
                 services.AddTransient<IPrioridadDAO,PrioridadDAO>();
                 services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
         }

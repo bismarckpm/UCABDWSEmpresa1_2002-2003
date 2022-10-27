@@ -52,6 +52,9 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        public virtual DbSet<Cargo> Cargos{
+            get;set;
+        }
     }
     
 }
