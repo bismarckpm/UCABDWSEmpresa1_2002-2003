@@ -1,0 +1,65 @@
+﻿@model List<ServicesDeskUCAB.DTO.PrioridadDTO>
+
+<!-- JS PARA TRAER LA VENTANA EMERGENTE DEL BOTON "CREAR PRIORIDAD" -->
+@section scripts{
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderPrioridad');
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+}
+@{
+        ViewData["Title"] = "Gestion Prioridades";
+}
+
+
+
+
+<!-- BOTON PARA ACCIONAR LA VENTANA EMERGENTE -->
+<div id="PlaceHolderPrioridad"></div>
+<button type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#popUpAgregar" data-url="@Url.Action("ventanaAgregarPrioridad")">
+    Crear prioridad
+</button>
+<br />
+<br/>
+
+<!-- INICIO DE TABLA DE DATOS -->
+<table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Prioridad
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                @Html.ActionLink("Detalles", "", "","", new { @class = "btn btn-secondary btn-sm" }) 
+                @Html.ActionLink("Editar", "", "","", new { @class = "btn btn-primary btn-sm" }) 
+                @Html.ActionLink("Eliminar", "", "","", new { @class = "btn btn-danger btn-sm" })
+            </td>
+        </tr>
+    }
+
+</table>
