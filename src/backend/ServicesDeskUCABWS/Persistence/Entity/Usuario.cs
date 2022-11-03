@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ServicesDeskUCABWS.Persistence.Entity
 {
-    public class Usuario
+    public abstract class  Usuario 
     {
         public int id {get; set;}
         public string? username {get; set;}
@@ -9,6 +11,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public string? email {get; set;}
 
-        public Cargo? cargoUser { get; set; }
+     
+        public virtual Cargo cargo { get; set; }
     }   
 }

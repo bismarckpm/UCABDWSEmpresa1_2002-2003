@@ -30,17 +30,12 @@ namespace ServicesDeskUCABWS.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EstadoDTO>>> Get()
         {
-            try
-            {
-                var result = await _dao_Estado.GetEstadosDAO();
-                _log.LogInformation("Estados obtenidos exitosamente");
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
-            }
+
+            var result = await _dao_Estado.GetEstadosDAO();
+            _log.LogInformation("Estados obtenidos exitosamente");
+            return Ok(result);
+
+
         }
 
         [HttpGet("{id:int}")]
@@ -52,10 +47,10 @@ namespace ServicesDeskUCABWS.Controllers
                 _log.LogInformation("Estado obtenido exitosamente");
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
+                _log.LogError(e.Message);
+                throw e;
             }
         }
 
@@ -76,27 +71,21 @@ namespace ServicesDeskUCABWS.Controllers
             catch (Exception ex)
             {
                 _log.LogError(ex.ToString());
-                throw ex.InnerException!;
+                throw ex;
             }
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete([FromRoute][Required] int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id del estado debe ser mayor a 0");
-                }
 
-                return await _dao_Estado.EliminarEstadoDAO(id);
-            }
-            catch (Exception ex)
+            if (id <= 0)
             {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
+                return BadRequest("El id del estado debe ser mayor a 0");
             }
+
+            return await _dao_Estado.EliminarEstadoDAO(id);
+
         }
 
 

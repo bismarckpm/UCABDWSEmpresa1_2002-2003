@@ -12,27 +12,39 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     public class UsuarioDAO : IUsuarioDao
     {
         private readonly IMigrationDbContext _context;
-        public UsuarioDAO(IMigrationDbContext context)
+        public UsuarioDAO(MigrationDbContext context ){
+            _context = context;
+
+        }
+         public  ICollection<Usuario> GetUsuarios()
         {
-                _context = context;
+         return _context.Usuario.OrderBy(p=>p.id).ToList();
+         }
+
+        public Usuario GetUsuario(string username){
+            return _context.Usuario.Where(p => p.username == username).FirstOrDefault();
         }
 
-        public UsuarioDTO AgregarUsuario(Usuario user)
-        {
-            try
-            {
-                     _context.Usuario.Add(user);
-                      _context.DbContext.SaveChanges();          
-                    UsuarioMapper map = new UsuarioMapper();
-
-
-                return map.EntityToDto(user); 
+        public bool UsuarioExists(string usuarname, string password){
+            return _context.Usuario.Any(p=>p.username == usuarname && p.password == password);
+        }
+        public Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword){
+            if (newpassword == confirmationpassword){
+             return _context.Usuario.Where(p=>p.username == usuarname).FirstOrDefault();
             }
-            catch (Exception ex)
-            { 
-                throw new Exception("Transaccion fallo",ex);
-            }
-        } 
-  
-    }
+            return null;
+        }   
+
+        public bool CreateUsuario(Usuario usuario){
+           
+             _context.Usuario.Add(usuario);
+             return Save();
+        }
+
+        public bool Save()
+{
+    var saved =_context.DbContext.SaveChanges();
+    return saved > 0 ? true:false;
+}
+    } 
 }

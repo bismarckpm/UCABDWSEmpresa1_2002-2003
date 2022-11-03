@@ -10,6 +10,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
         {
             CreateMap<Plantilla, PlantillaDTO>();
             CreateMap<PlantillaDTO, Plantilla>();
+            CreateMap<PlantillaDTOCreate, Plantilla>();
         }
 
     }

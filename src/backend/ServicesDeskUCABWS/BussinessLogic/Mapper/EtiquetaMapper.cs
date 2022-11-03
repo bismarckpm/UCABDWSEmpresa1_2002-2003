@@ -11,6 +11,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
         {
             CreateMap<EtiquetaDTO, Etiqueta>();
             CreateMap<Etiqueta, EtiquetaDTO>();
+            CreateMap<EtiquetaDTOCreate, Etiqueta>();
         }
 
     }

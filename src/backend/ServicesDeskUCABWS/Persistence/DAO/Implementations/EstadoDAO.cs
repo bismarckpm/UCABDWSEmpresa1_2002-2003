@@ -11,30 +11,24 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class EstadoDAO : IEstadoDAO
     {
-        private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
-        public readonly IMigrationDbContext _context = design.CreateDbContext(null);
+        private readonly IMigrationDbContext _context;
 
         private readonly IMapper _mapper;
-        public EstadoDAO(IMapper mapper)
+        public EstadoDAO(IMapper mapper, IMigrationDbContext context)
         {
             _mapper = mapper;
+            _context = context;
         }
+
 
         public async Task<ActionResult<EstadoEtiquetaDTO>> AgregarEstadoDAO(Estado estado)
         {
-            try
-            {
-                _context.Estados.Add(estado);
-                await _context.DbContext.SaveChangesAsync();
 
-                return _mapper.Map<EstadoEtiquetaDTO>(estado);
+            _context.Estados.Add(estado);
+            await _context.DbContext.SaveChangesAsync();
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
+            return _mapper.Map<EstadoEtiquetaDTO>(estado);
+
         }
 
         public async Task<ActionResult<List<EstadoDTO>>> GetEstadosEtiquetaDAO(int idEtiqueta)
@@ -49,7 +43,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
         }
@@ -70,7 +63,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
         }
@@ -78,21 +70,16 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         public async Task<ActionResult<List<EstadoDTO>>> GetEstadosDAO()
         {
-            try
-            {
-                var estados = await _context.Estados.ToListAsync();
 
-                return _mapper.Map<List<EstadoDTO>>(estados);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
+            var estados = await _context.Estados.ToListAsync();
+
+            return _mapper.Map<List<EstadoDTO>>(estados);
+
         }
 
         public async Task<ActionResult> ActualizarEstadoDAO(Estado estado, int id)
         {
+
             try
             {
                 var estadoOld = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
@@ -103,33 +90,30 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 estadoOld.nombre = estado.nombre;
                 await _context.DbContext.SaveChangesAsync();
                 return new OkResult();
-
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
+
+
+
         }
 
         public async Task<ActionResult> EliminarEstadoDAO(int id)
         {
-            try
+
+
+            var estado = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
+            if (estado == null)
             {
-                var estado = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
-                if (estado == null)
-                {
-                    return new NotFoundResult();
-                }
-                _context.Estados.Remove(estado);
-                await _context.DbContext.SaveChangesAsync();
-                return new OkResult();
+                return new NotFoundResult();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
+            _context.Estados.Remove(estado);
+            await _context.DbContext.SaveChangesAsync();
+            return new OkResult();
+
+
         }
 
         public async Task<ActionResult> ActualizarEstadoEtiquetaDAO(EstadoEtiquetaUpdateDTO estadoEtiquetaUpdateDTO)
@@ -147,9 +131,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 await _context.DbContext.SaveChangesAsync();
                 return new OkResult();
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
         }

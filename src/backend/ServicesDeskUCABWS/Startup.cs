@@ -39,15 +39,22 @@ namespace ServicesDeskUCABWS
             services.AddAutoMapper(typeof(Startup));
             services.AddTransient<IMigrationDbContext, MigrationDbContext>();
             services.AddTransient<IUsuarioDao, UsuarioDAO>();
+            services.AddScoped<ICargoDAO, CargoDao>();
             services.AddTransient<IPrioridadDAO, PrioridadDAO>();
-            services.AddTransient<INotificacionDAO, NotificacionDAO>();
             services.AddTransient<ITipoCargoDAO, TipoCargoDAO>();
             services.AddTransient<IEtiquetaDAO, EtiquetaDAO>();
             services.AddTransient<IEstadoDAO, EstadoDAO>();
+            services.AddTransient<IPlantillaDAO, PlantillaDAO>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<MigrationDbContext>();
+                context.Database.Migrate();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -32,45 +32,35 @@ namespace ServicesDeskUCABWS.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] EstadoEtiquetaDTO dto, [FromRoute][Required] int etiquetaId)
         {
-            try
+            if (etiquetaId <= 0)
             {
-                if (etiquetaId <= 0)
-                {
-                    return BadRequest("El id de la etiqueta debe ser mayor a 0");
-                }
-                var etiqueta = await _dao_Etiqueta.ObtenerEtiquetaDAO(etiquetaId);
-                if (etiqueta.Value!.id != etiquetaId)
-                {
-                    return BadRequest("La etiqueta no existe");
-                }
+                return BadRequest("El id de la etiqueta debe ser mayor a 0");
+            }
+            var etiqueta = await _dao_Etiqueta.ObtenerEtiquetaDAO(etiquetaId);
+            if (etiqueta.Value!.id != etiquetaId)
+            {
+                return BadRequest("La etiqueta no existe");
+            }
 
-                var estado = _mapper.Map<Estado>(dto);
-                estado.EtiquetaId = etiquetaId;
-                var result = await _dao_Estado.AgregarEstadoDAO(estado);
-                _log.LogInformation("Estado agregado exitosamente");
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
-            }
+            var estado = _mapper.Map<Estado>(dto);
+            estado.EtiquetaId = etiquetaId;
+            var result = await _dao_Estado.AgregarEstadoDAO(estado);
+            _log.LogInformation("Estado agregado exitosamente");
+            return Ok(result);
+
+
         }
 
         [HttpGet]
         public async Task<ActionResult<List<EstadoDTO>>> Get([FromRoute][Required] int etiquetaId)
         {
-            try
-            {
-                var result = await _dao_Estado.GetEstadosEtiquetaDAO(etiquetaId);
-                _log.LogInformation("Estados obtenidos exitosamente");
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
-            }
+
+
+            var result = await _dao_Estado.GetEstadosEtiquetaDAO(etiquetaId);
+            _log.LogInformation("Estados obtenidos exitosamente");
+            return Ok(result);
+
+
         }
 
         [HttpPut]

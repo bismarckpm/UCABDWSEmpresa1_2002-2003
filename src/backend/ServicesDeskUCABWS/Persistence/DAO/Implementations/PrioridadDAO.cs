@@ -10,14 +10,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class PrioridadDAO : IPrioridadDAO
     {
-        private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
-        public readonly IMigrationDbContext _context = design.CreateDbContext(null);
+        private readonly IMigrationDbContext _context;
+
+        public PrioridadDAO(IMigrationDbContext context)
+        {
+            this._context = context;
+        }
 
         public PrioridadDTO AgregarPrioridadDAO(Prioridad prioridad)
         {
             try
             {
-                 _context.Prioridades.Add(prioridad);
+                _context.Prioridades.Add(prioridad);
                 _context.DbContext.SaveChanges();
 
                 var data = _context.Prioridades.Where(a => a.id == prioridad.id)
@@ -27,11 +31,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                             Id = a.id,
                             Nombre = a.nombre
                         }
-                    );    
+                    );
 
-                    return data.First();
+                return data.First();
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 throw new Exception("Transaccion Fallida", ex);
@@ -42,17 +47,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                    var data = _context.Prioridades.Select(
-                        p => new PrioridadDTO
-                        {
-                            Id = p.id,
-                            Nombre = p.nombre
-                        }
-                    );
+                var data = _context.Prioridades.Select(
+                    p => new PrioridadDTO
+                    {
+                        Id = p.id,
+                        Nombre = p.nombre
+                    }
+                );
 
-                    return data.ToList();
+                return data.ToList();
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 throw ex.InnerException!;
@@ -63,13 +69,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                
+
                 _context.Prioridades.Update(prioridad);
                 _context.DbContext.SaveChanges();
 
                 return PrioridadMapper.EntityToDto(prioridad);
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw new Exception("Transaccion Fallo", ex)!;
@@ -80,14 +87,15 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                    var prioridad = (Prioridad) _context.Prioridades.Where(
-                        p=> p.id == id).First();
-                        _context.Prioridades.Remove(prioridad);
-                        _context.DbContext.SaveChanges();
+                var prioridad = (Prioridad)_context.Prioridades.Where(
+                    p => p.id == id).First();
+                _context.Prioridades.Remove(prioridad);
+                _context.DbContext.SaveChanges();
 
-                        return PrioridadMapper.EntityToDto(prioridad);
-                        
-            }catch(Exception ex)
+                return PrioridadMapper.EntityToDto(prioridad);
+
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
                 PrioridadDTO errorDTO = new PrioridadDTO();

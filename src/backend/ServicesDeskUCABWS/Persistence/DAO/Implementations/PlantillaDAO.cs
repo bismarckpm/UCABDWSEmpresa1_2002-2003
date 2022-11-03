@@ -3,51 +3,41 @@ using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Persistence.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class PlantillaDAO : IPlantillaDAO
     {
-        private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
-        public readonly IMigrationDbContext _context = design.CreateDbContext(null);
+
+        private readonly IMigrationDbContext _context;
+
 
         private readonly IMapper _mapper;
-        public PlantillaDAO(IMapper mapper)
+        public PlantillaDAO(IMapper mapper, IMigrationDbContext context)
         {
             _mapper = mapper;
+            _context = context;
         }
 
 
         public async Task<ActionResult<PlantillaDTO>> AgregarPlantillaDAO(Plantilla Plantilla)
         {
-            try
-            {
-                _context.Plantillas.Add(Plantilla);
-                await _context.DbContext.SaveChangesAsync();
 
-                return _mapper.Map<PlantillaDTO>(Plantilla);
+            _context.Plantillas.Add(Plantilla);
+            await _context.DbContext.SaveChangesAsync();
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
+            return _mapper.Map<PlantillaDTO>(Plantilla);
+
+
         }
 
         public Task<List<Plantilla>> ObtenerPlantillasDAO()
         {
-            try
-            {
-                return _context.Plantillas.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
+
+            return _context.Plantillas.ToListAsync();
+
         }
 
         public async Task<ActionResult<Plantilla>> ObtenerPlantillaDAO(int id)
@@ -61,9 +51,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 }
                 return Plantilla;
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
         }
@@ -72,47 +61,41 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var PlantillaOld = await ObtenerPlantillaDAO(id);
-                if (PlantillaOld.Value == null)
+                var plantillaOld = await ObtenerPlantillaDAO(id);
+
+                if (plantillaOld == null)
                 {
                     return new NotFoundResult();
                 }
 
-
+                plantillaOld.Value!.titulo = plantilla.titulo;
+                plantillaOld.Value!.cuerpo = plantilla.cuerpo;
+                plantillaOld.Value!.tipo = plantilla.tipo;
 
                 await _context.DbContext.SaveChangesAsync();
                 return new OkResult();
 
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
         }
 
         public async Task<ActionResult> EliminarPlantillaDAO(int id)
         {
-            try
+
+            var existe = await ObtenerPlantillaDAO(id);
+            if (existe == null)
             {
-                var existe = await ObtenerPlantillaDAO(id);
-                if (existe.Value?.id == 0)
-                {
-                    return new NotFoundResult();
-                }
-
-
-                _context.Plantillas.Remove(existe.Value!);
-                await _context.DbContext.SaveChangesAsync();
-
-                return new OkResult();
+                return new NotFoundResult();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
 
-            }
+            _context.Plantillas.Remove(existe.Value!);
+            await _context.DbContext.SaveChangesAsync();
+
+            return new OkResult();
+
         }
     }
 }

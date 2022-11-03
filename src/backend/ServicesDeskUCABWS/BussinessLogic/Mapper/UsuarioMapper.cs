@@ -1,30 +1,17 @@
-using ServicesDeskUCABWS.Persistence.Entity;
+using AutoMapper;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.Persistence.Entity;
 
 namespace ServicesDeskUCABWS.BussinessLogic.Mapper
 {
- public class UsuarioMapper
- {
-    public Usuario DtoToEntity(UsuarioDTO dto)
+    public class UsuarioMapper :Profile 
     {
-        return new Usuario()
+        public UsuarioMapper()
         {
-            id = dto.Id,
-            username = dto.Username,
-            password = dto.Password,
-            email = dto.Email
-        };
+            CreateMap<Usuario, UsuarioDTO>();
+            CreateMap<UsuarioDTO, Usuario>();
+            CreateMap<administrador, AdministratorDTO>();
+            CreateMap<AdministratorDTO, administrador>();
+        }
     }
-
-    public UsuarioDTO EntityToDto(Usuario user)
-    {
-        return new UsuarioDTO()
-        {
-            Id = user.id,
-            Username = user.username!,
-            Password = user.password!,
-            Email = user.email!
-        };
-    }
- }   
 }

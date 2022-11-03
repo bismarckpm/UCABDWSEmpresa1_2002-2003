@@ -29,116 +29,81 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] EtiquetaDTO dto)
+        public async Task<ActionResult> Post([FromBody] EtiquetaDTOCreate dto)
         {
-            try
-            {
-                var etiqueta = _mapper.Map<Etiqueta>(dto);
-                var result = await _dao.AgregarEtiquetaDAO(etiqueta);
-                _log.LogInformation("Etiqueta agregada con exito");
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
-            }
+
+            var etiqueta = _mapper.Map<Etiqueta>(dto);
+            var result = await _dao.AgregarEtiquetaDAO(etiqueta);
+            _log.LogInformation("Etiqueta agregada con exito");
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Etiqueta>>> Get()
+        public async Task<ActionResult<List<EtiquetaDTO>>> Get()
         {
-            try
-            {
-                var result = await _dao.ConsultarEtiquetasDAO();
-                _log.LogInformation("Etiquetas consultadas con exito");
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
-            }
+
+            var result = await _dao.ConsultarEtiquetasDAO();
+            _log.LogInformation("Etiquetas consultadas con exito");
+            return Ok(_mapper.Map<List<EtiquetaDTO>>(result));
+
+
         }
 
         [HttpGet("{id:int}", Name = "obtenerEtiqueta")]
-        public async Task<ActionResult<Etiqueta>> Get(int id)
+        public async Task<ActionResult<EtiquetaDTO>> Get(int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id debe ser mayor a 0");
-                }
-                var result = await _dao.ObtenerEtiquetaDAO(id);
-                if (result.Value!.id == id)
-                {
-                    _log.LogInformation("Etiqueta consultada con exito");
-                    return Ok(result);
-                }
-                else
-                {
-                    return NotFound("No se encontro la etiqueta");
-                }
 
-            }
-            catch (Exception ex)
+            if (id <= 0)
             {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
+                return BadRequest("El id debe ser mayor a 0");
+            }
+            var result = await _dao.ObtenerEtiquetaDAO(id);
+            if (result.Value!.id == id)
+            {
+                _log.LogInformation("Etiqueta consultada con exito");
+                return Ok(_mapper.Map<EtiquetaDTO>(result.Value));
+            }
+            else
+            {
+                return NotFound("No se encontro la etiqueta");
             }
         }
 
 
         [HttpPut("{id:int}")]
 
-        public async Task<ActionResult> ActualizarEtiqueta([FromBody] EtiquetaDTO dto, int id)
+        public async Task<ActionResult> ActualizarEtiqueta([FromBody] EtiquetaDTOCreate dto, int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id debe ser mayor a 0");
-                }
-                var etiqueta = _mapper.Map<Etiqueta>(dto);
-                var result = await _dao.ActualizarEtiquetaDAO(etiqueta, id);
-                if (result.Value!.id == id)
-                {
-                    _log.LogInformation("Etiqueta actualizada con exito");
-                    return Ok(result);
-                }
-                else
-                {
-                    return NotFound("No se encontro la etiqueta");
-                }
 
-            }
-            catch (Exception ex)
+            if (id <= 0)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                return BadRequest("El id debe ser mayor a 0");
             }
+            var etiqueta = _mapper.Map<Etiqueta>(dto);
+            var result = await _dao.ActualizarEtiquetaDAO(etiqueta, id);
+            if (result.Value!.id == id)
+            {
+                _log.LogInformation("Etiqueta actualizada con exito");
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound("No se encontro la etiqueta");
+            }
+
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> EliminarEtiqueta([Required] int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id debe ser mayor a 0");
-                }
 
-                var result = await _dao.EliminarEtiquetaDAO(id);
-                return result;
-
-            }
-            catch (Exception ex)
+            if (id <= 0)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                return BadRequest("El id debe ser mayor a 0");
             }
+
+            var result = await _dao.EliminarEtiquetaDAO(id);
+            return result;
 
         }
 

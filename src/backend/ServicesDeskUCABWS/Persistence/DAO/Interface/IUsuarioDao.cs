@@ -5,6 +5,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IUsuarioDao
     {
-        public UsuarioDTO AgregarUsuario(Usuario user);
+        ICollection<Usuario> GetUsuarios();
+
+        Usuario GetUsuario(string username);
+        bool UsuarioExists(string usuarname, string password);   
+        Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword);       
+        bool CreateUsuario(Usuario usuario);
+        bool Save();
     }
 }
