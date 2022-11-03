@@ -2,14 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServicesDeskUCABWS.BussinessLogic.DTO
 {
-    public class AdministratorDTO
+    public class UserLoginDTO
     {
-        
         [Required,EmailAddress]
         public string? Email {get; set;}
-        [Required,MinLength(8)]
+        [Required]
         public string? Password {get; set;}
-        [Required,Compare("Password")]
-         public string? confirmationpassword {get; set;}
     }
 }
