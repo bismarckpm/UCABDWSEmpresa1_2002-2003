@@ -1,0 +1,62 @@
+@model List<ServicesDeskUCAB.DTO.TipoCargoDTO>
+
+@section scripts{
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderTipoCargo');
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+}
+@{
+        ViewData["Title"] = "Gestion Tipo de Cargo";
+}
+
+
+    <div id="PlaceHolderTipoCargo"></div>
+
+    @* Boton para abrir el modal*@
+    <button type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarTipoCargo")">
+        Crear Tipo de Cargo
+    </button>
+    <br />
+    <br/>
+
+    <table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Tipo de Cargo
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                @Html.ActionLink("Detalles", "", "","", new { @class = "btn btn-secondary btn-sm" }) 
+                @Html.ActionLink("Editar", "ActualizarTCargo", "TipoCargo","TipoCargo", new { @class = "btn btn-primary btn-sm" }) 
+                @Html.ActionLink("Eliminar", "EliminarTCargo", "TipoCargo","TipoCargo", new { @class = "btn btn-danger btn-sm" })
+            </td>
+        </tr>
+    }
+
+</table>

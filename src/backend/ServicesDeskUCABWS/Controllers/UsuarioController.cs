@@ -44,7 +44,7 @@ namespace ServicesDeskUCABWS.Controllers
             if (usuario == null)
                 return BadRequest(ModelState);
 
-            var usuariocreate = _UsuarioRepository.GetUsuarios().Where(c => c.email.Trim().ToUpper() == usuario.Email.Trim().ToUpper()).FirstOrDefault();
+            var usuariocreate = _UsuarioRepository.GetUsuarios().Where(c => c.email!.Trim().ToUpper() == usuario.Email!.Trim().ToUpper()).FirstOrDefault();
             if (usuariocreate != null)
             {
                 ModelState.AddModelError("", "Usuario ya exite");
@@ -55,7 +55,7 @@ namespace ServicesDeskUCABWS.Controllers
 
 
 
-            CreatePasswordHash(usuario.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            CreatePasswordHash(usuario.Password!, out byte[] passwordHash, out byte[] passwordSalt);
             var usuarioMap = _mapper.Map<administrador>(usuario);
             usuarioMap.cargo = _CargoRepository.GetCargo(cargoid);
             usuarioMap.passwordHash = passwordHash;
@@ -83,7 +83,7 @@ namespace ServicesDeskUCABWS.Controllers
             if (usuario == null)
                 return BadRequest(ModelState);
 
-            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.email.Trim().ToUpper() == usuario.Email.Trim().ToUpper()).FirstOrDefault();
+            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.email!.Trim().ToUpper() == usuario.Email!.Trim().ToUpper()).FirstOrDefault();
             if (usuariocreated == null)
             {
                 ModelState.AddModelError("", "Usuario no existe");
@@ -98,7 +98,7 @@ namespace ServicesDeskUCABWS.Controllers
                 return StatusCode(422, ModelState);
             }
 
-            if (!VerifyPasswordHash(usuario.Password, usuariocreated.passwordHash, usuariocreated.passwordSalt))
+            if (!VerifyPasswordHash(usuario.Password!, usuariocreated.passwordHash, usuariocreated.passwordSalt))
             {
                 ModelState.AddModelError("", "Contrasena incorrecta");
                 return StatusCode(422, ModelState);
@@ -110,7 +110,7 @@ namespace ServicesDeskUCABWS.Controllers
         {
 
 
-            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.VerificationToken.Trim().ToUpper() == token.Trim().ToUpper()).FirstOrDefault();
+            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.VerificationToken!.Trim().ToUpper() == token.Trim().ToUpper()).FirstOrDefault();
             if (usuariocreated == null)
             {
                 ModelState.AddModelError("", "Token invalido");

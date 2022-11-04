@@ -16,6 +16,6 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public string? email {get; set;}
 
      
-        public virtual Cargo cargo { get; set; }
+        public virtual Cargo? cargo { get; set; }
     }   
 }
