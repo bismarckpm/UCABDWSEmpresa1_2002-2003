@@ -54,6 +54,23 @@ namespace ServicesDeskUCABWS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ConsultaPrioridad/{id}")]
+        public PrioridadDTO ConsultaPrioridad([Required][FromRoute] int id)
+        {
+            try
+            {
+                var data = _dao.ConsultaPrioridadDAO(id);
+                return data;
+
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.ToString());
+                throw ex.InnerException!;
+            }
+        }
+
         [HttpPut]
         [Route("Actualizar/")]
         public PrioridadDTO ActualizarPrioridad([Required][FromBody] PrioridadDTO dto)

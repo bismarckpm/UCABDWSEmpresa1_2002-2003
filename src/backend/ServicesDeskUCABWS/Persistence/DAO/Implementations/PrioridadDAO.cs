@@ -99,5 +99,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 return errorDTO;
             }
         }
+
+        public PrioridadDTO ConsultaPrioridadDAO(int id)
+        {
+            try
+            {
+                var prioridad = _context.Prioridades.Where(
+                p => p.id == id).First();
+                return PrioridadMapper.EntityToDto(prioridad); ;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw ex.InnerException!;
+            }
+        }
     }
 }
