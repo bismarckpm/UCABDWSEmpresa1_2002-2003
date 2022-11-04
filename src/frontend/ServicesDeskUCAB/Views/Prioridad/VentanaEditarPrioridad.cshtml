@@ -1,9 +1,11 @@
 ﻿@model ServicesDeskUCAB.DTO.PrioridadDTO
 @section scripts{
 }
+
 @{
     ViewData["Title"] = "Gestion Prioridades";
 }
+
 <!-- IMPORTACIONES DE LIBRERIAS -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
@@ -14,27 +16,37 @@
 
 
 <!-- VENTANA EMERGENTE "MODAL" -->
-<div class="modal fade" id="popUpAgregar" tabindex="-1" role="dialog" aria-labelledby="popUpAgregarTitle" aria-hidden="true">
+<div class="modal fade" id="popUpEditar" tabindex="-1" role="dialog" aria-labelledby="popUpEditarTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Agregar Prioridad</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Editar Prioridad</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            @using (Html.BeginForm("AgregarPrioridad", "Prioridad", FormMethod.Post))
+            @using (Html.BeginForm("EditarPrioridad", "Prioridad", FormMethod.Post))
             {
                 <div class="modal-body">
-                    <span>Prioridad: </span> @Html.TextBoxFor(m => m.nombre)
+                    @Html.TextBoxFor(m => m.id, new { @Value = Model.id, @type="hidden"})
+                    <span>Prioridad: </span> @Html.TextBoxFor(m => m.nombre, new { @Value = Model.nombre})
                     @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
                     <br />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Crear</button>
+                    <button type="submit" class="btn btn-primary">Editar</button>
                 </div>
             }
+            <!--<div class="modal-body">
+                <span>Prioridad: </span> @Html.TextBoxFor(m => m.nombre, new { @Value = Model.nombre})
+                @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
+                <br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EditarPrioridad", "Prioridad",new { prioridad = Model })'">Editar</button>
+            </div>-->
         </div>
     </div>
 </div>
