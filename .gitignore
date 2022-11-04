@@ -61,7 +61,8 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
-
+coverage.json
+appsettings.json
 # StyleCop
 StyleCopReport.xml
 
