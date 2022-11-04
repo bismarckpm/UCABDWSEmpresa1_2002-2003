@@ -41,6 +41,7 @@ namespace ServicesDeskUCABWS
                 services.AddTransient<IMigrationDbContext, MigrationDbContext>();
                 services.AddScoped<IUsuarioDao,UsuarioDAO>();
                 services.AddScoped<ICargoDAO,CargoDao>();
+                 services.AddScoped<IEmailDao,EmailDao>();
                 services.AddTransient<IPrioridadDAO,PrioridadDAO>();
                 services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
         }
