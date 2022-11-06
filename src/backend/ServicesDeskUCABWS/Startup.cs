@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
 
 namespace ServicesDeskUCABWS
 {
@@ -39,12 +40,13 @@ namespace ServicesDeskUCABWS
             services.AddAutoMapper(typeof(Startup));
             services.AddTransient<IMigrationDbContext, MigrationDbContext>();
             services.AddTransient<IUsuarioDao, UsuarioDAO>();
-            services.AddScoped<ICargoDAO, CargoDao>();
+            services.AddScoped<ICargoDAO, CargoDAO>();
             services.AddTransient<IPrioridadDAO, PrioridadDAO>();
             services.AddTransient<ITipoCargoDAO, TipoCargoDAO>();
             services.AddTransient<IEtiquetaDAO, EtiquetaDAO>();
             services.AddTransient<IEstadoDAO, EstadoDAO>();
             services.AddTransient<IPlantillaDAO, PlantillaDAO>();
+            services.AddTransient<ICargoDAO, CargoDAO>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

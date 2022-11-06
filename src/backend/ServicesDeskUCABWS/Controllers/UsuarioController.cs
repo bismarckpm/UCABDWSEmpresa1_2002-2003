@@ -61,7 +61,7 @@ namespace ServicesDeskUCABWS.Controllers
                 return BadRequest(ModelState);
 
             var usuarioMap = _mapper.Map<administrador>(usuario);
-            usuarioMap.cargo = _CargoRepository.GetCargo(cargoid);
+            usuarioMap.cargo = _CargoRepository.ObtenerCargoByIdDAO(cargoid).Result.Value;
             if(!_UsuarioRepository.CreateUsuario(usuarioMap)){
                 ModelState.AddModelError("", "Error al guardar");
                 return StatusCode(500, ModelState);       
