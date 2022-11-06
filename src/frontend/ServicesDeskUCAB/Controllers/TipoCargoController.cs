@@ -68,6 +68,28 @@ namespace ServicesDeskUCAB.Controllers
             }            
         }
 
+        public async Task<IActionResult> VentanaEditarTipoCargo(int id)
+        {
+            try
+            {
+               TipoCargoDTO dto = new TipoCargoDTO();
+                HttpClient client = new HttpClient();
+                
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/TipoCargo/ConsultaTCargo/"+id.ToString());
+                var _client = await client.SendAsync(request);
+
+                if(_client.IsSuccessStatusCode)
+                {
+                    var responseStream = await _client.Content.ReadAsStreamAsync();
+                    dto = await JsonSerializer.DeserializeAsync<TipoCargoDTO>(responseStream);
+                }
+                return View(dto);
+                
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
         public async Task<IActionResult> ActualizarTCargo(TipoCargoDTO tipoCargo)
         {
             try
@@ -83,6 +105,17 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
+        public async Task<IActionResult> VentanaEliminarTipoCargo(int id)
+        {
+            try
+            {
+                return View(id);
+                
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
         public async Task<IActionResult> EliminarTCargo(int id)
         {
             try
