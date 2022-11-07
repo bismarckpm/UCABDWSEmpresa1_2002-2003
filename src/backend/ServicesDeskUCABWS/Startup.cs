@@ -26,6 +26,23 @@ namespace ServicesDeskUCABWS
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+<<<<<<< Updated upstream
+=======
+            services.AddDbContext<MigrationDbContext>(options => 
+            options.UseSqlServer(Configuration["ConnectionString"]));    
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo{ Title="ServicesDeskUcabWs", Version= "v1"});
+            });  
+                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+                services.AddTransient<IMigrationDbContext, MigrationDbContext>();
+                services.AddScoped<IUsuarioDao,UsuarioDAO>();
+                services.AddScoped<ICargoDAO,CargoDao>();
+                 services.AddScoped<IEmailDao,EmailDao>();
+                services.AddTransient<IPrioridadDAO,PrioridadDAO>();
+                services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
+                services.AddTransient<IGrupoDAO, GrupoDAO>();
+>>>>>>> Stashed changes
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
