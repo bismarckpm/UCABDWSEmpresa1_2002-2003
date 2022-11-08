@@ -1,0 +1,107 @@
+@model List<ServicesDeskUCAB.DTO.TipoCargoDTO>
+
+@section scripts{
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderTipoCargo');
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+@* Js para traer la ventana emergente de confirmacion de eliminacion *@
+    <script>
+       $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEliminar');
+            $("#btnEliminar, .btn-danger").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idPrioridad", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+
+        @* Js para traer la ventana emergente de edicion de Tipo Cargo *@
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEditar');
+            $("#btnEditar, .btn-primary").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idPrioridad", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+}
+@{
+        ViewData["Title"] = "Gestion Tipo de Cargo";
+}
+
+
+    <div id="PlaceHolderTipoCargo"></div>
+    <div id="PlaceHolderEliminar"></div>
+    <div id="PlaceHolderEditar"></div>
+
+    @* Boton para abrir el modal*@
+    <button type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarTipoCargo")">
+        Crear Tipo de Cargo
+    </button>
+    <br />
+    <br/>
+
+    <table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Tipo de Cargo
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                <button id="btnEditar" type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarTipoCargo","TipoCargo",new {id = "idTipoCargo"})">
+                    Editar
+                </button>
+                <button id="btnEliminar" type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarTipoCargo","TipoCargo",new {id = "idTipoCargo"})">
+                        Eliminar
+                </button>
+                @* @Html.ActionLink("Editar", "ActualizarTCargo", "TipoCargo","TipoCargo", new { @class = "btn btn-primary btn-sm" }) 
+                @Html.ActionLink("Eliminar", "EliminarTCargo", "TipoCargo","TipoCargo", new { @class = "btn btn-danger btn-sm" }) *@
+            </td>
+        </tr>
+    }
+
+</table>

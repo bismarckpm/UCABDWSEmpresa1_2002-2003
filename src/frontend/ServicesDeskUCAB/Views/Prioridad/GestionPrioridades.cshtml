@@ -1,0 +1,112 @@
+﻿@model List<ServicesDeskUCAB.DTO.PrioridadDTO>
+
+
+@section scripts{
+
+    <!-- JS PARA TRAER LA VENTANA EMERGENTE DEL BOTON "CREAR PRIORIDAD" -->
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderPrioridad');
+            $('#btnAgregar').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+    <!-- JS PARA TRAER LA VENTANA EMERGENTE DE CONFIRMACION DE ELIMINACION -->
+    <script>
+       $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEliminar');
+            $("#btnEliminar, .btn-danger").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idPrioridad", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+
+    <!-- JS PARA TRAER LA VENTANA EMERGENTE DE EDICION DE PRIORIDAD -->
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEditar');
+            $("#btnEditar, .btn-primary").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idPrioridad", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+}
+
+
+@{
+        ViewData["Title"] = "Gestion Prioridades";
+}
+
+<!-- DIVS CONTENEDORES DE LAS DIFERENTES VENTANAS EMERGENTES -->
+<div id="PlaceHolderPrioridad"></div>
+<div id="PlaceHolderEliminar"></div>
+<div id="PlaceHolderEditar"></div>
+
+<!-- BOTON PARA ACCIONAR LA VENTANA EMERGENTE -->
+<button id=btnAgregar type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#popUpAgregar" data-url="@Url.Action("VentanaAgregarPrioridad")">
+    Crear prioridad
+</button>
+<br />
+<br/>
+
+<!-- INICIO DE TABLA DE DATOS -->
+<table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Prioridad
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="id">
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                <button id=btnEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarPrioridad","Prioridad",new { id = "idPrioridad" })">
+                    Editar
+                </button>
+                <button id=btnEliminar type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarPrioridad","Prioridad",new { id = "idPrioridad" })">
+                        Eliminar
+                </button>
+            </td>
+        </tr>
+    }
+
+</table>

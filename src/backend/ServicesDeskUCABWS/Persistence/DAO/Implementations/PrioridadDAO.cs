@@ -69,7 +69,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-
                 _context.Prioridades.Update(prioridad);
                 _context.DbContext.SaveChanges();
 
@@ -101,6 +100,22 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 PrioridadDTO errorDTO = new PrioridadDTO();
                 errorDTO.Nombre = "Error al Eliminar Prioridad";
                 return errorDTO;
+            }
+        }
+
+        public PrioridadDTO ConsultaPrioridadDAO(int id)
+        {
+            try
+            {
+                var prioridad = _context.Prioridades.Where(
+                p => p.id == id).First();
+                return PrioridadMapper.EntityToDto(prioridad); ;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw ex.InnerException!;
             }
         }
     }

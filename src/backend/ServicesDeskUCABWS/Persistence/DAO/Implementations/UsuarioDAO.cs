@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
@@ -22,24 +23,29 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
          }
 
         public Usuario GetUsuario(string username){
-            return _context.Usuario.Where(p => p.username == username).FirstOrDefault();
+            return _context.Usuario.Where(p => p.username == username).FirstOrDefault()!;
         }
 
         public bool UsuarioExists(string usuarname, string password){
-            return _context.Usuario.Any(p=>p.username == usuarname && p.password == password);
+            return _context.Usuario.Any(p=>p.username == usuarname );
         }
+
+       
+
         public Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword){
             if (newpassword == confirmationpassword){
-             return _context.Usuario.Where(p=>p.username == usuarname).FirstOrDefault();
+             return _context.Usuario.Where(p=>p.username == usuarname).FirstOrDefault()!;
             }
-            return null;
+            return null!;
         }   
 
         public bool CreateUsuario(Usuario usuario){
-           
+        
              _context.Usuario.Add(usuario);
              return Save();
         }
+        
+      
 
         public bool Save()
 {

@@ -22,7 +22,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
         public virtual DbSet<Notification> Notifications
         {
             get; set;
-
         }
         public virtual DbSet<Prioridad> Prioridades
         {
