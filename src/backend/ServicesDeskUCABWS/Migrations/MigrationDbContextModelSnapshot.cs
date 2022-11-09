@@ -254,7 +254,7 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("cargoid")
+                    b.Property<int?>("cargoid")
                         .HasColumnType("int");
 
                     b.Property<string>("email")
@@ -362,9 +362,7 @@ namespace ServicesDeskUCABWS.Migrations
                 {
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Cargo", "cargo")
                         .WithMany("Usuarios")
-                        .HasForeignKey("cargoid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("cargoid");
 
                     b.Navigation("cargo");
                 });

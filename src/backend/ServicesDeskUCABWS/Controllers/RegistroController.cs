@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ServicesDeskUCABWS.Controllers
 {
-    public class RegisroController : Controller
+    public class RegistroController : Controller
     {
         public readonly UserManager<IdentityUser> _userManager;
         public readonly SignInManager<IdentityUser> _signInManager;
-        public RegisroController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public RegistroController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
 
         {
             this._signInManager = signInManager;

@@ -57,7 +57,7 @@ namespace ServicesDeskUCABWS.Controllers
 
             CreatePasswordHash(usuario.Password!, out byte[] passwordHash, out byte[] passwordSalt);
             var usuarioMap = _mapper.Map<administrador>(usuario);
-            usuarioMap.cargo = _CargoRepository.GetCargo(cargoid);
+            usuarioMap.cargo = _CargoRepository.ObtenerCargoByIdDAO(cargoid).Result.Value;
             usuarioMap.passwordHash = passwordHash;
             usuarioMap.passwordSalt = passwordSalt;
             usuarioMap.VerificationToken = CreateRamdonToken();
