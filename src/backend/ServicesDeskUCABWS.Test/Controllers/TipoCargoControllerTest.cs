@@ -21,7 +21,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             private readonly Mock<ITipoCargoDAO> _servicesMock;
             private readonly Mock<ILogger<TipoCargoController>> _log;
             public TipoCargoDTO tipoCargo = It.IsAny<TipoCargoDTO>();
-            // public TipoCargoDTO tipo = It.IsAny<TipoCargoDTO>();
+            public TipoCargo tipo = It.IsAny<TipoCargo>();
 
             public TipoCargoControllerTest()
             {
@@ -35,14 +35,50 @@ namespace ServicesDeskUCABWS.Test.Controllers
 // En Proceso
             [Fact(DisplayName = "Agregar Tipo Cargo")]
             public Task CreateTipoCargoControllerTest()
+            {   var dto = new TipoCargoDTO(){Id = 3, Nombre = "Senior"};
+                
+                _servicesMock.Setup(t=>t.AgregarTipoCargoDAO(tipo))
+                .Returns(tipoCargo);
+                
+                var result = _controller.AgregarTipoCargo(dto);
+                
+                Assert.IsType<ActionResult<TipoCargoDTO>>(result);
+                return Task.CompletedTask;
+            }
+
+            [Fact(DisplayName = "Tipo Cargo con Excepcion")]
+            public Task CreateTipoCargoControllerTestException()
             {
-                TipoCargo tipo = new TipoCargo(){
-                    id = 1,
-                    nombre = "Prueba"
-                };
-                _servicesMock.Setup(t=>t.AgregarTipoCargoDAO(tipo)).Returns(tipoCargo);
-                var result = _controller.AgregarTipoCargo(tipoCargo);
-                Assert.IsType<TipoCargoDTO>(result);
+                _servicesMock.Setup(t=>t.AgregarTipoCargoDAO(tipo))
+                .Throws(new NullReferenceException());
+
+                Assert.Throws<NullReferenceException>(()=>_controller.AgregarTipoCargo(tipoCargo));
+                return Task.CompletedTask;
+            }
+
+            [Fact(DisplayName="Consultar Lista Tipo Cargo")]
+            public Task ConsultarTipoCargoControllerTest()
+            {
+                _servicesMock.Setup(t=>t.ConsultarTipoCargoDAO())
+                .Returns(new List<TipoCargoDTO>());
+
+                var result = _controller.ConsultaTipoCargo();
+
+                Assert.IsType<ActionResult<List<TipoCargoDTO>>>(result);
+                return Task.CompletedTask;
+            }
+
+
+            [Fact(DisplayName="Consulta Lista Tipo Cargo con Excepcion")]    
+            public Task ConsultarTipoCargoControllerTestException()
+            {
+                _servicesMock
+                    .Setup(t=>t.ConsultarTipoCargoDAO())
+                    .Throws(new Exception("",new NullReferenceException()));
+
+                var result = _controller.ConsultaTipoCargo();
+
+                Assert.Throws<NullReferenceException>(()=>result.Value[-1]);
                 return Task.CompletedTask;
             }
     }
