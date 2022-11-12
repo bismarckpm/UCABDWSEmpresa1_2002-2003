@@ -4,13 +4,14 @@ using ServicesDeskUCABWS.Persistence.Entity;
 
 namespace ServicesDeskUCABWS.Persistence.Database
 {
-    public class MigrationDbContext : DbContext ,IMigrationDbContext
+    public class MigrationDbContext : DbContext, IMigrationDbContext
     {
         public MigrationDbContext(DbContextOptions<MigrationDbContext> options) : base(options)
-        {}
-        public DbContext DbContext{
+        { }
+        public DbContext DbContext
+        {
             get
-            { 
+            {
                 return this;
             }
         }
@@ -21,7 +22,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
         public virtual DbSet<Notification> Notifications
         {
             get; set;
-            
         }
         public virtual DbSet<Prioridad> Prioridades
         {
@@ -32,29 +32,46 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        public  virtual DbSet<Ticket> Tickets
+        public virtual DbSet<Ticket> Tickets
         {
             get; set;
         }
-        public virtual DbSet<Estado> Estado
+        public virtual DbSet<Estado> Estados
         {
             get; set;
         }
-     public virtual DbSet<administrador> Administradores
+
+        public virtual DbSet<Plantilla> Plantillas
         {
             get; set;
         }
-       public virtual   DbSet<Empleado> Empleados
+
+        public virtual DbSet<Etiqueta> Etiquetas
         {
             get; set;
         }
-       public virtual     DbSet<Cliente> clientes
+
+        public virtual DbSet<administrador> Administradores
         {
             get; set;
         }
-        public virtual DbSet<Cargo> Cargos{
-            get;set;
+        public virtual DbSet<Empleado> Empleados
+        {
+            get; set;
+        }
+        public virtual DbSet<Cliente> clientes
+        {
+            get; set;
+        }
+        public virtual DbSet<Cargo> Cargos
+        {
+            get; set;
+        }
+        public virtual DbSet<Categoria> Categorias
+        {
+            get; set;
         }
     }
-    
+    }
+
 }

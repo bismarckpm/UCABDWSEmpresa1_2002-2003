@@ -21,7 +21,7 @@ namespace ServicesDeskUCABWS.Persistence.Database
         DbSet<Prioridad> Prioridades
         {
             get; set;
-        }           
+        }
         DbSet<TipoCargo> TipoCargos
         {
             get; set;
@@ -30,7 +30,17 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        DbSet<Estado> Estado
+        DbSet<Estado> Estados
+        {
+            get; set;
+        }
+
+        DbSet<Plantilla> Plantillas
+        {
+            get; set;
+        }
+
+        DbSet<Etiqueta> Etiquetas
         {
             get; set;
         }
@@ -38,16 +48,21 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-          DbSet<Empleado> Empleados
+        DbSet<Empleado> Empleados
         {
             get; set;
         }
-            DbSet<Cliente> clientes
+        DbSet<Cliente> clientes
         {
             get; set;
         }
-         DbSet<Cargo> Cargos{
-            get;set;
-         }
-    }    
+        DbSet<Cargo> Cargos
+        {
+            get; set;
+        }
+        DbSet<Categoria> Categorias
+        {
+            get; set;
+        }
+    }
 }

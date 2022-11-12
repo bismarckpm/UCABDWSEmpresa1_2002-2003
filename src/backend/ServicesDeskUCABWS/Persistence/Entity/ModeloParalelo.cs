@@ -1,6 +1,6 @@
 namespace ServicesDeskUCABWS.Persistence.Entity;
 
-public class ModeloParalelo
+public class ModeloParalelo : FlujoAprobacion
 {
     public Guid paraleloId {get; set;}
     public string? nombre {get; set;}
