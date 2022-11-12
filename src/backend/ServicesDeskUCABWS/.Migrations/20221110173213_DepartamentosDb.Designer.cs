@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicesDeskUCABWS.Persistence.Database;
 
@@ -11,9 +12,10 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221110173213_DepartamentosDb")]
+    partial class DepartamentosDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +117,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("Departamentoid");
 
-                    b.ToTable("Grupos");
+                    b.ToTable("Grupo");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>

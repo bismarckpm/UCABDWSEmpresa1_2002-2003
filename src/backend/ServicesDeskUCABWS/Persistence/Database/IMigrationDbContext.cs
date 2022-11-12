@@ -64,5 +64,13 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        DbSet<Departamento> Departamentos
+        {
+            get; set;
+        }
+        DbSet<Grupo> Grupos
+        {
+            get; set;
+        }
     }
 }
