@@ -69,16 +69,14 @@ namespace ServicesDeskUCABWS.Test.Controllers
             }
 
 
-            [Fact(DisplayName="Consulta Lista Tipo Cargo con Excepcion")]    
+            [Fact(DisplayName="Consulta Lista Tipo Cargo con Excepcion")]
             public Task ConsultarTipoCargoControllerTestException()
             {
                 _servicesMock
                     .Setup(t=>t.ConsultarTipoCargoDAO())
                     .Throws(new Exception("",new NullReferenceException()));
 
-                var result = _controller.ConsultaTipoCargo();
-
-                Assert.Throws<NullReferenceException>(()=>result.Value[-1]);
+                Assert.Throws<NullReferenceException>(()=> _controller.ConsultaTipoCargo());
                 return Task.CompletedTask;
             }
     }
