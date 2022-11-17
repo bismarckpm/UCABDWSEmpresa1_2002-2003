@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using ServicesDeskUCAB.DTO;
 using System.Net.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 
 
 namespace ServicesDeskUCAB.Controllers

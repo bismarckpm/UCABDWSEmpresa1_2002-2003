@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServicesDeskUCAB.Models;
 using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 
 namespace ServicesDeskUCAB.Controllers
 {

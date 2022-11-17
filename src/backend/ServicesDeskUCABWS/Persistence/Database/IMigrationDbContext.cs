@@ -35,7 +35,7 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
 
-       /* DbSet<Plantilla> Plantillas
+        DbSet<Plantilla> Plantillas
         {
             get; set;
         }
@@ -43,7 +43,7 @@ namespace ServicesDeskUCABWS.Persistence.Database
         DbSet<Etiqueta> Etiquetas
         {
             get; set;
-        }*/
+        }
         DbSet<administrador> Administradores
         {
             get; set;
@@ -57,18 +57,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
         DbSet<Cargo> Cargos
-        {
-            get; set;
-        }
-        DbSet<Categoria> Categorias
-        {
-            get; set;
-        }
-        DbSet<Departamento> Departamentos
-        {
-            get; set;
-        }
-        DbSet<Grupo> Grupos
         {
             get; set;
         }

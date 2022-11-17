@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
 using AutoMapper;
 
 namespace ServicesDeskUCABWS
@@ -26,41 +27,45 @@ namespace ServicesDeskUCABWS
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration {get; }
+        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<MigrationDbContext>(options => 
-            options.UseSqlServer(Configuration["ConnectionString"]));    
+            services.AddDbContext<MigrationDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("MyConn")));
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo{ Title="ServicesDeskUcabWs", Version= "v1"});
-            });  
-                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-                services.AddTransient<IMigrationDbContext, MigrationDbContext>();
-                services.AddScoped<IUsuarioDao,UsuarioDAO>();
-                services.AddScoped<ICargoDAO,CargoDao>();
-                services.AddTransient<IPrioridadDAO,PrioridadDAO>();
-                services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
-                services.AddTransient<IDepartamentoDAO, DepartamentoDAO>();
-                services.AddTransient<ICategoriaDAO, CategoriaDAO>();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServicesDeskUcabWs", Version = "v1" });
+            });
+            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddTransient<IMigrationDbContext, MigrationDbContext>();
+            services.AddTransient<IUsuarioDao, UsuarioDAO>();
+            services.AddScoped<ICargoDAO, CargoDAO>();
+            services.AddTransient<IPrioridadDAO, PrioridadDAO>();
+            services.AddTransient<ITipoCargoDAO, TipoCargoDAO>();
+            services.AddTransient<IEtiquetaDAO, EtiquetaDAO>();
+            services.AddTransient<IEstadoDAO, EstadoDAO>();
+            services.AddTransient<IPlantillaDAO, PlantillaDAO>();
+            services.AddTransient<ICargoDAO, CargoDAO>();
+            services.AddScoped<IEmailDao,EmailDao>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            using(var scope = app.ApplicationServices.CreateScope())
+            using (var scope = app.ApplicationServices.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<MigrationDbContext>();
                 context.Database.Migrate();
             }
-         if (env.IsDevelopment())
+
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ServicesDeskUcabWs v1"));
             }
-         
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -70,7 +75,7 @@ namespace ServicesDeskUCABWS
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });   
+            });
         }
-    }  
+    }
 }

@@ -12,5 +12,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         PrioridadDTO ActualizarPrioridadDAO(Prioridad p);
 
         PrioridadDTO EliminarPrioridadDAO(int id);
+
+        PrioridadDTO ConsultaPrioridadDAO(int id);
     }
 }
