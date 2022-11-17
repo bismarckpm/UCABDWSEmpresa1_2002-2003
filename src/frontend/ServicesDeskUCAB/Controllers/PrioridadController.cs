@@ -10,22 +10,22 @@ using System.Reflection;
 
 namespace ServicesDeskUCAB.Controllers
 {
-    public class CategoriaController : Controller
+    public class PrioridadController : Controller
     {
-        public async Task<IActionResult> GestionCategorias()
+        public async Task<IActionResult> GestionPrioridades()
         {
             try
             {
-                List<CategoriaDTO> listCategorias = new List<CategoriaDTO>();
+                List<PrioridadDTO> listPrioridades = new List<PrioridadDTO>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7267/Categoria/ConsultaCategorias");
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Prioridad/ConsultaPrioridades");
                 var _client = await client.SendAsync(request);
                 if (_client.IsSuccessStatusCode)
                 {
                     var responseStream = await _client.Content.ReadAsStreamAsync();
-                    listCategorias = await JsonSerializer.DeserializeAsync<List<CategoriaDTO>>(responseStream);
+                    listPrioridades = await JsonSerializer.DeserializeAsync<List<PrioridadDTO>>(responseStream);
                 }
-                return View(listCategorias);
+                return View(listPrioridades);
             }
             catch (Exception ex)
             {
@@ -33,7 +33,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public IActionResult VentanaAgregarCategoria()
+        public IActionResult VentanaAgregarPrioridad()
         {
             try
             {
@@ -45,14 +45,14 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> AgregarCategoria(CategoriaDTO categoria)
+        public async Task<IActionResult> AgregarPrioridad(PrioridadDTO prioridad)
         {
             try
             {
-                categoria.id = 0;
+                prioridad.id = 0;
                 HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<CategoriaDTO>("https://localhost:7267/Categoria/CreateCategoria", categoria);
-                return RedirectToAction("GestionCategorias");
+                var _client = await client.PostAsJsonAsync<PrioridadDTO>("https://localhost:7198/Prioridad/CreatePrioridad", prioridad);
+                return RedirectToAction("GestionPrioridades");
             }
             catch (Exception ex)
             {
@@ -60,7 +60,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public IActionResult VentanaEliminarCategoria(int id)
+        public IActionResult VentanaEliminarPrioridad(int id)
         {
             try
             {
@@ -72,13 +72,13 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> EliminarCategoria(int id)
+        public async Task<IActionResult> EliminarPrioridad(int id)
         {
             try
             {
                 HttpClient client = new HttpClient();
-                var _client = await client.DeleteAsync("https://localhost:7267/Categoria/Eliminar/" + id.ToString());
-                return RedirectToAction("GestionCategorias");
+                var _client = await client.DeleteAsync("https://localhost:7198/Prioridad/Eliminar/" + id.ToString());
+                return RedirectToAction("GestionPrioridades");
             }
             catch (Exception ex)
             {
@@ -86,20 +86,20 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> VentanaEditarCategoria(int id)
+        public async Task<IActionResult> VentanaEditarPrioridad(int id)
         {
             try
             {
-                CategoriaDTO categoria = new CategoriaDTO();
+                PrioridadDTO prioridad = new PrioridadDTO();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7267/Categoria/ConsultaCategoria/" + id.ToString());
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Prioridad/ConsultaPrioridad/"+ id.ToString());
                 var _client = await client.SendAsync(request);
                 if (_client.IsSuccessStatusCode)
                 {
                     var responseStream = await _client.Content.ReadAsStreamAsync();
-                    categoria = await JsonSerializer.DeserializeAsync<CategoriaDTO>(responseStream);
+                    prioridad = await JsonSerializer.DeserializeAsync<PrioridadDTO>(responseStream);
                 }
-                return View(categoria);
+                return View(prioridad);
             }
             catch (Exception ex)
             {
@@ -107,13 +107,13 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> EditarCategoria(CategoriaDTO categoria)
+        public async Task<IActionResult> EditarPrioridad(PrioridadDTO prioridad)
         {
             try
             {
                 HttpClient client = new HttpClient();
-                var _client = await client.PutAsJsonAsync("https://localhost:7267/Categoria/Actualizar", categoria);
-                return RedirectToAction("GestionCategorias");
+                var _client = await client.PutAsJsonAsync("https://localhost:7198/Prioridad/Actualizar",prioridad);
+                return RedirectToAction("GestionPrioridades");
             }
             catch (Exception ex)
             {
