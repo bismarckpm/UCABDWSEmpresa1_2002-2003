@@ -41,15 +41,15 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
 
-        public virtual DbSet<Plantilla> Plantillas
+       /* public virtual DbSet<Plantilla> Plantillas
         {
             get; set;
-        }
+        }*/
 
-        public virtual DbSet<Etiqueta> Etiquetas
+        /*public virtual DbSet<Etiqueta> Etiquetas
         {
             get; set;
-        }
+        }*/
 
         public virtual DbSet<administrador> Administradores
         {
@@ -82,4 +82,3 @@ namespace ServicesDeskUCABWS.Persistence.Database
     }
     }
 
-}

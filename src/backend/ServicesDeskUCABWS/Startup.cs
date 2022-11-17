@@ -44,6 +44,7 @@ namespace ServicesDeskUCABWS
                 services.AddTransient<IPrioridadDAO,PrioridadDAO>();
                 services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
                 services.AddTransient<IDepartamentoDAO, DepartamentoDAO>();
+                services.AddTransient<ICategoriaDAO, CategoriaDAO>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
