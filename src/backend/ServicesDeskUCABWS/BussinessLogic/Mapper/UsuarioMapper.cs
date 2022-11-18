@@ -12,6 +12,9 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             CreateMap<UsuarioDTO, Usuario>();
             CreateMap<administrador, AdministratorDTO>();
             CreateMap<AdministratorDTO, administrador>();
+            CreateMap<Usuario, ResetPasswordDTO>();
+            CreateMap<ResetPasswordDTO, Usuario >();
+        
         }
     }
 }

@@ -67,15 +67,11 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        public virtual DbSet<Categoria> Categorias
-        {
-            get; set;
-        }
         public virtual DbSet<Departamento> Departamentos
         {
             get; set;
         }
-        public virtual DbSet<Grupo> Grupos
+        public virtual DbSet<Categoria> Categorias
         {
             get; set;
         }

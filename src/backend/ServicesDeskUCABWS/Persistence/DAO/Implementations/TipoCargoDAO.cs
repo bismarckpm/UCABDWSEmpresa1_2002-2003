@@ -35,7 +35,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                throw new Exception("Error al Crear, detalles:", ex);
             }
         }
 
@@ -56,7 +56,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                throw new Exception("Error al Consultar: "+ex.Message,ex);
             }
         }
 

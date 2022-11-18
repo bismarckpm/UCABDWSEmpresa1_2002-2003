@@ -44,7 +44,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        public List<PrioridadDTO> ConsultarTodosCategoriasDAO()
+        public List<CategoriaDTO> ConsultarTodosCategoriasDAO()
         {
             try
             {
