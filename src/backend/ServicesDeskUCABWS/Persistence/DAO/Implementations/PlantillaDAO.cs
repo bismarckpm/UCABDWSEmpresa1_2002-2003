@@ -24,19 +24,31 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         public async Task<ActionResult<PlantillaDTO>> AgregarPlantillaDAO(Plantilla Plantilla)
         {
+            try
+            {
+                _context.Plantillas.Add(Plantilla);
+                await _context.DbContext.SaveChangesAsync();
 
-            _context.Plantillas.Add(Plantilla);
-            await _context.DbContext.SaveChangesAsync();
-
-            return _mapper.Map<PlantillaDTO>(Plantilla);
-
-
+                return _mapper.Map<PlantillaDTO>(Plantilla);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al agregar la plantilla");
+            }
         }
 
         public Task<List<Plantilla>> ObtenerPlantillasDAO()
         {
-
-            return _context.Plantillas.ToListAsync();
+            try
+            {
+                return _context.Plantillas.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al consultar las plantillas");
+            }
 
         }
 
@@ -53,7 +65,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (DbUpdateException ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al obtener la plantilla");
             }
         }
 
@@ -78,24 +91,31 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (DbUpdateException ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al actualizar la plantilla");
             }
         }
 
         public async Task<ActionResult> EliminarPlantillaDAO(int id)
         {
-
-            var existe = await ObtenerPlantillaDAO(id);
-            if (existe == null)
+            try
             {
-                return new NotFoundResult();
+                var existe = await ObtenerPlantillaDAO(id);
+                if (existe == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                _context.Plantillas.Remove(existe.Value!);
+                await _context.DbContext.SaveChangesAsync();
+
+                return new OkResult();
             }
-
-            _context.Plantillas.Remove(existe.Value!);
-            await _context.DbContext.SaveChangesAsync();
-
-            return new OkResult();
-
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al eliminar la plantilla");
+            }
         }
     }
 }
