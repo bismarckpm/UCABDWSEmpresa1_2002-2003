@@ -23,12 +23,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         public async Task<ActionResult<EstadoEtiquetaDTO>> AgregarEstadoDAO(Estado estado)
         {
+            try
+            {
+                _context.Estados.Add(estado);
+                await _context.DbContext.SaveChangesAsync();
 
-            _context.Estados.Add(estado);
-            await _context.DbContext.SaveChangesAsync();
-
-            return _mapper.Map<EstadoEtiquetaDTO>(estado);
-
+                return _mapper.Map<EstadoEtiquetaDTO>(estado);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al agregar el estado");
+            }
         }
 
         public async Task<ActionResult<List<EstadoDTO>>> GetEstadosEtiquetaDAO(int idEtiqueta)
@@ -43,7 +49,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al consultar los estados de la etiqueta");
             }
         }
 
@@ -63,7 +70,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al consultar el estado");
             }
         }
 
@@ -71,9 +79,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         public async Task<ActionResult<List<EstadoDTO>>> GetEstadosDAO()
         {
 
-            var estados = await _context.Estados.ToListAsync();
+            try
+            {
+                var estados = await _context.Estados.ToListAsync();
 
-            return _mapper.Map<List<EstadoDTO>>(estados);
+                return _mapper.Map<List<EstadoDTO>>(estados);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al consultar los estados");
+            }
 
         }
 
@@ -93,26 +109,30 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (DbUpdateException ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al actualizar el estado");
             }
-
-
 
         }
 
         public async Task<ActionResult> EliminarEstadoDAO(int id)
         {
-
-
-            var estado = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
-            if (estado == null)
+            try
             {
-                return new NotFoundResult();
+                var estado = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
+                if (estado == null)
+                {
+                    return new NotFoundResult();
+                }
+                _context.Estados.Remove(estado);
+                await _context.DbContext.SaveChangesAsync();
+                return new OkResult();
             }
-            _context.Estados.Remove(estado);
-            await _context.DbContext.SaveChangesAsync();
-            return new OkResult();
-
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al eliminar el estado");
+            }
 
         }
 
@@ -133,7 +153,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (DbUpdateException ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al actualizar el estado de la etiqueta");
             }
         }
 

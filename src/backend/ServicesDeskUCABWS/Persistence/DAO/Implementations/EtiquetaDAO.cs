@@ -26,19 +26,31 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         public async Task<ActionResult<EtiquetaDTO>> AgregarEtiquetaDAO(Etiqueta etiqueta)
         {
-
-            _context.Etiquetas.Add(etiqueta);
-            await _context.DbContext.SaveChangesAsync();
-
-            return _mapper.Map<EtiquetaDTO>(etiqueta);
+            try
+            {
+                _context.Etiquetas.Add(etiqueta);
+                await _context.DbContext.SaveChangesAsync();
+                return _mapper.Map<EtiquetaDTO>(etiqueta);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al agregar la etiqueta");
+            }
 
         }
 
         public Task<List<Etiqueta>> ConsultarEtiquetasDAO()
         {
-
-            return _context.Etiquetas.ToListAsync();
-
+            try
+            {
+                return _context.Etiquetas.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al consultar las etiquetas");
+            }
         }
 
         public async Task<ActionResult<Etiqueta>> ObtenerEtiquetaDAO(int id)
@@ -52,9 +64,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 }
                 return etiqueta;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al obtener la etiqueta");
             }
         }
 
@@ -77,8 +90,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (DbUpdateException ex)
             {
-
-                throw ex.InnerException!;
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al actualizar la etiqueta");
             }
 
 
@@ -86,20 +99,26 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         public async Task<ActionResult> EliminarEtiquetaDAO(int id)
         {
-
-            var existe = await ObtenerEtiquetaDAO(id);
-            if (existe.Value?.id == 0)
+            try
             {
-                return new NotFoundResult();
+                var existe = await ObtenerEtiquetaDAO(id);
+                if (existe.Value?.id == 0)
+                {
+                    return new NotFoundResult();
+                }
+
+
+                _context.Etiquetas.Remove(existe.Value!);
+                await _context.DbContext.SaveChangesAsync();
+
+                return new OkResult();
             }
-
-
-            _context.Etiquetas.Remove(existe.Value!);
-            await _context.DbContext.SaveChangesAsync();
-
-            return new OkResult();
-
-
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException!.Message);
+                throw new Exception("Error al eliminar la etiqueta");
+            }
         }
+
     }
 }
