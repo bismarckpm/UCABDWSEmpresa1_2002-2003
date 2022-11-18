@@ -22,7 +22,6 @@ namespace ServicesDeskUCABWS.Controllers
             this._log = log;
         }
 
-
         [HttpPost]
         [Route("CreateTCargo/")]
         public ActionResult<TipoCargoDTO> AgregarTipoCargo([FromBody] TipoCargoDTO dto1)
