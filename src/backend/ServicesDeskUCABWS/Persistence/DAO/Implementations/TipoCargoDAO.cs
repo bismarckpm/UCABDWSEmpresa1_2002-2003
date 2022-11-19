@@ -79,7 +79,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                 Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
                 throw new Exception("Fallo al actualizar: " + tipoCargo.nombre, ex);
-            }
+            } 
         } 
 
         public TipoCargoDTO EliminarTipoCargoDAO(int id)

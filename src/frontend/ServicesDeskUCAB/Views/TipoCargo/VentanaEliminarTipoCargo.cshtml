@@ -1,6 +1,6 @@
 @model int
 @{
-    ViewData["Title"] = "Gestion Prioridades";
+    ViewData["Title"] = "Gestion Tipo de Cargo";
 }
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
@@ -21,7 +21,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EliminarTCargo", "TipoCargo",new { id = Model })'>Aceptar</button>
+                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EliminarTCargo","TipoCargo",new {id = Model})'">Aceptar</button>
                 </div>
         </div>
     </div>
