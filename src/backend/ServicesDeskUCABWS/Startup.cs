@@ -52,6 +52,7 @@ namespace ServicesDeskUCABWS
             services.AddScoped<IEmailDao,EmailDao>();
             services.AddScoped<IDepartamentoDAO, DepartamentoDAO>();
             services.AddTransient<ICategoriaDAO, CategoriaDAO>();
+            services.AddTransient<ITicketcDao, TicketDao>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -12,14 +12,14 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    [Migration("20221024020826_Tablas-Estado-Etiqueta-Plantilla")]
-    partial class TablasEstadoEtiquetaPlantilla
+    [Migration("20221119223042_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -32,9 +32,6 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
@@ -43,13 +40,63 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("tipoCargoId");
 
-                    b.HasIndex("tipoCargoId")
-                        .IsUnique();
+                    b.ToTable("Cargos");
+                });
 
-                    b.ToTable("Cargo");
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Categoria", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<string>("nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Categorias");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cliente", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<string>("email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("clientes");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Departamento", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<string>("nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Departamentos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
@@ -60,7 +107,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("etiquetaid")
+                    b.Property<int>("EtiquetaId")
                         .HasColumnType("int");
 
                     b.Property<string>("nombre")
@@ -71,7 +118,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("etiquetaid");
+                    b.HasIndex("EtiquetaId");
 
                     b.HasIndex("notificationid");
 
@@ -97,6 +144,27 @@ namespace ServicesDeskUCABWS.Migrations
                     b.ToTable("Etiquetas");
                 });
 
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int?>("Departamentoid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("Departamentoid");
+
+                    b.ToTable("Grupo");
+                });
+
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
                 {
                     b.Property<int>("id")
@@ -104,6 +172,9 @@ namespace ServicesDeskUCABWS.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int?>("Plantillaid")
+                        .HasColumnType("int");
 
                     b.Property<string>("descripcion")
                         .HasColumnType("nvarchar(max)");
@@ -118,6 +189,8 @@ namespace ServicesDeskUCABWS.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("id");
+
+                    b.HasIndex("Plantillaid");
 
                     b.HasIndex("usuarioid");
 
@@ -135,12 +208,6 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<string>("cuerpo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("notificationid")
-                        .HasColumnType("int");
-
                     b.Property<string>("tipo")
                         .HasColumnType("nvarchar(max)");
 
@@ -148,8 +215,6 @@ namespace ServicesDeskUCABWS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
-
-                    b.HasIndex("notificationid");
 
                     b.ToTable("Plantillas");
                 });
@@ -181,6 +246,19 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<int>("Statusid")
                         .HasColumnType("int");
 
+                    b.Property<int?>("asginadoaid")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("creadoporid")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("delegacionid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("fecha")
                         .HasColumnType("nvarchar(max)");
 
@@ -190,16 +268,17 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<int?>("prioridadid")
                         .HasColumnType("int");
 
-                    b.Property<int?>("usuarioid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("Statusid");
 
-                    b.HasIndex("prioridadid");
+                    b.HasIndex("asginadoaid");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("creadoporid");
+
+                    b.HasIndex("delegacionid");
+
+                    b.HasIndex("prioridadid");
 
                     b.ToTable("Tickets");
                 });
@@ -228,44 +307,85 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Grupoid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VerificationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("cargoid")
+                        .HasColumnType("int");
+
                     b.Property<string>("email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("password")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("passwordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("passwordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
 
+                    b.HasIndex("Grupoid");
+
+                    b.HasIndex("cargoid");
+
                     b.ToTable("Usuario");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Usuario");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.administrador", b =>
+                {
+                    b.HasBaseType("ServicesDeskUCABWS.Persistence.Entity.Usuario");
+
+                    b.HasDiscriminator().HasValue("administrador");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Empleado", b =>
+                {
+                    b.HasBaseType("ServicesDeskUCABWS.Persistence.Entity.Usuario");
+
+                    b.HasDiscriminator().HasValue("Empleado");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "user")
-                        .WithOne("cargoUser")
-                        .HasForeignKey("ServicesDeskUCABWS.Persistence.Entity.Cargo", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", "tipoCargo")
-                        .WithOne("cargo_")
-                        .HasForeignKey("ServicesDeskUCABWS.Persistence.Entity.Cargo", "tipoCargoId")
+                        .WithMany()
+                        .HasForeignKey("tipoCargoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("tipoCargo");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
                 {
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Etiqueta", "etiqueta")
-                        .WithMany()
-                        .HasForeignKey("etiquetaid");
+                        .WithMany("estados")
+                        .HasForeignKey("EtiquetaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Notification", "notification")
                         .WithMany()
@@ -276,22 +396,24 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Navigation("notification");
                 });
 
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
+                {
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Departamento", null)
+                        .WithMany("grupos")
+                        .HasForeignKey("Departamentoid");
+                });
+
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
                 {
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Plantilla", null)
+                        .WithMany("notifications")
+                        .HasForeignKey("Plantillaid");
+
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "usuario")
                         .WithMany()
                         .HasForeignKey("usuarioid");
 
                     b.Navigation("usuario");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Notification", "notification")
-                        .WithMany()
-                        .HasForeignKey("notificationid");
-
-                    b.Navigation("notification");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
@@ -302,29 +424,69 @@ namespace ServicesDeskUCABWS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "asginadoa")
+                        .WithMany()
+                        .HasForeignKey("asginadoaid");
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "creadopor")
+                        .WithMany()
+                        .HasForeignKey("creadoporid");
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "delegacion")
+                        .WithMany()
+                        .HasForeignKey("delegacionid");
+
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Prioridad", "prioridad")
                         .WithMany()
                         .HasForeignKey("prioridadid");
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "usuario")
-                        .WithMany()
-                        .HasForeignKey("usuarioid");
-
                     b.Navigation("Status");
 
+                    b.Navigation("asginadoa");
+
+                    b.Navigation("creadopor");
+
+                    b.Navigation("delegacion");
+
                     b.Navigation("prioridad");
-
-                    b.Navigation("usuario");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", b =>
-                {
-                    b.Navigation("cargo_");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
                 {
-                    b.Navigation("cargoUser");
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Grupo", null)
+                        .WithMany("usuarios")
+                        .HasForeignKey("Grupoid");
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Cargo", "cargo")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("cargoid");
+
+                    b.Navigation("cargo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
+                {
+                    b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Departamento", b =>
+                {
+                    b.Navigation("grupos");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Etiqueta", b =>
+                {
+                    b.Navigation("estados");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
+                {
+                    b.Navigation("usuarios");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
+                {
+                    b.Navigation("notifications");
                 });
 #pragma warning restore 612, 618
         }
