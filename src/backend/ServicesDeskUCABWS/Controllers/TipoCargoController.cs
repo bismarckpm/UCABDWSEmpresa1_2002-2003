@@ -47,7 +47,6 @@ namespace ServicesDeskUCABWS.Controllers
                 return _dao.ConsultarTipoCargoDAO();
             }catch(Exception ex)
             {
-        
                 throw ex.InnerException!;
             }
         }
