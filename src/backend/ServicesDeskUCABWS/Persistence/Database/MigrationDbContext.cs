@@ -12,6 +12,13 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get
             {
+    public class MigrationDbContext : DbContext ,IMigrationDbContext
+    {
+        public MigrationDbContext(DbContextOptions<MigrationDbContext> options) : base(options)
+        {}
+        public DbContext DbContext{
+            get
+            { 
                 return this;
             }
         }

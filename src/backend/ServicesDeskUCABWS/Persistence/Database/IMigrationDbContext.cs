@@ -77,4 +77,20 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
     }
+          DbSet<Empleado> Empleados
+        {
+            get; set;
+        }
+            DbSet<Cliente> clientes
+        {
+            get; set;
+        }
+         DbSet<Cargo> Cargos{
+            get; set;
+         }
+        DbSet<Grupo> Grupos
+        {
+            get; set;
+        }
+    }    
 }
