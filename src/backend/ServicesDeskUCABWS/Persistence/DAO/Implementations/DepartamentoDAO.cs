@@ -2,9 +2,7 @@ using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
-using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
-using System;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -31,7 +29,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                             Id = a.id,
                             Nombre = a.nombre
                         }
-                    );    
+                    );   
 
                     return data.First();
 
@@ -97,6 +95,25 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 DepartamentoDTO errorDTO = new DepartamentoDTO();
                 errorDTO.Nombre = "Error al Eliminar Departamento";
                 return errorDTO;
+            }
+        }
+
+        public ModeloJerarquicoDTO EliminarModeloJerarquicoDAO(string id)
+        {
+            try
+            {
+                var modeloJerarquico = (ModeloJerarquico)_context.ModeloJerarquicos.Where(
+                    p => p.jerarquicoId == Guid.Parse(id)).First();
+                _context.ModeloJerarquicos.Remove(modeloJerarquico);
+                _context.DbContext.SaveChanges();
+
+                return ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
+                throw new Exception("Transaccion Fallo", ex)!;
             }
         }
     }
