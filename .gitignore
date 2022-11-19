@@ -353,3 +353,4 @@ MigrationBackup/
 
 # AppSettings.json 
 src/backend/ServicesDeskUCABWS/appsettings.json
+src/backend/ServicesDeskUCABWS/appsettings.json
