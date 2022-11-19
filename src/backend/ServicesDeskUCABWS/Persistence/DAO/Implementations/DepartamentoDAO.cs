@@ -98,23 +98,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        public ModeloJerarquicoDTO EliminarModeloJerarquicoDAO(string id)
-        {
-            try
-            {
-                var modeloJerarquico = (ModeloJerarquico)_context.ModeloJerarquicos.Where(
-                    p => p.jerarquicoId == Guid.Parse(id)).First();
-                _context.ModeloJerarquicos.Remove(modeloJerarquico);
-                _context.DbContext.SaveChanges();
-
-                return ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-                throw new Exception("Transaccion Fallo", ex)!;
-            }
-        }
+     
     }
 }

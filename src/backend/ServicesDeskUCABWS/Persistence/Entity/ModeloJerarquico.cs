@@ -1,6 +1,9 @@
 namespace ServicesDeskUCABWS.Persistence.Entity;
 public class ModeloJerarquico
 {
+    public int Id { get; set; }
+
+    
     public Guid jerarquicoId {get; set;}
     public string nombre {get; set;}
     public List<string> orden {get; set;}
