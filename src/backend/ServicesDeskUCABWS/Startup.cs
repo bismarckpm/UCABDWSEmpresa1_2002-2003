@@ -32,6 +32,7 @@ namespace ServicesDeskUCABWS
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+<<<<<<< HEAD
             services.AddDbContext<MigrationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("MyConn")));
             services.AddSwaggerGen(c =>
@@ -51,6 +52,25 @@ namespace ServicesDeskUCABWS
             services.AddTransient<ICargoDAO, CargoDAO>();
             services.AddScoped<IEmailDao,EmailDao>();
             services.AddTransient<ICategoriaDAO, CategoriaDAO>();
+=======
+<<<<<<< Updated upstream
+=======
+            services.AddDbContext<MigrationDbContext>(options => 
+            options.UseSqlServer(Configuration["ConnectionString"]));    
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo{ Title="ServicesDeskUcabWs", Version= "v1"});
+            });  
+                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+                services.AddTransient<IMigrationDbContext, MigrationDbContext>();
+                services.AddScoped<IUsuarioDao,UsuarioDAO>();
+                services.AddScoped<ICargoDAO,CargoDao>();
+                 services.AddScoped<IEmailDao,EmailDao>();
+                services.AddTransient<IPrioridadDAO,PrioridadDAO>();
+                services.AddTransient<ITipoCargoDAO,TipoCargoDAO>();
+                services.AddTransient<IGrupoDAO, GrupoDAO>();
+>>>>>>> Stashed changes
+>>>>>>> Grupo-D
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
