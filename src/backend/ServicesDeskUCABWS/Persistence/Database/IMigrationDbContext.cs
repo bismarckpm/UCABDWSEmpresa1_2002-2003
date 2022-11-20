@@ -68,6 +68,11 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+
+        DbSet<ModeloJerarquico> ModeloJerarquicos
+        {
+            get; set;
+        }
     
     }
 }

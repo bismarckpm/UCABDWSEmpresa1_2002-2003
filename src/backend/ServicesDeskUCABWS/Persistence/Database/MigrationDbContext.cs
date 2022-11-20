@@ -78,6 +78,11 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
 
+        public virtual DbSet<ModeloJerarquico> ModeloJerarquicos
+        {
+            get; set;
+        }
+
     }
        
 

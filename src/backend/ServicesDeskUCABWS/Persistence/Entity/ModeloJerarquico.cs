@@ -3,11 +3,10 @@ public class ModeloJerarquico
 {
     public int Id { get; set; }
 
+    public string? Nombre {get; set;}
     
-    public Guid jerarquicoId {get; set;}
-    public string nombre {get; set;}
-    public List<string> orden {get; set;}
-    public int tipoCargo{get; set;}
-    public virtual FlujoAprobacion flujoAprobacion{get; set;}
-    public virtual Categoria categoria {get; set;}
+    public List<TipoCargo>? orden {get; set;}
+    public FlujoAprobacion? flujoAprobacion{get; set;}
+    public int CategoriaId { get; set; }
+    public Categoria? categoria {get; set;}
 }

@@ -1,17 +1,18 @@
-using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Persistence.Entity;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ServicesDeskUCABWS.Persistence.DAO.Interface;
-
-public interface IModeloJerarquicoDAO
+namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
-    ModeloJerarquicoDTO AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
+    public interface IModeloJerarquicoDAO
+    {
+        public Task<List<ModeloJerarquico>> ConsultarModeloJerarquicosDAO();
 
-    List<ModeloJerarquicoDTO> ConsultarModelosJerarquicosDAO();
+        public Task<ActionResult> AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
 
-    ModeloJerarquicoDTO ActualizarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
+        public Task<ActionResult<ModeloJerarquico>> ObtenerModeloJerarquicoDAO(int id);
+        public Task<ActionResult<ModeloJerarquico>> ActualizarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico, int id);
 
-    ModeloJerarquicoDTO EliminarModeloJerarquicoDAO(string id);
-
-    ModeloJerarquicoDTO ConsultaModeloJerarquicoDAO(string id);
+        public Task<ActionResult> EliminarModeloJerarquicoDAO(int id);
+    }
 }
