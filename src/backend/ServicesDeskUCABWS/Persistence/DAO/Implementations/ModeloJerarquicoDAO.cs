@@ -91,14 +91,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var ModeloJerarquico = await _context.ModeloJerarquicos
                                                      .Include(mj => mj.categoria)
                                                      .FirstOrDefaultAsync(mj => mj.Id == id);
-                var listCargos = await _context.TipoCargos.Where(tc => tc.ModeloJerarquicoId == id).ToListAsync();
+                //var listCargos = await _context.TipoCargos.Where(tc => tc.ModeloJerarquicoId == id).ToListAsync();
                 
                 
                 if (ModeloJerarquico == null)
                 {
                     return new ModeloJerarquico();
                 }
-                ModeloJerarquico.orden = listCargos;
+                //ModeloJerarquico.orden = listCargos;
                 return ModeloJerarquico;
             }
             catch (Exception ex)
