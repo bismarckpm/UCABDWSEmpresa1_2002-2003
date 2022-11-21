@@ -79,17 +79,17 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 return Task.CompletedTask;
             }
 
-            [Theory (DisplayName ="Actualizar Tipo de Cargo")]
-            [InlineData("Semi Senior")]
-            public Task ActualizarTipoCargoControllerTest(string nombre)
+            [Fact (DisplayName ="Actualizar Tipo de Cargo")]
+            public Task ActualizarTipoCargoControllerTest()
             {
+                // var nombre = "Semi senior";
                 var tipo1 = new TipoCargoDTO(){Id = 2, Nombre = "Semi Senior"};
 
                 _servicesMock.Setup(t=>t.ActualizarTipoCargoDAO(tipo))
                     .Returns(new TipoCargoDTO());
 
                     var result = _controller.ActualizarTipoCargo(tipo1);
-                    Assert.NotEqual<ActionResult<TipoCargoDTO>>(It.IsAny<TipoCargoDTO>(), result);
+                    Assert.IsType<ActionResult<TipoCargoDTO>>(result);
                 return Task.CompletedTask;
             }	
 
@@ -102,13 +102,13 @@ namespace ServicesDeskUCABWS.Test.Controllers
                  return Task.CompletedTask;
              }
 
-             [Theory (DisplayName ="Elimina un Tipo de Cargo")]
-             [InlineData(1)]
-             public Task EliminarTipoCargoControllerTest(int id)
+             [Fact (DisplayName ="Elimina un Tipo de Cargo")]
+             public Task EliminarTipoCargoControllerTest()
              {
+                var codigo = 1;
                  _servicesMock.Setup(t=>t.EliminarTipoCargoDAO(It.IsAny<int>())).Returns(It.IsAny<TipoCargoDTO>());
 
-                 var result = _controller.EliminarTipoCargo(id);
+                 var result = _controller.EliminarTipoCargo(codigo);
 
                  Assert.IsType<ActionResult<TipoCargoDTO>>(result);
                  return Task.CompletedTask;
