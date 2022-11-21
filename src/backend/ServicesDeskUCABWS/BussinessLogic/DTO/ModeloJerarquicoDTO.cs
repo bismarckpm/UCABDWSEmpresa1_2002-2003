@@ -1,10 +1,23 @@
- namespace ServicesDeskUCABWS.BussinessLogic.DTO;
+ using ServicesDeskUCABWS.Persistence.Entity;
  
- public class ModeloJerarquicoDTO
- {  
-    public Guid id {get; set;}
-    public string nombre {get; set;}
-    public List<string> orden {get; set;}
-    public int tipoCargo{get; set;}
-    public CategoriaDTO categoria {get; set;}
-}
+ namespace ServicesDeskUCABWS.BussinessLogic.DTO
+ {
+    public class ModeloJerarquicoCreateDTO
+    {  
+    
+        public string? Nombre {get; set;}
+        
+        public List<TipoCargo>? orden {get; set;}
+        public int CategoriaId {get; set;}
+    
+    }
+
+    public class ModeloJerarquicoDTO
+    {
+        public string? Nombre {get; set;}
+        
+        public List<TipoCargo>? orden {get; set;}
+        public Categoria? categoria {get; set;}
+    }
+ }
+ 

@@ -1,30 +1,20 @@
 using ServicesDeskUCABWS.BussinessLogic.DTO;
+using AutoMapper;
 using ServicesDeskUCABWS.Persistence.Entity;
 
-namespace ServicesDeskUCABWS.BussinessLogic.Mapper;
-
-public class ModeloJerarquicoMapper
+namespace ServicesDeskUCABWS.BussinessLogic.Mapper
 {
-    public static ModeloJerarquicoDTO EntityToDto(ModeloJerarquico modeloJerarquico)
+    public class ModeloJerarquicoMapper: Profile
     {
-        return new ModeloJerarquicoDTO()
+
+        public ModeloJerarquicoMapper()
         {
-            id = modeloJerarquico.jerarquicoId,
-            nombre = modeloJerarquico.nombre,
-            orden = modeloJerarquico.orden,
-            tipoCargo = modeloJerarquico.tipoCargo,
-            categoria = CategoriaMapper.EntityToDto(modeloJerarquico.categoria)
-        };
-    }
-    
-    public static ModeloJerarquico DtoToEntity(ModeloJerarquicoDTO modeloJerarquicoDTO)
-    {
-        return new ModeloJerarquico()
-        {
-           jerarquicoId = modeloJerarquicoDTO.id, 
-           nombre = modeloJerarquicoDTO.nombre,
-           orden = modeloJerarquicoDTO.orden,
-           categoria = CategoriaMapper.DtoToEntity(modeloJerarquicoDTO.categoria)
-        };
+            CreateMap<ModeloJerarquicoCreateDTO, ModeloJerarquico>();
+            CreateMap<ModeloJerarquico, ModeloJerarquicoCreateDTO>();
+            CreateMap<ModeloJerarquico, ModeloJerarquicoDTO>();
+            CreateMap<ModeloJerarquicoDTO, ModeloJerarquico>();
+        
+        }
+
     }
 }
