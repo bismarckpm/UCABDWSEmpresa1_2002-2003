@@ -16,7 +16,7 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly ICategoriaDAO _dao;
         private readonly ILogger<CategoriaController> _log;
 
-        public CategoriaController(ILogger<CategoriaController> logger, ICategoriaDAO dao)
+        public CategoriaController(ICategoriaDAO dao, ILogger<CategoriaController> logger)
         {
             _log = logger;
             _dao = dao;
@@ -24,11 +24,11 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPost]
         [Route("CreateCategoria/")]
-        public CategoriaDTO CreateCategoria([FromBody] CategoriaDTO dto)
+        public CategoriaDTO CreateCategoria([FromBody] CategoriaDTO dto1)
         {
             try
             {               
-                var data =  _dao.AgregarCategoriaDAO(CategoriaMapper.DtoToEntity(dto));
+                var data =  _dao.AgregarCategoriaDAO(CategoriaMapper.DtoToEntity(dto1));
                  return data;   
 
             }catch(Exception ex)

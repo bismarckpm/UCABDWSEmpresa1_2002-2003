@@ -77,10 +77,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 return CategoriaMapper.EntityToDto(categ);
 
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Transaccion Fallo", ex)!;
+                throw new NullReferenceException("Transaccion Fallo", ex)!;
             }
         }
 
