@@ -76,9 +76,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                  return Task.CompletedTask;
          }
 
-
-//  En proceso
-        [Theory]
+        [Theory(DisplayName = "Valida Actualizar Tipo Cargo")]
         [InlineData("Junior")]
          public Task ActualizarTipoCargoTest(string nombre)
          {
@@ -92,8 +90,40 @@ namespace ServicesDeskUCABWS.Test.DAOs
             
             var result = _dao.ActualizarTipoCargoDAO(tipocargo);
 
-            Assert.Equal("Junior", result.Nombre);
+            Assert.NotEqual<string>(nombre,result.Nombre!);
             return Task.CompletedTask;
          }
+
+        [Fact(DisplayName="Valida no Actualizar Tipo Cargo")]
+         public Task ActualizarTipoCargoTestException()
+         {
+             _servicesMock.Setup(c=>c.ActualizarTipoCargoDAO(It.IsAny<TipoCargo>()))
+             .Throws(new Exception());
+           
+            Assert.Throws<NullReferenceException>(()=>_dao.ActualizarTipoCargoDAO(null!));
+            return Task.CompletedTask;
+         }
+
+        [Theory(DisplayName = "Valida Eliminar Tipo Cargo")]
+        [InlineData(1)]
+        public Task EliminarTipoCargoTest(int id)
+        {
+            _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
+
+            var result = _dao.EliminarTipoCargoDAO(id);
+
+            Assert.NotEqual(null,result);
+            return Task.CompletedTask;
+        } 
+
+        [Fact(DisplayName="Valida no Eliminar Tipo Cargo")]
+        public Task EliminarTipoCargoTestException()
+        {
+            _servicesMock.Setup(c=>c.ActualizarTipoCargoDAO(It.IsAny<TipoCargo>()))
+             .Throws(new Exception());
+
+            Assert.Throws<Exception>(()=>_dao.EliminarTipoCargoDAO(-1));
+            return Task.CompletedTask;
+        }
     }
 }

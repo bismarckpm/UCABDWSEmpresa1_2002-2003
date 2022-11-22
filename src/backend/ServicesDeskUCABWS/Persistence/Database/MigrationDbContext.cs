@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Entity;
+using System.Diagnostics.Metrics;
+using System.Reflection.Metadata;
 
 
 namespace ServicesDeskUCABWS.Persistence.Database
@@ -67,6 +69,21 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        public virtual DbSet<Departamento> Departamentos
+        {
+            get; set;
+        }
+        public virtual DbSet<Categoria> Categorias
+        {
+            get; set;
+        }
+
+        public virtual DbSet<ModeloJerarquico> ModeloJerarquicos
+        {
+            get; set;
+        }
+
     }
+       
 
 }

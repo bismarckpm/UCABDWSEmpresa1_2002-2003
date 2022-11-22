@@ -22,7 +22,6 @@ namespace ServicesDeskUCABWS.Controllers
             this._log = log;
         }
 
-
         [HttpPost]
         [Route("CreateTCargo/")]
         public ActionResult<TipoCargoDTO> AgregarTipoCargo([FromBody] TipoCargoDTO dto1)
@@ -48,7 +47,6 @@ namespace ServicesDeskUCABWS.Controllers
                 return _dao.ConsultarTipoCargoDAO();
             }catch(Exception ex)
             {
-        
                 throw ex.InnerException!;
             }
         }

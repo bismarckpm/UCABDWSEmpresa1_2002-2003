@@ -1,6 +1,7 @@
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using ServicesDeskUCABWS.Persistence.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -16,29 +17,42 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         private readonly IMigrationDbContext _context;
 
         private readonly IMapper _mapper;
-        public EtiquetaDAO(IMapper mapper, IMigrationDbContext context)
+        private readonly ILogger<EtiquetaDAO> _logger;
+        public EtiquetaDAO(IMapper mapper, IMigrationDbContext context, ILogger<EtiquetaDAO> logger)
         {
             _mapper = mapper;
             _context = context;
+            _logger = logger;
         }
 
 
 
         public async Task<ActionResult<EtiquetaDTO>> AgregarEtiquetaDAO(Etiqueta etiqueta)
         {
-
-            _context.Etiquetas.Add(etiqueta);
-            await _context.DbContext.SaveChangesAsync();
-
-            return _mapper.Map<EtiquetaDTO>(etiqueta);
+            try
+            {
+                _context.Etiquetas.Add(etiqueta);
+                await _context.DbContext.SaveChangesAsync();
+                _logger.LogInformation("Etiqueta agregada exitosamente en la base de datos");
+                return _mapper.Map<EtiquetaDTO>(etiqueta);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new EtiquetaException("Error al agregar la etiqueta", ex, _logger);
+            }
 
         }
 
         public Task<List<Etiqueta>> ConsultarEtiquetasDAO()
         {
-
-            return _context.Etiquetas.ToListAsync();
-
+            try
+            {
+                return _context.Etiquetas.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new EtiquetaException("Error al consultar las etiquetas", ex, _logger);
+            }
         }
 
         public async Task<ActionResult<Etiqueta>> ObtenerEtiquetaDAO(int id)
@@ -48,13 +62,15 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var etiqueta = await _context.Etiquetas.FindAsync(id);
                 if (etiqueta == null)
                 {
+                    _logger.LogWarning("No se encontró la etiqueta con id: " + id);
                     return new Etiqueta();
                 }
+                _logger.LogInformation("Etiqueta encontrada exitosamente");
                 return etiqueta;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw ex.InnerException!;
+                throw new EtiquetaException("Error al obtener la etiqueta", ex, _logger);
             }
         }
 
@@ -66,6 +82,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var etiquetaOld = await ObtenerEtiquetaDAO(id);
                 if (etiquetaOld.Value == null)
                 {
+                    _logger.LogWarning("No se encontró la etiqueta con id: " + id);
                     return new Etiqueta();
                 }
 
@@ -73,12 +90,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 etiquetaOld.Value.descripcion = etiqueta.descripcion;
 
                 await _context.DbContext.SaveChangesAsync();
+                _logger.LogInformation("Etiqueta actualizada exitosamente");
                 return etiquetaOld;
             }
             catch (DbUpdateException ex)
             {
-
-                throw ex.InnerException!;
+                throw new EtiquetaException("Error al actualizar la etiqueta", ex, _logger);
             }
 
 
@@ -86,20 +103,26 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         public async Task<ActionResult> EliminarEtiquetaDAO(int id)
         {
-
-            var existe = await ObtenerEtiquetaDAO(id);
-            if (existe.Value?.id == 0)
+            try
             {
-                return new NotFoundResult();
+                var existe = await ObtenerEtiquetaDAO(id);
+                if (existe.Value?.id == 0)
+                {
+                    _logger.LogWarning("No se encontró la etiqueta con id: " + id);
+                    return new NotFoundResult();
+                }
+
+
+                _context.Etiquetas.Remove(existe.Value!);
+                await _context.DbContext.SaveChangesAsync();
+                _logger.LogInformation("Etiqueta eliminada exitosamente");
+                return new OkResult();
             }
-
-
-            _context.Etiquetas.Remove(existe.Value!);
-            await _context.DbContext.SaveChangesAsync();
-
-            return new OkResult();
-
-
+            catch (DbUpdateException ex)
+            {
+                throw new EtiquetaException("Error al eliminar la etiqueta", ex, _logger);
+            }
         }
+
     }
 }

@@ -60,5 +60,19 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        DbSet<Departamento> Departamentos
+        {
+            get; set;
+        }
+        DbSet<Categoria> Categorias
+        {
+            get; set;
+        }
+
+        DbSet<ModeloJerarquico> ModeloJerarquicos
+        {
+            get; set;
+        }
+    
     }
 }

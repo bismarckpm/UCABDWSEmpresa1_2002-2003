@@ -2,13 +2,21 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 {
     public class Ticket
     {
-        public  int id {get; set;}
+        public int id { get; set; }
 
-        public string? nombre {get; set;}
+        public string? nombre { get; set; }
 
-        public string? fecha { get; set;}
-        public Usuario? usuario {get; set;}
+        public string? fecha { get; set; }
+
+        public string descripcion { get; set; }
+
+        public Usuario? creadopor {get; set;}
+        public Usuario? asginadoa { get; set; }
         public Prioridad? prioridad { get; set; }
+
+        public Ticket? delegacion { get; set; }
+
+    
 
         private Estado? status;
 
