@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServicesDeskUCABWS.BussinessLogic.DTO
 {
-    public class AdministratorDTO
+    public class RegistroDTO
     {
         
         [Required,EmailAddress]

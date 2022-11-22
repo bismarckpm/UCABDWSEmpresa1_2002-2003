@@ -2,6 +2,19 @@ html {
   font-size: 14px;
 }
 
+.contenedorlogin{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.botones{
+  margin-top: 20px;
+}
+.olvidastea{
+  display: block;
+  margin-top: 10px;
+  cursor: pointer;
+}
 @media (min-width: 768px) {
   html {
     font-size: 16px;

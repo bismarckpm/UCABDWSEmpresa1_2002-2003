@@ -6,6 +6,7 @@ using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Security.Cryptography;
+using ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -18,8 +19,8 @@ namespace ServicesDeskUCABWS.Controllers
         public readonly ICargoDAO _CargoRepository;
         public readonly IMapper _mapper;
         private readonly IEmailDao _emailRepository;
-
-        public UsuarioController(IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper , IEmailDao emailRepository)
+        public static Usuario mapeado;
+           public UsuarioController(IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper , IEmailDao emailRepository)
         {
             _UsuarioRepository = usuarioRepository;
             _mapper = mapper;
@@ -39,12 +40,12 @@ namespace ServicesDeskUCABWS.Controllers
         }
        
         [HttpPost("Registrar")]
-        public IActionResult CreateAdministrador([FromQuery] int cargoid, [FromBody] AdministratorDTO usuario)
+        public IActionResult CreateUsuario([FromQuery] int cargoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
         {
             if (usuario == null)
                 return BadRequest(ModelState);
 
-            var usuariocreate = _UsuarioRepository.GetUsuarios().Where(c => c.email!.Trim().ToUpper() == usuario.Email!.Trim().ToUpper()).FirstOrDefault();
+            var usuariocreate = _UsuarioRepository.GetUsuarioTrimToUpper(usuario);
             if (usuariocreate != null)
             {
                 ModelState.AddModelError("", "Usuario ya exite");
@@ -52,29 +53,51 @@ namespace ServicesDeskUCABWS.Controllers
             }
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            //administrador
+            if (tipousuario == 1)
+            {
+                 var clave = usuario.Password;
+                 var usuarioMap = _mapper.Map<administrador>(usuario);
+                 mapeado = _UsuarioRepository.CreatePasswordHash(usuarioMap, clave);
+                 
+            }
+            //empleado
+            else if (tipousuario == 2)
+            {
+                var clave = usuario.Password;
+                var usuarioMap = _mapper.Map<Empleado>(usuario);
+                mapeado = _UsuarioRepository.CreatePasswordHash(usuarioMap, clave);
+
+            }
+            else if (tipousuario == 3)
+            {
+                var clave = usuario.Password;
+                var usuarioMap = _mapper.Map<Cliente>(usuario);
+                mapeado = _UsuarioRepository.CreatePasswordHash(usuarioMap, clave);
+                cargoid = 0;
+            }
+            else
+            {
+                ModelState.AddModelError("", "Tipo de usuario no existe");
+                return StatusCode(422, ModelState);
+            }
+
+
+            mapeado.VerificationToken = CreateRamdonToken();
 
 
 
-            CreatePasswordHash(usuario.Password!, out byte[] passwordHash, out byte[] passwordSalt);
-            var usuarioMap = _mapper.Map<administrador>(usuario);
-            usuarioMap.cargo = _CargoRepository.ObtenerCargoByIdDAO(cargoid).Result.Value;
-            usuarioMap.passwordHash = passwordHash;
-            usuarioMap.passwordSalt = passwordSalt;
-            usuarioMap.VerificationToken = CreateRamdonToken();
-
-
-
-            if (!_UsuarioRepository.CreateUsuario(usuarioMap))
+            if (!_UsuarioRepository.CreateUsuario(mapeado, cargoid))
             {
                 ModelState.AddModelError("", "Error al guardar");
                 return StatusCode(500, ModelState);
             }
             var email = new EmailDTO();
-            email.para = usuarioMap.email;
-            email.Cuerpo = usuarioMap.VerificationToken;
+            email.para = mapeado.email;
+            email.Cuerpo = mapeado.VerificationToken;
             email.asunto = "Token de verificacion";
             _emailRepository.SendEmail(email);
-            return Ok("Administrador Creado");
+            return Ok("Usuario Creado");
         }
 
         [HttpPost("Login")]
@@ -98,15 +121,15 @@ namespace ServicesDeskUCABWS.Controllers
                 return StatusCode(422, ModelState);
             }
 
-            if (!VerifyPasswordHash(usuario.Password!, usuariocreated.passwordHash, usuariocreated.passwordSalt))
+            if (!_UsuarioRepository.VerifyPasswordHash(usuario.Password!, usuariocreated.passwordHash, usuariocreated.passwordSalt))
             {
                 ModelState.AddModelError("", "Contrasena incorrecta");
                 return StatusCode(422, ModelState);
             }
-            return Ok(usuariocreated);
+            return Ok("Bienvenido" + usuario.Email);
         }
-        [HttpPost("Verificar")]
-        public IActionResult Verificar(string token)
+        [HttpGet("Verificar")]
+        public IActionResult Verificar([FromQuery] string token)
         {
 
 
@@ -127,8 +150,8 @@ namespace ServicesDeskUCABWS.Controllers
             return BadRequest(ModelState);
 
         }
-        [HttpPost("olvido-contrasena")]
-        public IActionResult olvidoContrasena(string email)
+        [HttpGet("olvido-contrasena")]
+        public IActionResult olvidoContrasena([FromQuery] string email)
         {
 
 
@@ -170,9 +193,8 @@ namespace ServicesDeskUCABWS.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            CreatePasswordHash(usuario.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            usuariocreated.passwordHash = passwordHash;
-            usuariocreated.passwordSalt = passwordSalt;
+            usuariocreated =  _UsuarioRepository.CreatePasswordHash(usuariocreated, usuario.Password);
+           
             usuariocreated.ResetTokenExpires = null;
             usuariocreated.PasswordResetToken = null;
 
@@ -194,22 +216,7 @@ namespace ServicesDeskUCABWS.Controllers
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hash = new HMACSHA512())
-            {
-                passwordSalt = hash.Key;
-                passwordHash = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hash = new HMACSHA512(passwordSalt))
-            {
-                var ComputedHash = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return ComputedHash.SequenceEqual(passwordHash);
-            }
-        }
+       
     }
        
 }

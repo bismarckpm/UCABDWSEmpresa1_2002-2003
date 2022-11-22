@@ -6,6 +6,7 @@ using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
 using System;
+using System.Text;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -30,7 +31,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             return _context.Usuario.Any(p=>p.username == usuarname );
         }
 
-       
+        public Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO)
+        {
+            return GetUsuarios().Where(c => c.email.Trim().ToUpper() == administratorDTO.Email.TrimEnd().ToUpper())
+                .FirstOrDefault();
+        }
+
 
         public Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword){
             if (newpassword == confirmationpassword){
@@ -39,13 +45,31 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             return null!;
         }   
 
-        public bool CreateUsuario(Usuario usuario){
-        
+        public bool CreateUsuario(Usuario usuario, int cargoid){
+            usuario.cargo = _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
              _context.Usuario.Add(usuario);
              return Save();
         }
-        
-      
+
+        public Usuario CreatePasswordHash(Usuario usuario,string clave )
+        {
+            using (var hash = new HMACSHA512())
+            {
+                usuario.passwordSalt = hash.Key;
+                usuario.passwordHash = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(clave));
+                return usuario;
+            }
+        }
+        public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hash = new HMACSHA512(passwordSalt))
+            {
+                var ComputedHash = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return ComputedHash.SequenceEqual(passwordHash);
+            }
+        }
+
+
 
         public bool Save()
 {
