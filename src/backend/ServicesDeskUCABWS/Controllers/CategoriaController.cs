@@ -16,7 +16,7 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly ICategoriaDAO _dao;
         private readonly ILogger<CategoriaController> _log;
 
-        public CategoriaController(ILogger<CategoriaController> logger, ICategoriaDAO dao)
+        public CategoriaController(ICategoriaDAO dao, ILogger<CategoriaController> logger)
         {
             _log = logger;
             _dao = dao;

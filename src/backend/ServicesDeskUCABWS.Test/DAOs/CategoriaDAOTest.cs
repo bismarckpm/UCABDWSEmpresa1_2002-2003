@@ -10,7 +10,7 @@ using System.Linq;
 using Bogus;
 using Xunit;
 using Moq;
-using TipoCargoDAO = ServicesDeskUCABWS.Persistence.DAO.Implementations.TipoCargoDAO;
+using CategoriaDAO = ServicesDeskUCABWS.Persistence.DAO.Implementations.CategoriaDAO;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -23,7 +23,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             {
                 var faker = new Faker();
                 _contextMock = new Mock<IMigrationDbContext>();
-                _dao = new TipoCargoDAO(_contextMock.Object);
+                _dao = new CategoriaDAO(_contextMock.Object);
                _servicesMock = new Mock<ICategoriaDAO>();
                 _contextMock.SetupDbContextData();
             }
@@ -40,7 +40,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 nombre = Nombre
             };
             
-            var result = _dao.AgregarTipoCargoDAO(categoria);
+            var result = _dao.AgregarCategoriaDAO(categoria);
            
             Assert.IsType<CategoriaDTO>(result);
             return Task.CompletedTask;
@@ -79,20 +79,20 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
 //  En proceso
         [Theory]
-        [InlineData("Junior")]
-         public Task ActualizarTipoCargoTest(string nombre)
+        [InlineData("CategoriaPrueba")]
+         public Task ActualizarCategoriaTest(string nombre)
          {
             _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
             
-            var tipocargo = new TipoCargo()
+            var categoria = new Categoria()
             {
                 id = 1,
                 nombre = nombre
             };
             
-            var result = _dao.ActualizarTipoCargoDAO(tipocargo);
+            var result = _dao.ActualizarCategoriaDAO(categoria);
 
-            Assert.Equal("Junior", result.Nombre);
+            Assert.Equal("CategoriaPrueba", result.Nombre);
             return Task.CompletedTask;
          }
     }
