@@ -8,15 +8,15 @@ namespace ServicesDeskUCABWS.Controllers
 {
 
     [ApiController]
-    [Route("/Tickect")]
-    public class TickectController : Controller
+    [Route("/Ticket")]
+    public class TicketController : Controller
     {
-        public readonly ITicketcDao _ticketcDao;
+        public readonly ITicketDao _ticketDao;
         public readonly IMapper _mapper;
 
-        public TickectController(ITicketcDao ticketcDao, IMapper mapper)
+        public TicketController(ITicketDao ticketDao, IMapper mapper)
         {
-            _ticketcDao=ticketcDao;
+            _ticketDao=ticketDao;
             _mapper=mapper;
 
         }
@@ -25,7 +25,7 @@ namespace ServicesDeskUCABWS.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Ticket>))]
         public IActionResult GetCollection()
         {
-            var tickets =_ticketcDao.GetTikects();
+            var tickets =_ticketDao.GetTikects();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

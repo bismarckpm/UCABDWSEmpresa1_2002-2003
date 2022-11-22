@@ -2,7 +2,7 @@
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
-    public interface ITicketcDao
+    public interface ITicketDao
     {
         ICollection<Ticket> GetTikects();
 

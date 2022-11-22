@@ -4,7 +4,7 @@ using ServicesDeskUCABWS.Persistence.Entity;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
-    public class TicketDao : ITicketcDao
+    public class TicketDao : ITicketDao
     {
         private readonly IMigrationDbContext _context;
         public TicketDao(MigrationDbContext context)
