@@ -4,7 +4,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface ITicketDao
     {
-        ICollection<Ticket> GetTikects();
+        ICollection<Ticket> GetTickets();
 
         Usuario GetTicket(int id);
 

@@ -25,7 +25,7 @@ namespace ServicesDeskUCABWS.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Ticket>))]
         public IActionResult GetCollection()
         {
-            var tickets =_ticketDao.GetTikects();
+            var tickets =_ticketDao.GetTickets();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

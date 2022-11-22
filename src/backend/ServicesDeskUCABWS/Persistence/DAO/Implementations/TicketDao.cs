@@ -17,7 +17,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             throw new NotImplementedException();
         }
 
-        public ICollection<Ticket> GetTikects()
+        public ICollection<Ticket> GetTickets()
         {
             return _context.Tickets.OrderBy(p => p.id).ToList();
         }
