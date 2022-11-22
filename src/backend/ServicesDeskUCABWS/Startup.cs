@@ -52,7 +52,7 @@ namespace ServicesDeskUCABWS
             services.AddScoped<IEmailDao,EmailDao>();
             services.AddScoped<IDepartamentoDAO, DepartamentoDAO>();
             services.AddTransient<ICategoriaDAO, CategoriaDAO>();
-            services.AddTransient<ITicketcDao, TicketDao>();
+            services.AddTransient<ITicketDao, TicketDao>();
             services.AddTransient<IModeloJerarquicoDAO, ModeloJerarquicoDAO>();
         }
 

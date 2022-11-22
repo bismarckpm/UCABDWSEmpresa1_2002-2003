@@ -4,7 +4,7 @@ using ServicesDeskUCABWS.Persistence.Entity;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
-    public class TicketDao : ITicketcDao
+    public class TicketDao : ITicketDao
     {
         private readonly IMigrationDbContext _context;
         public TicketDao(MigrationDbContext context)
@@ -17,7 +17,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             throw new NotImplementedException();
         }
 
-        public ICollection<Ticket> GetTikects()
+        public ICollection<Ticket> GetTickets()
         {
             return _context.Tickets.OrderBy(p => p.id).ToList();
         }
