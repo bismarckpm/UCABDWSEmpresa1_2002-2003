@@ -12,6 +12,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             CreateMap<Estado, EstadoEtiquetaDTO>();
             CreateMap<Estado, EstadoDTO>();
             CreateMap<EstadoDTO, Estado>();
+            CreateMap<EstadoCreateDTO, Estado>();
         }
 
     }
