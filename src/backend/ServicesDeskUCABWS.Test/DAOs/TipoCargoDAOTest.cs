@@ -65,16 +65,14 @@ namespace ServicesDeskUCABWS.Test.DAOs
                  return Task.CompletedTask;
          }
 
-        [Fact(DisplayName= "Validar lista fuera de rango")]
+        [Fact(DisplayName= "Validar lista excepcion")]
          public Task ConsultarListTipoCargoExceptionTest()
          {
-            _servicesMock.Setup(c=>c.ConsultarTipoCargoDAO()).Throws(new Exception("", new Exception()));
-            var result = _dao.ConsultarTipoCargoDAO();
+            _contextMock.Setup(c => c.TipoCargos).Throws(new Exception());
 
-
-            Assert.Throws<System.ArgumentOutOfRangeException>(()=>result[6]);
+            Assert.Throws<Exception>(() => _dao!.ConsultarTipoCargoDAO());
             return Task.CompletedTask;
-         }
+        }
 
         [Fact(DisplayName = "Valida Actualizar Tipo Cargo")]
          public Task ActualizarTipoCargoTest()
@@ -117,7 +115,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName="Valida no Eliminar Tipo Cargo")]
         public Task EliminarTipoCargoTestException()
         {
-            _servicesMock.Setup(c=>c.ActualizarTipoCargoDAO(It.IsAny<TipoCargo>()))
+            _servicesMock.Setup(c=>c.EliminarTipoCargoDAO(It.IsAny<int>()))
              .Throws(new Exception());
 
             Assert.Throws<Exception>(()=>_dao.EliminarTipoCargoDAO(-1));

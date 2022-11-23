@@ -19,9 +19,21 @@ namespace ServicesDeskUCABWS.Controllers
         public readonly ICargoDAO _CargoRepository;
         public readonly IMapper _mapper;
         private readonly IEmailDao _emailRepository;
+        private readonly ILogger<UsuarioController> _log;
+        private readonly IUsuarioDao _dao;
         public static Usuario mapeado;
-           public UsuarioController(IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper , IEmailDao emailRepository)
+
+        public UsuarioController(IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper , IEmailDao emailRepository)
         {
+            _UsuarioRepository = usuarioRepository;
+            _mapper = mapper;
+            this._emailRepository = emailRepository;
+            _CargoRepository = cargoRepository;
+        }
+
+        public UsuarioController(ILogger<UsuarioController> log,IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper, IEmailDao emailRepository)
+        {
+            this._log = log;
             _UsuarioRepository = usuarioRepository;
             _mapper = mapper;
             this._emailRepository = emailRepository;
@@ -40,7 +52,7 @@ namespace ServicesDeskUCABWS.Controllers
         }
        
         [HttpPost("Registrar")]
-        public IActionResult CreateUsuario([FromQuery] int cargoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
+        public IActionResult CreateUsuario([FromQuery] int cargoid,[FromQuery] int Departamentoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
         {
             if (usuario == null)
                 return BadRequest(ModelState);
@@ -87,7 +99,7 @@ namespace ServicesDeskUCABWS.Controllers
 
 
 
-            if (!_UsuarioRepository.CreateUsuario(mapeado, cargoid))
+            if (!_UsuarioRepository.CreateUsuario(mapeado, cargoid, Departamentoid))
             {
                 ModelState.AddModelError("", "Error al guardar");
                 return StatusCode(500, ModelState);
@@ -126,7 +138,7 @@ namespace ServicesDeskUCABWS.Controllers
                 ModelState.AddModelError("", "Contrasena incorrecta");
                 return StatusCode(422, ModelState);
             }
-            return Ok("Bienvenido" + usuario.Email);
+            return Ok(usuariocreated);
         }
         [HttpGet("Verificar")]
         public IActionResult Verificar([FromQuery] string token)

@@ -66,13 +66,12 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Validar lista fuera de rango")]
-        public Task ConsultarListCategoriaExceptionTest()
+        [Fact(DisplayName = "Validar consulta lista categoria excepcion")]
+        public Task ConsultarCategoriaExceptionTest()
         {
-            _servicesMock.Setup(c => c.ConsultarTodosCategoriasDAO()).Throws(new Exception("", new Exception()));
-            var result = _dao.ConsultarTodosCategoriasDAO();
+            _contextMock.Setup(c => c.Categorias).Throws(new NullReferenceException());
 
-            Assert.Throws<System.ArgumentOutOfRangeException>(() => result[6]);
+            Assert.Throws<NullReferenceException>(() => _dao!.ConsultarTodosCategoriasDAO());
             return Task.CompletedTask;
         }
 
@@ -123,6 +122,27 @@ namespace ServicesDeskUCABWS.Test.DAOs
              .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _dao.EliminarCategoriaDAO(-1));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Consultar categoria por id")]
+        public Task ConsultarCategoriaIdTest()
+        {
+            CategoriaDTO dto = _dao.ConsultaCategoriaDAO(1);
+            var result = dto;
+
+            Assert.IsType<CategoriaDTO>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Valida consulta categoria por id Excepcion")]
+        public Task ConsultarCategoriaIdTestException()
+        {
+            _servicesMock.Setup(c => c.ConsultaCategoriaDAO(It.IsAny<int>()))
+                .Throws(new NullReferenceException());
+            var result = _dao.ConsultarTodosCategoriasDAO();
+
+            Assert.Throws<NullReferenceException>(() => _dao.ConsultaCategoriaDAO(-1));
             return Task.CompletedTask;
         }
     }

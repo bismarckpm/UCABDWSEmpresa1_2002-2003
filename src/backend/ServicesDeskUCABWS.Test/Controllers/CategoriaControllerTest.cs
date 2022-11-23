@@ -87,7 +87,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var dto = new CategoriaDTO() { Id = 2, Nombre = "Cate" };
 
             _servicesMock.Setup(t => t.ActualizarCategoriaDAO(cat))
-                .Returns(new CategoriaDTO());
+                .Returns(categoria);
 
             var result = _controller.ActualizarCategoria(dto);
             Assert.IsType<ActionResult<CategoriaDTO>>(result);
@@ -107,7 +107,8 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task EliminarTipoCargoControllerTest()
         {
             var codigo = 1;
-            _servicesMock.Setup(t => t.EliminarCategoriaDAO(It.IsAny<int>())).Returns(It.IsAny<CategoriaDTO>());
+            _servicesMock.Setup(t => t.EliminarCategoriaDAO(It.IsAny<int>()))
+                .Returns(categoria);
 
             var result = _controller.EliminarCategoria(codigo);
 
@@ -122,6 +123,28 @@ namespace ServicesDeskUCABWS.Test.Controllers
             .Throws(new Exception("", new NullReferenceException()));
 
             Assert.Throws<NullReferenceException>(() => _controller.EliminarCategoria(It.IsAny<int>()));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Consultar Categoria por id")]
+        public Task ConsultarCategoriaIdControllerTest()
+        {
+            _servicesMock.Setup(t => t.ConsultaCategoriaDAO(It.IsAny<int>()))
+            .Returns(categoria);
+
+            var result = _controller.ConsultaCategoria(1);
+
+            Assert.IsType<ActionResult<CategoriaDTO>>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Valida consultar categoria por id excepcion")]
+        public Task ConsultarCategoriaIdControllerTestException()
+        {
+            _servicesMock.Setup(t => t.ConsultaCategoriaDAO(It.IsAny<int>()))
+            .Throws((new Exception("", new NullReferenceException())));
+
+            Assert.Throws<NullReferenceException>(() => _controller.ConsultaCategoria(It.IsAny<int>())); ;
             return Task.CompletedTask;
         }
     }

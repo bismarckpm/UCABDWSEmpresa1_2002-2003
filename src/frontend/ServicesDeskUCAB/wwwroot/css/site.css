@@ -6,9 +6,14 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  flex-direction: column;
 }
 .botones{
   margin-top: 20px;
+}
+.titulo{
+  text-align: center;
 }
 .olvidastea{
   display: block;

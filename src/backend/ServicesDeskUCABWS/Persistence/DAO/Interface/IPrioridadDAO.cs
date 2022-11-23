@@ -5,14 +5,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IPrioridadDAO
     {
-        PrioridadDTO AgregarPrioridadDAO(Prioridad p);
+        public PrioridadDTO AgregarPrioridadDAO(Prioridad p);
 
-        List<PrioridadDTO> ConsultarTodosPrioridadesDAO();
+        public List<PrioridadDTO> ConsultarTodosPrioridadesDAO();
 
-        PrioridadDTO ActualizarPrioridadDAO(Prioridad p);
+        public PrioridadDTO ActualizarPrioridadDAO(Prioridad p);
 
-        PrioridadDTO EliminarPrioridadDAO(int id);
+        public PrioridadDTO EliminarPrioridadDAO(int id);
 
-        PrioridadDTO ConsultaPrioridadDAO(int id);
+        public PrioridadDTO ConsultaPrioridadDAO(int id);
     }
 }

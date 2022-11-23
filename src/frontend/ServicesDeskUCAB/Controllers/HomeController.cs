@@ -15,6 +15,7 @@ namespace ServicesDeskUCAB.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.email = HttpContext.Session.GetString("email");
             return View();
         }
 

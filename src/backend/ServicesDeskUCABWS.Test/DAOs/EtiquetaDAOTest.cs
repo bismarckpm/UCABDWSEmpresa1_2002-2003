@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using Microsoft.Extensions.Logging.Abstractions;
 using ServicesDeskUCABWS.Test.Configuraciones;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -99,6 +100,16 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarEtiquetaIdTest()
         {
             // preparacion de los datos
+            //_contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>()))
+            .ReturnsAsync(new Etiqueta()
+            {
+                id = 1,
+                nombre = "Prueba",
+                descripcion = "Creada"
+            });
+
+
             var id = 1;
             // prueba de la funcion
             var result = await _dao.ObtenerEtiquetaDAO(id);
@@ -108,6 +119,137 @@ namespace ServicesDeskUCABWS.Test.DAOs
             Assert.IsType<Etiqueta>(etiquetaResult);
             Assert.Equal(id, etiquetaResult!.id);
         }
+
+        [Fact(DisplayName = "Consultar Etiqueta por Id que no existe")]
+        public async Task ConsultarEtiquetaIdNoExisteTest()
+        {
+            // preparacion de los datos
+            // no obtener ninguna etiqueta
+            _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Etiqueta);
+
+
+            var id = 4;
+            // prueba de la funcion
+            var result = await _dao.ObtenerEtiquetaDAO(id);
+            var etiquetaResult = result.Value;
+
+            // verificacion de la prueba
+            Assert.Equal(0, etiquetaResult!.id);
+        }
+
+        [Fact(DisplayName = "Consultar Etiqueta por Id con Excepcion")]
+        public async Task ConsultarEtiquetaIdTestException()
+        {
+            // preparacion de los datos
+            var id = 1;
+            _servicesMock.Setup(x => x.ObtenerEtiquetaDAO(id))
+                .ThrowsAsync(new Exception());
+
+            // prueba de la funcion
+            await Assert.ThrowsAsync<Exception>(() => _servicesMock.Object.ObtenerEtiquetaDAO(id));
+        }
+
+        [Fact(DisplayName = "Actualizar una Etiqueta")]
+        public async Task ActualizarEtiquetaTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync(new Etiqueta()
+            {
+                id = 1,
+                nombre = "Prueba",
+                descripcion = "Creada"
+            });
+            var etiqueta = new Etiqueta()
+            {
+                id = 1,
+                nombre = "Modificada",
+                descripcion = "Creada"
+            };
+            // prueba de la funcion
+            var result = await _dao.ActualizarEtiquetaDAO(etiqueta, etiqueta.id);
+            var etiquetaResult = result.Value;
+            // verificacion de la prueba
+            Assert.IsType<Etiqueta>(etiquetaResult);
+        }
+
+        [Fact(DisplayName = "No existe Etiqueta para actualizar")]
+        public async Task ActualizarEtiquetaNoExisteTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Etiqueta);
+            var etiqueta = new Etiqueta();
+            // prueba de la funcion
+            var result = await _dao.ActualizarEtiquetaDAO(etiqueta, etiqueta.id);
+            var etiquetaResult = result.Value;
+            // verificacion de la prueba
+            Assert.IsType<Etiqueta>(etiquetaResult);
+        }
+
+        [Fact(DisplayName = "Actualizar una Etiqueta con Excepcion")]
+        public async Task ActualizarEtiquetaTestException()
+        {
+            // preparacion de los datos
+            var etiqueta = new Etiqueta()
+            {
+                id = 1,
+                nombre = "Modificada",
+                descripcion = "Creada"
+            };
+            _servicesMock.Setup(x => x.ActualizarEtiquetaDAO(etiqueta, etiqueta.id))
+                .ThrowsAsync(new DbUpdateException());
+
+            // prueba de la funcion
+            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.ActualizarEtiquetaDAO(etiqueta, etiqueta.id));
+        }
+
+        [Fact(DisplayName = "Eliminar una Etiqueta")]
+        public async Task EliminarEtiquetaTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync(new Etiqueta()
+            {
+                id = 1,
+                nombre = "Prueba",
+                descripcion = "Creada"
+            });
+            var id = 1;
+            // prueba de la funcion
+            var result = await _dao.EliminarEtiquetaDAO(id);
+
+            // verificacion de result Ok
+            Assert.IsType<OkResult>(result);
+
+        }
+
+        [Fact(DisplayName = "No existe Etiqueta para eliminar")]
+        public async Task EliminarEtiquetaNoExisteTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Etiqueta);
+            var id = 1;
+            // prueba de la funcion
+            var result = await _dao.EliminarEtiquetaDAO(id);
+
+            // verificacion de result NotFound
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact(DisplayName = "Eliminar una Etiqueta con Excepcion")]
+        public async Task EliminarEtiquetaTestException()
+        {
+            // preparacion de los datos
+            var id = 1;
+            _servicesMock.Setup(x => x.EliminarEtiquetaDAO(id))
+                .ThrowsAsync(new DbUpdateException());
+
+            // prueba de la funcion
+            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.EliminarEtiquetaDAO(id));
+        }
+
 
     }
 }

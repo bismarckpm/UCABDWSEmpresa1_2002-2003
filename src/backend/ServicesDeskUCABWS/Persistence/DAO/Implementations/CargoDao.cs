@@ -19,6 +19,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             _mapper = mapper;
         }
 
+        public CargoDAO(IMigrationDbContext context)
+        {
+            this._context = context;
+        }
+
         /// <summary>
         /// Agregar Cargo DAO
         /// </summary>
