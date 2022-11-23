@@ -56,7 +56,7 @@ namespace ServicesDeskUCAB.Controllers
                     
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = json.errors;
+                    ViewBag.Result = json;
 
                 }
             }
