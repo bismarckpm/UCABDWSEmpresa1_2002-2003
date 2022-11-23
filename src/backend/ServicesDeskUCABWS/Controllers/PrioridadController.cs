@@ -16,15 +16,15 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly IPrioridadDAO _dao;
         private readonly ILogger<PrioridadController> _log;
 
-        public PrioridadController(ILogger<PrioridadController> logger, IPrioridadDAO dao)
+        public PrioridadController(ILogger<PrioridadController> log, IPrioridadDAO dao)
         {
-            _log = logger;
-            _dao = dao;
+            this._log = log;
+            this._dao = dao;
         }
 
         [HttpPost]
         [Route("CreatePrioridad/")]
-        public PrioridadDTO CreatePrioridad([FromBody] PrioridadDTO dto)
+        public ActionResult<PrioridadDTO> CreatePrioridad([FromBody] PrioridadDTO dto)
         {
             try
             {               
@@ -40,7 +40,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ConsultaPrioridades/")]
-        public List<PrioridadDTO> ConsultaPrioridades()
+        public ActionResult<List<PrioridadDTO>> ConsultaPrioridades()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ConsultaPrioridad/{id}")]
-        public PrioridadDTO ConsultaPrioridad([Required][FromRoute] int id)
+        public ActionResult<PrioridadDTO> ConsultaPrioridad([Required][FromRoute] int id)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPut]
         [Route("Actualizar/")]
-        public PrioridadDTO ActualizarPrioridad([Required][FromBody] PrioridadDTO dto)
+        public ActionResult<PrioridadDTO> ActualizarPrioridad([Required][FromBody] PrioridadDTO dto)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpDelete]
         [Route("Eliminar/{id}")]
-        public PrioridadDTO EliminarPrioridad([Required][FromRoute] int id)
+        public ActionResult<PrioridadDTO> EliminarPrioridad([Required][FromRoute] int id)
         {
             try
             {
