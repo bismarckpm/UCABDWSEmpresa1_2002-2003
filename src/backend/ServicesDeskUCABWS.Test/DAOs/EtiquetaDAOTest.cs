@@ -82,7 +82,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
             // verificacion de la prueba
             Assert.IsType<List<Etiqueta>>(result);
-            Assert.Equal(3, result.Count);
+            Assert.Equal(2, result.Count);
         }
 
         [Fact(DisplayName = "Consultar lista Etiquetas con Excepcion")]
