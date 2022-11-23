@@ -6,7 +6,7 @@
 <div class="main">
          <div class="col-md-12 col-sm-12">
             <div class="contenedorlogin">
-               <form>
+               <form asp-action="VerificarUsuario"  method="post">
                   <div class="form-group">
                      <label>Introduzca el token enviado a su correo para validar usuario</label>
                      <input type="text" class="form-control" name="token" placeholder="Token">

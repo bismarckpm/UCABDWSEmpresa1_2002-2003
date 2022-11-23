@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicesDeskUCABWS.Persistence.Database;
 
@@ -11,9 +12,10 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221122175531_DepartamentoUsuario")]
+    partial class DepartamentoUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -411,6 +413,9 @@ namespace ServicesDeskUCABWS.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("id");
 
                     b.HasIndex("Departamentoid");
@@ -486,11 +491,11 @@ namespace ServicesDeskUCABWS.Migrations
                         .IsRequired();
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "ticket")
-                        .WithMany("Flujo")
+                        .WithMany()
                         .HasForeignKey("ticketid");
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "usuario")
-                        .WithMany("Flujo")
+                        .WithMany()
                         .HasForeignKey("usuarioid");
 
                     b.Navigation("modeloJerarquico");
@@ -553,15 +558,15 @@ namespace ServicesDeskUCABWS.Migrations
                         .IsRequired();
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "asginadoa")
-                        .WithMany("ticketsasignados")
+                        .WithMany()
                         .HasForeignKey("asginadoaid");
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "creadopor")
-                        .WithMany("ticketscreados")
+                        .WithMany()
                         .HasForeignKey("creadoporid");
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "delegacion")
-                        .WithMany("Tickets")
+                        .WithMany()
                         .HasForeignKey("delegacionid");
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Prioridad", "prioridad")
@@ -637,22 +642,6 @@ namespace ServicesDeskUCABWS.Migrations
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
                 {
                     b.Navigation("notifications");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
-                {
-                    b.Navigation("Flujo");
-
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
-                {
-                    b.Navigation("Flujo");
-
-                    b.Navigation("ticketsasignados");
-
-                    b.Navigation("ticketscreados");
                 });
 #pragma warning restore 612, 618
         }

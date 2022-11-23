@@ -16,7 +16,8 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public Ticket? delegacion { get; set; }
 
-    
+        public virtual ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<FlujoAprobacion> Flujo { get; set; }
 
         private Estado? status;
 

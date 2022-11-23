@@ -10,7 +10,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         Usuario GetUsuario(string username);
         bool UsuarioExists(string usuarname, string password);   
         Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword);       
-        bool CreateUsuario(Usuario usuario, int cargoid);
+        bool CreateUsuario(Usuario usuario, int cargoid, int Departamentoid);
         Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO);
         bool Save();
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServicesDeskUCAB.DTO;
 using ServicesDeskUCAB.Services.Login;
+using System.Dynamic;
 using System.Text;
 
 namespace ServicesDeskUCAB.Controllers
@@ -41,7 +42,7 @@ namespace ServicesDeskUCAB.Controllers
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
  
-                using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Registrar?cargoid=0&tipousuario=3", content))
+                using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Registrar?cargoid=0&tipousuario=3&Departamentoid=0", content))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -58,7 +59,8 @@ namespace ServicesDeskUCAB.Controllers
             return View();
         }
       
-    
+        public ViewResult VerificarUsuario() => View();
+        [HttpPost]
         public async Task<IActionResult> VerificarUsuario(string token)
         {
             using (var httpClient = new HttpClient())
@@ -126,5 +128,62 @@ namespace ServicesDeskUCAB.Controllers
            
             return View();
         }
+    
+
+      public async Task<IActionResult> RegistrarEmpleado(){
+        List<DepartamentoDTO> listDep = new List<DepartamentoDTO>();
+        List<CargoDTO> listCargo = new List<CargoDTO>();
+         using (var httpClient = new HttpClient())
+            {
+                using (var departamento = await httpClient.GetAsync("https://localhost:7198/Departamento/ConsultaDepartamentos"))
+                {
+                    if (departamento.IsSuccessStatusCode)
+                    {
+                    var cargos = await httpClient.GetAsync("https://localhost:7198/Cargo/ConsultaCargo");
+                      string apiResponse = await departamento.Content.ReadAsStringAsync();
+                      string apiResponse2 = await cargos.Content.ReadAsStringAsync();
+                      listDep = JsonConvert.DeserializeObject<List<DepartamentoDTO>>(apiResponse);
+                      listCargo = JsonConvert.DeserializeObject<List<CargoDTO>>(apiResponse2);
+                      dynamic mymodel = new ExpandoObject();
+                      mymodel.Departamentos = listDep;
+                      mymodel.Cargos = listCargo;
+                     return View(mymodel);
+                    }
+                    
+                   
+
+                }
+          return View();
+            }
+
+    }
+ [HttpPost]
+     public async Task<IActionResult> RegistrarEmpleado(int tipou, int departamentos, int cargos, string email , string password, string confirmationpassword)
+        {
+             RegistroDTO usuario = new RegistroDTO();
+             usuario.Email = email;
+             usuario.Password= password;
+             usuario.confirmationpassword = confirmationpassword;
+            using (var httpClient = new HttpClient())
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
+ 
+                using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Registrar?cargoid="+cargos+"&tipousuario="+tipou+"&Departamentoid=" + departamentos, content))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                         return RedirectToAction("VerificarUsuario");
+                    }
+                    
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
+                    ViewBag.Result = json.errors;
+
+                }
+            }
+           
+            return View();
+        }
+      
     }
 }

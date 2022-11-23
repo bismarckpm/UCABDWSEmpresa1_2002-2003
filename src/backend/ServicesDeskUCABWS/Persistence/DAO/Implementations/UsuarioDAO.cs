@@ -23,12 +23,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
          return _context.Usuario.OrderBy(p=>p.id).ToList();
          }
 
-        public Usuario GetUsuario(string username){
-            return _context.Usuario.Where(p => p.username == username).FirstOrDefault()!;
+        public Usuario GetUsuario(string email){
+            return _context.Usuario.Where(p => p.email == email).FirstOrDefault()!;
         }
 
-        public bool UsuarioExists(string usuarname, string password){
-            return _context.Usuario.Any(p=>p.username == usuarname );
+        public bool UsuarioExists(string email, string password){
+            return _context.Usuario.Any(p=>p.email == email );
         }
 
         public Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO)
@@ -38,15 +38,16 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         }
 
 
-        public Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword){
+        public Usuario ChangePassword(string email, string newpassword, string confirmationpassword){
             if (newpassword == confirmationpassword){
-             return _context.Usuario.Where(p=>p.username == usuarname).FirstOrDefault()!;
+             return _context.Usuario.Where(p=>p.email == email).FirstOrDefault()!;
             }
             return null!;
         }   
 
-        public bool CreateUsuario(Usuario usuario, int cargoid){
+        public bool CreateUsuario(Usuario usuario, int cargoid, int Departamentoid){
             usuario.cargo = _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
+            usuario.Departamento = _context.Departamentos.Where(c => c.id == Departamentoid).FirstOrDefault();
              _context.Usuario.Add(usuario);
              return Save();
         }
