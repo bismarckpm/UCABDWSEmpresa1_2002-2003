@@ -1,5 +1,6 @@
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
+using System.Collections;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {

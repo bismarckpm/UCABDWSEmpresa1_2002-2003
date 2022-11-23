@@ -14,14 +14,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     public class UsuarioDAO : IUsuarioDao
     {
         private readonly IMigrationDbContext _context;
-        public UsuarioDAO(MigrationDbContext context ){
-            _context = context;
+        public UsuarioDAO(IMigrationDbContext context ){
+            this._context = context;
 
         }
-         public  ICollection<Usuario> GetUsuarios()
+        public ICollection<Usuario> GetUsuarios()
         {
-         return _context.Usuario.OrderBy(p=>p.id).ToList();
-         }
+            return _context.Usuario.OrderBy(p => p.id).ToList();
+        }
 
         public Usuario GetUsuario(string email){
             return _context.Usuario.Where(p => p.email == email).FirstOrDefault()!;
@@ -45,8 +45,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             return null!;
         }   
 
-        public bool CreateUsuario(Usuario usuario, int cargoid, int Departamentoid){
-            usuario.cargo = _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
+        public bool CreateUsuario(Usuario usuario, 
+            int cargoid, int Departamentoid){
+            usuario.cargo = 
+                _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
             usuario.Departamento = _context.Departamentos.Where(c => c.id == Departamentoid).FirstOrDefault();
              _context.Usuario.Add(usuario);
              return Save();
@@ -70,12 +72,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-
-
         public bool Save()
-{
-    var saved =_context.DbContext.SaveChanges();
-    return saved > 0 ? true:false;
-}
+        {
+            var saved = _context.DbContext.SaveChanges();
+            return saved > 0 ? true : false;
+        }
+
+
     } 
 }
