@@ -23,13 +23,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             return _context.Usuario.OrderBy(p => p.id).ToList();
         }
 
-        public Usuario GetUsuario(string email){
-            return _context.Usuario.Where(p => p.email == email).FirstOrDefault()!;
-        }
-
-        public bool UsuarioExists(string email, string password){
-            return _context.Usuario.Any(p=>p.email == email );
-        }
 
         public Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO)
         {
