@@ -18,21 +18,20 @@ namespace ServicesDeskUCABWS.Controllers
 
         public DepartamentoController(ILogger<DepartamentoController> logger, IDepartamentoDAO dao)
         {
-            _log = logger;
-            _dao = dao;
+            this._log = logger;
+            this._dao = dao;
         }
 
         [HttpPost]
         [Route("CreateDepartamento/")]
-        public DepartamentoDTO CreateDepartamento([FromBody] DepartamentoDTO dto)
+        public ActionResult<DepartamentoDTO> CreateDepartamento([FromBody] DepartamentoDTO dto)
         {
             try
             {
                 var data = _dao.AgregarDepartamentoDAO(DepartamentoMapper.DtoToEntity(dto));
                 return data;
 
-            }
-            catch (Exception ex)
+            }catch (Exception ex)
             {
                 _log.LogError(ex.ToString());
                 throw ex.InnerException!;
@@ -41,7 +40,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ConsultaDepartamentos/")]
-        public List<DepartamentoDTO> ConsultaDepartamentos()
+        public ActionResult<List<DepartamentoDTO>> ConsultaDepartamentos()
         {
             try
             {
@@ -58,7 +57,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPut]
         [Route("Actualizar/")]
-        public DepartamentoDTO ActualizarDepartamento([Required][FromBody] DepartamentoDTO dto)
+        public ActionResult<DepartamentoDTO> ActualizarDepartamento([Required][FromBody] DepartamentoDTO dto)
         {
             try
             {
@@ -74,7 +73,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpDelete]
         [Route("Eliminar/{id}")]
-        public DepartamentoDTO EliminarDepartamento([Required][FromRoute] int id)
+        public ActionResult<DepartamentoDTO> EliminarDepartamento([Required][FromRoute] int id)
         {
             try
             {

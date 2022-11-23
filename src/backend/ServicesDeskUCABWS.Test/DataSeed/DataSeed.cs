@@ -11,6 +11,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<TipoCargo>> mockSetTCargo = new Mock<DbSet<TipoCargo>>();
         public static Mock<DbSet<Categoria>> mockSetCategorias = new Mock<DbSet<Categoria>>();
         public static Mock<DbSet<Prioridad>> mockSetPrioridades = new Mock<DbSet<Prioridad>>();
+        public static Mock<DbSet<Departamento>> mockSetDepartamentos = new Mock<DbSet<Departamento>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
             //ListTipoCargo
@@ -64,6 +65,23 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre = "Baja"
                 }
             };
+            //Departamento
+            var requestsDepartamentos = new List<Departamento>
+            {
+                new Departamento
+                {
+                    id = 1,
+                    nombre = "departamento1"
+                }, new Departamento
+                {
+                    id = 2,
+                    nombre = "departamento2"
+                }, new Departamento
+                {
+                    id = 3,
+                    nombre = "departamento3"
+                }
+            };
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t=>t.DbContext.SaveChanges()).Returns(1);
@@ -76,6 +94,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.Prioridades).Returns(mockSetPrioridades.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Prioridades).Returns(requestsPrioridades.AsQueryable().BuildMockDbSet().Object);
+            //Departamento DataSeed
+            _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
         }
     }
 }
