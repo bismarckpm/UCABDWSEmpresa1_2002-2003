@@ -28,16 +28,15 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 _contextMock.SetupDbContextData();
             }
 
-        [Theory (DisplayName ="Crear un Tipo de Cargo")]
-        [InlineData("Prueba")]
-        public Task CrearTipoCargoTest(string Nombre)
+        [Fact (DisplayName ="Crear un Tipo de Cargo")]
+        public Task CrearTipoCargoTest()
         {
             _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
             
             var tipocargo = new TipoCargo()
             {
                 id = 1,
-                nombre = Nombre
+                nombre = "Carlos"
             };
             
             var result = _dao.AgregarTipoCargoDAO(tipocargo);
@@ -72,25 +71,25 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _servicesMock.Setup(c=>c.ConsultarTipoCargoDAO()).Throws(new Exception("", new Exception()));
             var result = _dao.ConsultarTipoCargoDAO();
 
-                 Assert.Throws<System.ArgumentOutOfRangeException>(()=>result[6]);
-                 return Task.CompletedTask;
+
+            Assert.Throws<System.ArgumentOutOfRangeException>(()=>result[6]);
+            return Task.CompletedTask;
          }
 
-        [Theory(DisplayName = "Valida Actualizar Tipo Cargo")]
-        [InlineData("Junior")]
-         public Task ActualizarTipoCargoTest(string nombre)
+        [Fact(DisplayName = "Valida Actualizar Tipo Cargo")]
+         public Task ActualizarTipoCargoTest()
          {
             _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
             
             var tipocargo = new TipoCargo()
             {
                 id = 1,
-                nombre = nombre
+                nombre = "Pedro"
             };
             
             var result = _dao.ActualizarTipoCargoDAO(tipocargo);
 
-            Assert.NotEqual<string>(nombre,result.Nombre!);
+            Assert.IsType<TipoCargoDTO>(result);
             return Task.CompletedTask;
          }
 
@@ -104,15 +103,14 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
          }
 
-        [Theory(DisplayName = "Valida Eliminar Tipo Cargo")]
-        [InlineData(1)]
-        public Task EliminarTipoCargoTest(int id)
+        [Fact(DisplayName = "Valida Eliminar Tipo Cargo")]
+        public Task EliminarTipoCargoTest()
         {
             _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
 
-            var result = _dao.EliminarTipoCargoDAO(id);
+            var result = _dao.EliminarTipoCargoDAO(1);
 
-            Assert.NotEqual(null,result);
+            Assert.IsType<TipoCargoDTO>(result);
             return Task.CompletedTask;
         } 
 
