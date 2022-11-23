@@ -24,7 +24,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPost]
         [Route("CreateCategoria/")]
-        public CategoriaDTO CreateCategoria([FromBody] CategoriaDTO dto1)
+        public ActionResult<CategoriaDTO> CreateCategoria([FromBody] CategoriaDTO dto1)
         {
             try
             {               
@@ -40,7 +40,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ConsultaCategorias/")]
-        public List<CategoriaDTO> ConsultaCategorias()
+        public ActionResult<List<CategoriaDTO>> ConsultaCategorias()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ConsultaCategoria/{id}")]
-        public CategoriaDTO ConsultaCategoria([Required][FromRoute] int id)
+        public ActionResult<CategoriaDTO> ConsultaCategoria([Required][FromRoute] int id)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPut]
         [Route("Actualizar/")]
-        public CategoriaDTO ActualizarCategoria([Required][FromBody] CategoriaDTO dto)
+        public ActionResult<CategoriaDTO> ActualizarCategoria([Required][FromBody] CategoriaDTO dto)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpDelete]
         [Route("Eliminar/{id}")]
-        public CategoriaDTO EliminarCategoria([Required][FromRoute] int id)
+        public ActionResult<CategoriaDTO> EliminarCategoria([Required][FromRoute] int id)
         {
             try
             {

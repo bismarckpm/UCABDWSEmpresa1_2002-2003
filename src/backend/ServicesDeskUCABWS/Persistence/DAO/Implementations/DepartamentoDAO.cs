@@ -44,20 +44,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                    var data = _context.Departamentos.Select(
-                        d => new DepartamentoDTO
-                        {
-                            Id = d.id,
-                            Nombre = d.nombre
-                        }
-                    );
+                var data = _context.Departamentos.Select(
+                    d => new DepartamentoDTO
+                    {
+                        Id = d.id,
+                        Nombre = d.nombre
+                    }
+                );
 
-                    return data.ToList();
+                return data.ToList();
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new Exception("Error al Consultar: " + ex.Message, ex);
             }
         }
 
@@ -65,13 +66,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                
                 _context.Departamentos.Update(departamento);
                 _context.DbContext.SaveChanges();
 
                 return DepartamentoMapper.EntityToDto(departamento);
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw new Exception("Transaccion Fallo", ex)!;
@@ -82,19 +83,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                    var departamento = (Departamento) _context.Departamentos.Where(
-                        d=> d.id == id).First();
-                        _context.Departamentos.Remove(departamento);
-                        _context.DbContext.SaveChanges();
+                var departamento = _context.Departamentos.Where(
+                    d => d.id == id).First();
+                _context.Departamentos.Remove(departamento);
+                _context.DbContext.SaveChanges();
 
-                        return DepartamentoMapper.EntityToDto(departamento);
-                        
-            }catch(Exception ex)
+                return DepartamentoMapper.EntityToDto(departamento);
+
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-                DepartamentoDTO errorDTO = new DepartamentoDTO();
-                errorDTO.Nombre = "Error al Eliminar Departamento";
-                return errorDTO;
+                Console.WriteLine(ex.Message + " || " + ex.StackTrace);
+                throw new Exception("Fallo al Eliminar Departamento: " + id, ex);
             }
         }
 

@@ -61,7 +61,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new Exception("Error al Consultar: " + ex.Message, ex);
             }
         }
 
@@ -86,7 +86,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var prioridad = (Prioridad)_context.Prioridades.Where(
+                var prioridad = _context.Prioridades.Where(
                     p => p.id == id).First();
                 _context.Prioridades.Remove(prioridad);
                 _context.DbContext.SaveChanges();
@@ -96,10 +96,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-                PrioridadDTO errorDTO = new PrioridadDTO();
-                errorDTO.Nombre = "Error al Eliminar Prioridad";
-                return errorDTO;
+                Console.WriteLine(ex.Message + " || " + ex.StackTrace);
+                throw new Exception("Fallo al Eliminar la id: " + id, ex);
             }
         }
 
@@ -115,7 +113,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new Exception("Error al Consultar por id: " + id, ex);
             }
         }
     }
