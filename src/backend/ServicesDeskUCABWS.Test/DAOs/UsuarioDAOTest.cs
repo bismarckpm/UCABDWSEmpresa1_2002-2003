@@ -41,27 +41,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Obtiene Usuario por Email")]
-        public Task GetUserByEmailTest()
-        {
-            var email = "prueba@gmail.com";
-            var result = _dao.GetUsuario(email);
-
-            Assert.Equal(email, result.email);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Valida usuario existe")]
-        public Task UserExistTest()
-        {
-            var correo = "prueba@gmail.com";
-            var pwd = "123";
-
-            var result = _dao.UsuarioExists(correo, pwd);
-            Assert.True(result);
-            return Task.CompletedTask;
-        }
-
         [Fact(DisplayName = "Trim to Upper")]
         public Task GetUserTrimToUpperTest()
         {
