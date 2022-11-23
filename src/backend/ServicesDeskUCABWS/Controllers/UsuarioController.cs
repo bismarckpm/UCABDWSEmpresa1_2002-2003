@@ -126,7 +126,7 @@ namespace ServicesDeskUCABWS.Controllers
                 ModelState.AddModelError("", "Contrasena incorrecta");
                 return StatusCode(422, ModelState);
             }
-            return Ok("Bienvenido" + usuario.Email);
+            return Ok(usuariocreated);
         }
         [HttpGet("Verificar")]
         public IActionResult Verificar([FromQuery] string token)

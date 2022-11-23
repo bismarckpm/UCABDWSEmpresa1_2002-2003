@@ -5,6 +5,7 @@ using ServicesDeskUCAB.Services.Login;
 using System.Dynamic;
 using System.Text;
 
+
 namespace ServicesDeskUCAB.Controllers
 {
     public class loginController : Controller
@@ -13,7 +14,7 @@ namespace ServicesDeskUCAB.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(UserLoginDTO usuario)
         {
-         
+          LoginDTO user = new LoginDTO();
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
@@ -22,6 +23,10 @@ namespace ServicesDeskUCAB.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
+                         string response2 = await response.Content.ReadAsStringAsync();
+                         user = JsonConvert.DeserializeObject<LoginDTO>(response2);
+                        HttpContext.Session.SetInt32("userid",user.id);
+                        HttpContext.Session.SetString("email", user.email);
                       return RedirectToAction("Index", "Home");
                     }
                     
@@ -183,6 +188,13 @@ namespace ServicesDeskUCAB.Controllers
             }
            
             return View();
+        }
+
+
+        public IActionResult Cerrar(){
+            HttpContext.Session.Remove("userid");
+            HttpContext.Session.Remove("email");
+            return RedirectToAction("Index");
         }
       
     }
