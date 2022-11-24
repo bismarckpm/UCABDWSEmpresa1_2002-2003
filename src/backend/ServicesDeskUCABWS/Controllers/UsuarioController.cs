@@ -23,13 +23,7 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly IUsuarioDao _dao;
         public static Usuario mapeado;
 
-        public UsuarioController(IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper , IEmailDao emailRepository)
-        {
-            _UsuarioRepository = usuarioRepository;
-            _mapper = mapper;
-            this._emailRepository = emailRepository;
-            _CargoRepository = cargoRepository;
-        }
+   
 
         public UsuarioController(ILogger<UsuarioController> log,IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper, IEmailDao emailRepository)
         {
@@ -45,6 +39,39 @@ namespace ServicesDeskUCABWS.Controllers
         public IActionResult GetCollection()
         {
             var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetUsuarios());
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
+
+     
+
+        [HttpGet("Administradores")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetCollectionA()
+        {
+            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetAdministradores());
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
+         [HttpGet("Empleados")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetCollectionE()
+        {
+            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetEmpleados());
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
+           [HttpGet("Clientes")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetCollectionC()
+        {
+            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetClientes());
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

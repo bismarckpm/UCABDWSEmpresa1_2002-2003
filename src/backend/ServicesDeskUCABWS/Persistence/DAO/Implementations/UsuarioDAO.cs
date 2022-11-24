@@ -22,6 +22,20 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             return _context.Usuario.OrderBy(p => p.id).ToList();
         }
+          public ICollection<Empleado> GetEmpleados()
+        {
+            return _context.Empleados.OrderBy(p => p.id).ToList();
+        }
+          public ICollection<administrador> GetAdministradores()
+        {
+            return _context.Administradores.OrderBy(p => p.id).ToList();
+        }
+          public ICollection<Cliente> GetClientes()
+        {
+            return _context.clientes.OrderBy(p => p.id).ToList();
+        }
+
+
 
 
         public Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO)

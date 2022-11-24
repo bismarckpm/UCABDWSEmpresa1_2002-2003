@@ -55,6 +55,23 @@ namespace ServicesDeskUCABWS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ConsultaDepartamento/{id}")]
+        public ActionResult<DepartamentoDTO> ConsultaDepartamento([Required][FromRoute] int id)
+        {
+            try
+            {
+                var data = _dao.ConsultaUnDepartamentoDAO(id);
+                return data;
+
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.ToString());
+                throw ex.InnerException!;
+            }
+        }
+
         [HttpPut]
         [Route("Actualizar/")]
         public ActionResult<DepartamentoDTO> ActualizarDepartamento([Required][FromBody] DepartamentoDTO dto)
