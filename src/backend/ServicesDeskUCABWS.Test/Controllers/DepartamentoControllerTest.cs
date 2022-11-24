@@ -120,5 +120,27 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
+        [Fact(DisplayName = "Consultar Departamento por id")]
+        public Task ConsultarDepartamentoIdControllerTest()
+        {
+            _servicesMock.Setup(t => t.ConsultaUnDepartamentoDAO(It.IsAny<int>()))
+            .Returns(departamentoDto);
+
+            var result = _controller.ConsultaDepartamento(1);
+
+            Assert.IsType<ActionResult<DepartamentoDTO>>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Valida consultar Departamento por id excepcion")]
+        public Task ConsultarDepartamentoIdControllerTestException()
+        {
+            _servicesMock.Setup(t => t.ConsultaUnDepartamentoDAO(It.IsAny<int>()))
+            .Throws((new Exception("", new NullReferenceException())));
+
+            Assert.Throws<NullReferenceException>(() => _controller.ConsultaDepartamento(It.IsAny<int>())); ;
+            return Task.CompletedTask;
+        }
+
     }
 }

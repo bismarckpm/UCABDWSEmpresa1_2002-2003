@@ -120,5 +120,26 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
+        [Fact(DisplayName = "Consultar departamento por id")]
+        public Task ConsultarDepartamentoIdTest()
+        {
+            DepartamentoDTO dto = _dao.ConsultaUnDepartamentoDAO(1);
+            var result = dto;
+
+            Assert.IsType<DepartamentoDTO>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Valida consulta departamento por id Excepcion")]
+        public Task ConsultarDepartamentoIdTestException()
+        {
+            _servicesMock.Setup(c => c.ConsultaUnDepartamentoDAO(It.IsAny<int>()))
+                .Throws(new Exception());
+            var result = _dao.ConsultarDepartamentosDAO();
+
+            Assert.Throws<Exception>(() => _dao.ConsultaUnDepartamentoDAO(-1));
+            return Task.CompletedTask;
+        }
+
     }
 }

@@ -5,12 +5,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IDepartamentoDAO
     {
-        DepartamentoDTO AgregarDepartamentoDAO(Departamento d);
+        public DepartamentoDTO AgregarDepartamentoDAO(Departamento d);
 
-        List<DepartamentoDTO> ConsultarDepartamentosDAO();
+        public List<DepartamentoDTO> ConsultarDepartamentosDAO();
 
-        DepartamentoDTO ModificarDepartamentoDAO(Departamento d);
+        public DepartamentoDTO ModificarDepartamentoDAO(Departamento d);
 
-        DepartamentoDTO EliminarDepartamentoDAO(int id);
+        public DepartamentoDTO EliminarDepartamentoDAO(int id);
+
+        public DepartamentoDTO ConsultaUnDepartamentoDAO(int id);
     }
 }
