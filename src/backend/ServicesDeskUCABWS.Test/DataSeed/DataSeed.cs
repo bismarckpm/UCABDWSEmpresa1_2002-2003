@@ -16,6 +16,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
+
+        public static Mock<DbSet<Plantilla>> mockSetPlantillas = new Mock<DbSet<Plantilla>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
             var hash = new HMACSHA512();
@@ -149,6 +151,26 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     estados = new List<Estado>()
                 }
             };
+            //Plantillas
+            var requestsPlantillas = new List<Plantilla>
+            {
+                new Plantilla
+                {
+                    id = 1,
+                    titulo = "Plantilla1",
+                    cuerpo = "Cuerpo1",
+                    tipo = "Tipo1",
+                    notifications = new List<Notification>()
+                },
+                new Plantilla
+                {
+                    id = 2,
+                    titulo = "Plantilla2",
+                    cuerpo = "Cuerpo2",
+                    tipo = "Tipo2",
+                    notifications = new List<Notification>()
+                }
+            };
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -178,6 +200,11 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Etiquetas).Returns(requestsEtiquetas.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEtiquetas.Where(x => x.id == i).Single());
+            //Plantillas DataSeed
+            _mockContext.Setup(t => t.Plantillas).Returns(mockSetPlantillas.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
         }
     }
 }

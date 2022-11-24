@@ -13,6 +13,7 @@ namespace ServicesDeskUCABWS.Test.Configuraciones
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new EtiquetaMapper());
+                cfg.AddProfile(new PlantillaMapper());
             });
             return config.CreateMapper();
         }

@@ -79,21 +79,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
             try
             {
-                var etiquetaOld = await ObtenerEtiquetaDAO(id);
-                if (etiquetaOld.Value == null)
+                var etiquetaOld = await _context.Etiquetas.FindAsync(id);
+                if (etiquetaOld == null)
                 {
                     _logger.LogWarning("No se encontró la etiqueta con id: " + id);
                     return new Etiqueta();
                 }
 
-                etiquetaOld.Value.nombre = etiqueta.nombre;
-                etiquetaOld.Value.descripcion = etiqueta.descripcion;
+                etiquetaOld.nombre = etiqueta.nombre;
+                etiquetaOld.descripcion = etiqueta.descripcion;
 
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Etiqueta actualizada exitosamente");
                 return etiquetaOld;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new EtiquetaException("Error al actualizar la etiqueta", ex, _logger);
             }
@@ -105,20 +105,20 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var existe = await ObtenerEtiquetaDAO(id);
-                if (existe.Value?.id == 0)
+                var existe = await _context.Etiquetas.FindAsync(id);
+                if (existe == null)
                 {
                     _logger.LogWarning("No se encontró la etiqueta con id: " + id);
                     return new NotFoundResult();
                 }
 
 
-                _context.Etiquetas.Remove(existe.Value!);
+                _context.Etiquetas.Remove(existe);
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Etiqueta eliminada exitosamente");
                 return new OkResult();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new EtiquetaException("Error al eliminar la etiqueta", ex, _logger);
             }
