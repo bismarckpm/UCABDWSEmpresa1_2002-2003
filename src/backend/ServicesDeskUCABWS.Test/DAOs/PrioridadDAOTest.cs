@@ -135,7 +135,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             _servicesMock.Setup(c => c.ConsultaPrioridadDAO(It.IsAny<int>()))
                 .Throws(new Exception());
-            var result = _dao.ConsultarTodosPrioridadesDAO();
 
             Assert.Throws<Exception>(() => _dao.ConsultaPrioridadDAO(-1));
             return Task.CompletedTask;
