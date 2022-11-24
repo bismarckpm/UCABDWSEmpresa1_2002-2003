@@ -67,7 +67,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 _logger.LogInformation("Plantilla encontrada exitosamente");
                 return Plantilla;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new PlantillaException("Error al obtener la plantilla", ex, _logger);
             }
@@ -94,7 +94,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 return new OkResult();
 
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new PlantillaException("Error al actualizar la plantilla", ex, _logger);
             }
@@ -116,7 +116,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 _logger.LogInformation("Plantilla eliminada exitosamente");
                 return new OkResult();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new PlantillaException("Error al eliminar la plantilla", ex, _logger);
             }

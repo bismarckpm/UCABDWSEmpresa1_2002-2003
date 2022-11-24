@@ -67,13 +67,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task CrearPlantillaTestException()
         {
             // preparacion de los datos
-            _contextMock.Setup(x => x.DbContext.SaveChanges()).Throws(new DbUpdateException());
-            var Plantilla = new Plantilla();
-
-
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                 .ThrowsAsync(new DbUpdateException());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<PlantillaException>(() => _dao.AgregarPlantillaDAO(Plantilla));
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao!.AgregarPlantillaDAO(new Plantilla()));
         }
 
         [Fact(DisplayName = "Consultar lista Plantillas")]
@@ -93,11 +91,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarListPlantillasTestException()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ObtenerPlantillasDAO())
-                .ThrowsAsync(new Exception());
+            _contextMock.Setup(c => c.Plantillas).Throws(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<Exception>(() => _servicesMock.Object.ObtenerPlantillasDAO());
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao.ObtenerPlantillasDAO());
         }
 
         [Fact(DisplayName = "Consultar Plantilla por Id")]
@@ -146,12 +143,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarPlantillaIdTestException()
         {
             // preparacion de los datos
-            var id = 1;
-            _servicesMock.Setup(x => x.ObtenerPlantillaDAO(id))
-                .ThrowsAsync(new Exception());
+            _servicesMock.Setup(c => c.ObtenerPlantillaDAO(It.IsAny<int>()))
+                .Throws(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<Exception>(() => _servicesMock.Object.ObtenerPlantillaDAO(id));
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao.ObtenerPlantillaDAO(-1));
         }
 
         [Fact(DisplayName = "Actualizar una Plantilla")]
@@ -197,18 +193,12 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ActualizarPlantillaTestException()
         {
             // preparacion de los datos
-            var Plantilla = new Plantilla()
-            {
-                id = 1,
-                titulo = "modificada",
-                cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
-            };
-            _servicesMock.Setup(x => x.ActualizarPlantillaDAO(Plantilla, Plantilla.id))
-                .ThrowsAsync(new DbUpdateException());
+            var id = 1;
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.ActualizarPlantillaDAO(Plantilla, Plantilla.id));
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao!.ActualizarPlantillaDAO(new Plantilla(), id));
         }
 
         [Fact(DisplayName = "Eliminar una Plantilla")]
@@ -251,11 +241,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             // preparacion de los datos
             var id = 1;
-            _servicesMock.Setup(x => x.EliminarPlantillaDAO(id))
-                .ThrowsAsync(new DbUpdateException());
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.EliminarPlantillaDAO(id));
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao!.EliminarPlantillaDAO(id));
         }
 
 
