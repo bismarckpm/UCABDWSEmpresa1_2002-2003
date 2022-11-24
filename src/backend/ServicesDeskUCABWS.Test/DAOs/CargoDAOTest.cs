@@ -34,27 +34,25 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _servicesMock = new Mock<ICargoDAO>();
             _contextMock.SetupDbContextData();
         }
-    }
 
-    [Fact(DisplayName = "Crear un Cargo")]
-    public async Task CrearCargoTest()
-    {
-        // preparacion de los datos
-        _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        var cargo = new Cargo()
+        [Fact(DisplayName = "Crear un Cargo")]
+        public async Task CrearCargoTest()
         {
-            id = 1,
-            nombre = "Gerente",
-            tipoCargoId = 1
-        };
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            var cargo = new Cargo()
+            {
+                id = 1,
+                nombre = "Gerente",
+                tipoCargoId = 1
+            };
 
-        // prueba de la funcion
-        var result = await _dao.AgregarCargoDAO(cargo);
-        var cargoResult = result.Value;
+            // prueba de la funcion
+            var result = await _dao.AgregarCargoDAO(cargo);
+            var cargoResult = result.Value;
 
-        // verificacion de la prueba
-        Assert.IsType<CargoDTO>(cargoResult);
-    }
-
-    
+            // verificacion de la prueba
+            Assert.IsType<CargoDTO>(cargoResult);
+        }
+    }  
 }
