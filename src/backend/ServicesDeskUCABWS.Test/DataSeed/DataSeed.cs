@@ -16,8 +16,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
-
         public static Mock<DbSet<Plantilla>> mockSetPlantillas = new Mock<DbSet<Plantilla>>();
+        public static Mock<DbSet<ModeloParalelo>> mockSetModeloParalelo = new Mock<DbSet<ModeloParalelo>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
             var hash = new HMACSHA512();
@@ -225,6 +225,18 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     notifications = new List<Notification>()
                 }
             };
+            //ModeloParalelo
+            var requestsModeloParalelo = new List<ModeloParalelo>
+            {
+                new ModeloParalelo
+                {
+                    paraid=1,
+                    cantidadAprobaciones=2,
+                    categoriaId=1,
+                    nombre="prueba",
+                    categoria= new Categoria()
+                },
+            };
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -262,6 +274,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
+            //ModeloParalelo DataSeed
+            _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
         }
     }
 }
