@@ -23,13 +23,7 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly IUsuarioDao _dao;
         public static Usuario mapeado;
 
-        public UsuarioController(IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper , IEmailDao emailRepository)
-        {
-            _UsuarioRepository = usuarioRepository;
-            _mapper = mapper;
-            this._emailRepository = emailRepository;
-            _CargoRepository = cargoRepository;
-        }
+   
 
         public UsuarioController(ILogger<UsuarioController> log,IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper, IEmailDao emailRepository)
         {
