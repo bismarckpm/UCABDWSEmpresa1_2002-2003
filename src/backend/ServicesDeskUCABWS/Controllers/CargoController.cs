@@ -101,6 +101,35 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
         /// <summary>
+        /// Actualizar Cargo
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("ActualizarCargo/")]
+        public async Task<ActionResult> ActualizarCargo([FromBody] CargoDTO dto, int id)
+        {
+
+            if (id <= 0)
+            {
+                return BadRequest("El id debe ser mayor a 0");
+            }
+            var cargo = _mapper.Map<Cargo>(dto);
+            var result = await _CargoRepository.ActualizarCargoDAO(cargo, id);
+            if (result.Value!.id == id)
+            {
+                _log.LogInformation("Cargo actualizado con exito");
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound("No se encontro el cargo");
+            }
+
+        }
+
+        /// <summary>
         /// Eliminar Cargo
         /// </summary>
         /// <param name="id"></param>
