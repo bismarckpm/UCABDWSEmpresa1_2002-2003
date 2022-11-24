@@ -12,12 +12,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     {
         private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
         public readonly IMigrationDbContext _context = design.CreateDbContext(null);
-        private readonly IMapper _mapper;      
+        private readonly IMapper _mapper;
+        private readonly ILogger<CargoDAO> _log;
 
-        public CargoDAO(IMapper mapper)
+
+        public CargoDAO(IMapper mapper, ILogger<CargoDAO> log, IMigrationDbContext context)
         {
             _mapper = mapper;
+            _log = log;
+            _context = context;
         }
+
 
         /// <summary>
         /// Agregar Cargo DAO
