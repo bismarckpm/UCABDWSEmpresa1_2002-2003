@@ -34,10 +34,34 @@ namespace ServicesDeskUCABWS.Test.DAOs
         }
 
         [Fact(DisplayName = "Obtiene listado de Usuarios")]
-        public Task GetUserTest()
+        public Task ListaUsuariosTest()
         {
             var lista = _dao.GetUsuarios();
             Assert.IsType<List<Usuario>>(lista);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Obtiene listado de Empleados")]
+        public Task ListaEmpleadosTest()
+        {
+            var lista = _dao.GetEmpleados();
+            Assert.IsType<List<Empleado>>(lista);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Obtiene listado de Administradores")]
+        public Task ListaAdminsTest()
+        {
+            var lista = _dao.GetAdministradores();
+            Assert.IsType<List<administrador>>(lista);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Obtiene listado de Clientes")]
+        public Task ListaClientesTest()
+        {
+            var lista = _dao.GetClientes();
+            Assert.IsType<List<Cliente>>(lista);
             return Task.CompletedTask;
         }
 
