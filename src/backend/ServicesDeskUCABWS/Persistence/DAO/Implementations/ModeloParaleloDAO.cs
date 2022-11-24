@@ -1,118 +1,114 @@
-//using ServicesDeskUCABWS.Persistence.DAO.Interface;
-//using ServicesDeskUCABWS.Persistence.Entity;
-//using ServicesDeskUCABWS.BussinessLogic.DTO;
-//using ServicesDeskUCABWS.BussinessLogic.Mapper;
-//using ServicesDeskUCABWS.Persistence.Database;
+using ServicesDeskUCABWS.Persistence.DAO.Interface;
+using ServicesDeskUCABWS.Persistence.Entity;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.BussinessLogic.Mapper;
+using ServicesDeskUCABWS.Persistence.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace ServicesDeskUCABWS.Persistence.DAO.Implementations;
+namespace ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
-//public class ModeloParaleloDAO : IModeloParaleloDAO
-//{
-//    private readonly IMigrationDbContext _context;
-//    public ModeloParaleloDAO(IMigrationDbContext context)
-//    {
-//        this._context = context;
-//    }
-//    public ModeloParaleloDTO AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
-//    {
-//        try
-//        {
-//            _context.ModeloParalelos.Add(modeloParalelo);
-//            _context.DbContext.SaveChanges();
+public class ModeloParaleloDAO : IModeloParaleloDAO
+{   
+    private readonly IMigrationDbContext context;
+    public ModeloParaleloDAO(IMigrationDbContext Dbcontext)
+    {
+        this.context = Dbcontext;
+    }
 
-//            var data = _context.ModeloParalelos.Where(a => a.paraleloId == modeloParalelo.paraleloId)
-//            .Select(
-//                    a => new ModeloParaleloDTO
-//                    {
-//                        id = a.paraleloId,
-//                        nombre = a.nombre,
-//                        cantidadAprobaciones = a.cantidadAprobaciones,
-//                        categoria = CategoriaMapper.EntityToDto(a.categoria)
-//                    }
-//                );
+    public async Task<ActionResult> AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
+    {
+        try
+        {
+            var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
+            if (categoria == null)
+            {
+                return new NotFoundResult();
+            }
+            modeloParalelo.categoria = categoria;
+            context.ModeloParalelos.Add(modeloParalelo);
+            await context.DbContext.SaveChangesAsync();
+            return new OkResult();
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine(ex.InnerException!.Message);
+            throw new Exception("Error al agregar el Modelo Paralelo");
+        }       
+    }
 
-//                return data.First();
+    public IEnumerable<ModeloParalelo> ConsultarModelosParalelosDAO()
+    {
+        try
+        {
+            IEnumerable<ModeloParalelo> datos = context.ModeloParalelos;
+            if (datos == null)
+            {
+                return null;
+            }
+            return datos;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.InnerException!.Message);
+            throw new Exception("Error al consultar los modelos paralelos", ex); 
+        } 
+    }
 
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.ToString());
-//                throw new Exception("Transaccion Fallida", ex);
-//            }
-//        }
+    public async Task<ActionResult<ModeloParalelo>> ConsultaModeloParaleloDAO(int id)
+    {
+        try
+        {
+            var consulta = await context.ModeloParalelos.Include(cat => cat.categoria).FirstOrDefaultAsync(p => p.paraid == id);
+            if (consulta == null)
+            {
+                return new ModeloParalelo(); 
+            }
+            return consulta;                
+        }                          
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.InnerException!.Message);
+            throw new Exception("Error al obtener el Modelo Paralelo"); 
+        } 
+    } 
 
-//         public List<ModeloParaleloDTO> ConsultarModelosParalelosDAO()
-//        {
-//            try
-//            {
-//                var data = _context.ModeloParalelos.Select(
-//                    p => new ModeloParaleloDTO
-//                    {
-//                        id = p.paraleloId,
-//                        nombre = p.nombre,
-//                        cantidadAprobaciones = p.cantidadAprobaciones,
-//                        categoria = CategoriaMapper.EntityToDto(p.categoria)
-//                    }
-//                );
+    public async Task ActualizarModeloParaleloDAO(int id, ModeloParalelo modeloParalelo)
+    {
+        try
+        {
+            var modeloActual = context.ModeloParalelos.Find(id);
+            if (modeloActual != null)
+            {
+                modeloActual.paraid = modeloParalelo.paraid;
+                modeloActual.nombre = modeloParalelo.nombre;
+                modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;
+                modeloActual.categoriaId = modeloParalelo.categoriaId;
+                await context.DbContext.SaveChangesAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+            throw new Exception("Transaccion Fallo", ex)!;
+        }
+    }
 
-//                return data.ToList();
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.ToString());
-//                throw ex.InnerException!;
-//            }
-//        }
-//        public ModeloParaleloDTO ActualizarModeloParaleloDAO(ModeloParalelo modeloParalelo)
-//        {
-//            try
-//            {
-//                _context.ModeloParalelos.Update(modeloParalelo);
-//                _context.DbContext.SaveChanges();
-
-//                return ModeloParaleloMapper.EntityToDto(modeloParalelo);
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-//                throw new Exception("Transaccion Fallo", ex)!;
-//            }
-//        }
-
-//        public ModeloParaleloDTO EliminarModeloParaleloDAO(string id)
-//        {
-//            try
-//            {
-//                var modeloParalelo = (ModeloParalelo)_context.ModeloParalelos.Where(
-//                    p => p.paraleloId == Guid.Parse(id)).First();
-//                _context.ModeloParalelos.Remove(modeloParalelo);
-//                _context.DbContext.SaveChanges();
-
-//                return ModeloParaleloMapper.EntityToDto(modeloParalelo);
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-//                throw new Exception("Transaccion Fallo", ex)!;
-//            }
-//        }
-
-//        public ModeloParaleloDTO ConsultaModeloParaleloDAO(string id)
-//        {
-//            try
-//            {
-//                var modeloParalelo = _context.ModeloParalelos.Where(
-//                p => p.paraleloId == Guid.Parse(id)).First();
-//                return ModeloParaleloMapper.EntityToDto(modeloParalelo); ;
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.ToString());
-//                throw ex.InnerException!;
-//            }
-//        }
-//}
+    public async Task EliminarModeloParaleloDAO(int id)
+        {
+        try
+        {
+            var modeloActual = context.ModeloParalelos.Find(id);
+            if(modeloActual != null)
+            {
+                context.DbContext.Remove(modeloActual);
+                await context.DbContext.SaveChangesAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
+            throw new Exception("Transaccion Fallo", ex)!;
+        }
+    }
+}

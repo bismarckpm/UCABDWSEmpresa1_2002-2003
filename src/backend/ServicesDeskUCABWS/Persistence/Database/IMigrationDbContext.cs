@@ -74,5 +74,9 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
     
+        DbSet<ModeloParalelo> ModeloParalelos
+        {
+            get; set;
+        }
     }
 }

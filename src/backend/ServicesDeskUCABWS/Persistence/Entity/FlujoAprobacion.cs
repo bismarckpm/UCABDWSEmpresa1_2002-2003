@@ -12,6 +12,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
             get; set;
         }
         public virtual ModeloParalelo? modeloParalelo {get; set;}
+        public int paraleloid {get; set;}
         public virtual Usuario? usuario {get;set;}
         public int secuencia {get;set;}
         public Status status {get; set;}
