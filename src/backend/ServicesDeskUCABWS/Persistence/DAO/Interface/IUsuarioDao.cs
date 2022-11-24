@@ -7,6 +7,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
     public interface IUsuarioDao
     {
         ICollection<Usuario> GetUsuarios();
+        ICollection<Empleado> GetEmpleados();
+        ICollection<administrador> GetAdministradores();
+        ICollection<Cliente> GetClientes();
 
      
         Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword);       

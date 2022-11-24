@@ -44,6 +44,39 @@ namespace ServicesDeskUCABWS.Controllers
 
             return Ok(usuarios);
         }
+
+     
+
+        [HttpGet("Administradores")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetCollectionA()
+        {
+            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetAdministradores());
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
+         [HttpGet("Empleados")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetCollectionE()
+        {
+            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetEmpleados());
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
+           [HttpGet("Clientes")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetCollectionC()
+        {
+            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetClientes());
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
        
         [HttpPost("Registrar")]
         public IActionResult CreateUsuario([FromQuery] int cargoid,[FromQuery] int Departamentoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)

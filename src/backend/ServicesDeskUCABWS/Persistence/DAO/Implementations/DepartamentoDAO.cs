@@ -98,6 +98,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-     
+        public DepartamentoDTO ConsultaUnDepartamentoDAO(int id)
+        {
+            try
+            {
+                var departamento = _context.Departamentos.Where(
+                d => d.id == id).First();
+                return DepartamentoMapper.EntityToDto(departamento); ;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Error al Consultar por id: " + id, ex);
+            }
+        }
+
     }
 }

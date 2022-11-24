@@ -113,6 +113,60 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Flujo = new List<FlujoAprobacion>()
                 }
             };
+            //Empleados
+            var requestsEmpleados = new List<Empleado>
+            {
+                new Empleado
+                {
+                    id=1,
+                    email="prueba@gmail.com",
+                    cargo= new Cargo{ id=1 },
+                    Departamento = new Departamento { id=1 },
+                    VerificationToken = "prueba",
+                    VerifiedAt = new DateTime(),
+                    PasswordResetToken=Guid.NewGuid().ToString(),
+                    ResetTokenExpires= new DateTime(),
+                    ticketsasignados = new List<Ticket>(),
+                    ticketscreados= new List<Ticket>(),
+                    Flujo = new List<FlujoAprobacion>()
+                }
+            };
+            //Administradores
+            var requestsAdmins = new List<administrador>
+            {
+                new administrador
+                {
+                    id=1,
+                    email="prueba@gmail.com",
+                    cargo= new Cargo{ id=1 },
+                    Departamento = new Departamento { id=1 },
+                    VerificationToken = "prueba",
+                    VerifiedAt = new DateTime(),
+                    PasswordResetToken=Guid.NewGuid().ToString(),
+                    ResetTokenExpires= new DateTime(),
+                    ticketsasignados = new List<Ticket>(),
+                    ticketscreados= new List<Ticket>(),
+                    Flujo = new List<FlujoAprobacion>()
+                }
+            };
+            //Clientes
+            var requestsClientes = new List<Cliente>
+            {
+                new Cliente
+                {
+                    id=1,
+                    email="prueba@gmail.com",
+                    cargo= new Cargo{ id=1 },
+                    Departamento = new Departamento { id=1 },
+                    VerificationToken = "prueba",
+                    VerifiedAt = new DateTime(),
+                    PasswordResetToken=Guid.NewGuid().ToString(),
+                    ResetTokenExpires= new DateTime(),
+                    ticketsasignados = new List<Ticket>(),
+                    ticketscreados= new List<Ticket>(),
+                    Flujo = new List<FlujoAprobacion>()
+                }
+            };
             //Cargos
             var requestsCargos = new List<Cargo>
             {
@@ -191,6 +245,9 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Usuario).Returns(requestsUsuarios.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(c => c.Empleados).Returns(requestsEmpleados.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(c => c.Administradores).Returns(requestsAdmins.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(c => c.clientes).Returns(requestsClientes.AsQueryable().BuildMockDbSet().Object);
             //Cargos DataSeed
             _mockContext.Setup(t => t.Cargos).Returns(mockSetCargos.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
