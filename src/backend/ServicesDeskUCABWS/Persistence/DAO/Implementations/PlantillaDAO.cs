@@ -77,7 +77,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var plantillaOld = await ObtenerPlantillaDAO(id);
+                var plantillaOld = await _context.Plantillas.FindAsync(id);
 
                 if (plantillaOld == null)
                 {
@@ -85,9 +85,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     return new NotFoundResult();
                 }
 
-                plantillaOld.Value!.titulo = plantilla.titulo;
-                plantillaOld.Value!.cuerpo = plantilla.cuerpo;
-                plantillaOld.Value!.tipo = plantilla.tipo;
+                plantillaOld.titulo = plantilla.titulo;
+                plantillaOld.cuerpo = plantilla.cuerpo;
+                plantillaOld.tipo = plantilla.tipo;
 
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla actualizada exitosamente");
@@ -104,14 +104,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var existe = await ObtenerPlantillaDAO(id);
+                var existe = await _context.Plantillas.FindAsync(id);
                 if (existe == null)
                 {
                     _logger.LogWarning("No se encontro la plantilla con id: " + id);
                     return new NotFoundResult();
                 }
 
-                _context.Plantillas.Remove(existe.Value!);
+                _context.Plantillas.Remove(existe);
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla eliminada exitosamente");
                 return new OkResult();
