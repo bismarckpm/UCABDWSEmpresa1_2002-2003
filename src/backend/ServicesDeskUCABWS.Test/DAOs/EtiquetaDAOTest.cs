@@ -16,6 +16,7 @@ using AutoMapper;
 using Microsoft.Extensions.Logging.Abstractions;
 using ServicesDeskUCABWS.Test.Configuraciones;
 using Microsoft.AspNetCore.Mvc;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -65,11 +66,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task CrearEtiquetaTestException()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.AgregarEtiquetaDAO(It.IsAny<Etiqueta>()))
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new DbUpdateException());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.AgregarEtiquetaDAO(new Etiqueta()));
+            await Assert.ThrowsAsync<EtiquetaException>(() => _dao!.AgregarEtiquetaDAO(new Etiqueta()));
         }
 
         [Fact(DisplayName = "Consultar lista Etiquetas")]
@@ -89,18 +90,16 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarListEtiquetasTestException()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ConsultarEtiquetasDAO())
-                .ThrowsAsync(new Exception());
+            _contextMock.Setup(c => c.Etiquetas).Throws(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<Exception>(() => _servicesMock.Object.ConsultarEtiquetasDAO());
+            await Assert.ThrowsAsync<EtiquetaException>(() => _dao.ConsultarEtiquetasDAO());
         }
 
         [Fact(DisplayName = "Consultar Etiqueta por Id")]
         public async Task ConsultarEtiquetaIdTest()
         {
             // preparacion de los datos
-            //_contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
             _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>()))
             .ReturnsAsync(new Etiqueta()
             {
@@ -142,11 +141,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             // preparacion de los datos
             var id = 1;
-            _servicesMock.Setup(x => x.ObtenerEtiquetaDAO(id))
-                .ThrowsAsync(new Exception());
+            _servicesMock.Setup(c => c.ObtenerEtiquetaDAO(It.IsAny<int>()))
+                .Throws(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<Exception>(() => _servicesMock.Object.ObtenerEtiquetaDAO(id));
+            await Assert.ThrowsAsync<EtiquetaException>(() => _dao.ObtenerEtiquetaDAO(-1));
         }
 
         [Fact(DisplayName = "Actualizar una Etiqueta")]
