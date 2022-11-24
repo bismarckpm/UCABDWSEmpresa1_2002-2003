@@ -140,7 +140,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarEtiquetaIdTestException()
         {
             // preparacion de los datos
-            var id = 1;
             _servicesMock.Setup(c => c.ObtenerEtiquetaDAO(It.IsAny<int>()))
                 .Throws(new Exception());
 
@@ -190,17 +189,12 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ActualizarEtiquetaTestException()
         {
             // preparacion de los datos
-            var etiqueta = new Etiqueta()
-            {
-                id = 1,
-                nombre = "Modificada",
-                descripcion = "Creada"
-            };
-            _servicesMock.Setup(x => x.ActualizarEtiquetaDAO(etiqueta, etiqueta.id))
-                .ThrowsAsync(new DbUpdateException());
+            var id = 1;
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.ActualizarEtiquetaDAO(etiqueta, etiqueta.id));
+            await Assert.ThrowsAsync<EtiquetaException>(() => _dao!.ActualizarEtiquetaDAO(new Etiqueta(), id));
         }
 
         [Fact(DisplayName = "Eliminar una Etiqueta")]
@@ -242,11 +236,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             // preparacion de los datos
             var id = 1;
-            _servicesMock.Setup(x => x.EliminarEtiquetaDAO(id))
-                .ThrowsAsync(new DbUpdateException());
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<DbUpdateException>(() => _servicesMock.Object.EliminarEtiquetaDAO(id));
+            await Assert.ThrowsAsync<EtiquetaException>(() => _dao!.EliminarEtiquetaDAO(id));
         }
 
 
