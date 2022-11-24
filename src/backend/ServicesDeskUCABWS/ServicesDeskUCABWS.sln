@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCABWS", "Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCAB", "..\..\frontend\ServicesDeskUCAB\ServicesDeskUCAB.csproj", "{B24BD05A-95FD-464F-A8DB-D4EEB91A3FAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI.TEST", "..\WebAPI.TEST\WebAPI.TEST.csproj", "{67C3FDE3-B0D9-42D0-B149-628E20986130}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCABWS.Test", "..\ServicesDeskUCABWS.Test\ServicesDeskUCABWS.Test.csproj", "{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}"
 EndProject
 Global
