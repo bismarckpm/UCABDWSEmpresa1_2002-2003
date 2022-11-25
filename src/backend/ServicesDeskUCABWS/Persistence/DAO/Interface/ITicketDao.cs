@@ -5,14 +5,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface ITicketDao
     {
-        ICollection<Ticket> GetTickets();
+        ICollection<TicketCDTO>GetTickets();
 
-        Usuario GetTicket(int id);
 
         bool Save();
-        object AgregarTicketDAO(Ticket ticket);
-        object ConsultarTicketDAO();
-        TicketDTO ModificarTicketDAO(Ticket ticket);
-        TicketDTO EliminarTicketDAO(int id);
+        bool AgregarTicketDAO(Ticket ticket,int creadopor, int asignadaa, int prioridad, int estatud);
+      
     }
 }

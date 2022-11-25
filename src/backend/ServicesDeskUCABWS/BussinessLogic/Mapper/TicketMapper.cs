@@ -13,22 +13,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
 
         }
 
-        public static Ticket DtoToEntity(TicketDTO dto)
-        {
-            return new Ticket()
-            {
-                id = dto.Id,
-                nombre = dto.nombre
-            };
-        }
-        public static TicketDTO EntityToDto(Ticket ticket)
-        {
-            return new TicketDTO()
-            {
-                Id = ticket.id,
-                nombre = ticket.nombre
-            };
-        }
+       
 
     }
 }

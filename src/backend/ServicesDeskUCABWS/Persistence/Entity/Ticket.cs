@@ -19,8 +19,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual ICollection<FlujoAprobacion> Flujo { get; set; }
 
-        private Estado? status;
+        public Estado? Estado { get; set; }
 
-        public Estado Status {get => status!; set => status = value;}
     }
 }

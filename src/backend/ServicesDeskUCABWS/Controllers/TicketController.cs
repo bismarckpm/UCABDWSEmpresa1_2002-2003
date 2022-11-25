@@ -39,52 +39,19 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPost]
         [Route("CreateTicket")]
-        public TicketDTO CreateTicket([FromBody] TicketDTO dto)
+         public IActionResult CreateTicket([FromQuery] int creadopor,[FromQuery] int asignadaa, [FromBody] TicketDTO ticket, [FromQuery] int prioridad,[FromQuery] int estatud)
         {
-            try
+            if (ticket == null)
+                return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var Tickectmap = _mapper.Map<Ticket>(ticket);
+            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor,asignadaa,prioridad,estatud))
             {
-                var data =  _ticketDao.AgregarTicketDAO(TicketMapper.DtoToEntity(dto));
-                return (TicketDTO)data;
-
+                ModelState.AddModelError("", "Error al guardar");
+                return StatusCode(500, ModelState);
             }
-            catch (Exception e)
-            {
-                _log.LogError(e.Message);
-                throw e;
-            }
+            return Ok("Ticket Creado");
         }
-        [HttpPut]
-        [Route("Actualizar/")]
-        public TicketDTO ActualizarTicket([Required][FromBody] TicketDTO dto)
-        {
-            try
-            {
-                return _ticketDao.ModificarTicketDAO(TicketMapper.DtoToEntity(dto));
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
-        }
-
-        [HttpDelete]
-        [Route("Eliminar/{id}")]
-        public TicketDTO EliminarTicket([Required][FromRoute] int id)
-        {
-            try
-            {
-
-                return _ticketDao.EliminarTicketDAO(id);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
-        }
-
     }
 }

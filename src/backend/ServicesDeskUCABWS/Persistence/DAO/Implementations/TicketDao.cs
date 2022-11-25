@@ -1,5 +1,6 @@
 ﻿using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
 using ServicesDeskUCABWS.Persistence.Entity;
@@ -15,107 +16,51 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        public TicketDTO AgregarTicketDAO(Ticket Ticket)
+        public bool AgregarTicketDAO(Ticket ticket, int creadopor, int asignadaa, int prioridad, int estatud)
         {
-            try
-            {
-                _context.Tickets.Add(Ticket);
-                _context.DbContext.SaveChanges();
-
-                var data = _context.Tickets.Where(a => a.id == Ticket.id)
-                .Select(
-                        a => new TicketDTO
-                        {
-                            Id = a.id,
-                            nombre = a.nombre,
-                            fecha = a.fecha,
-                            descripcion = a.descripcion,
-                            asignadoa = (Empleado)a.asginadoa,
-                            prioridad = (Prioridad)a.prioridad
-
-                        }
-                    ); ;
-
-                return data.First();
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                throw new Exception("Transaccion Fallida: Ticket no creado", ex);
-            }
+        
+            ticket.creadopor = _context.Usuario.Where(c => c.id == creadopor).FirstOrDefault();
+            ticket.asginadoa = _context.Usuario.Where(c => c.id == asignadaa).FirstOrDefault();
+            ticket.prioridad = _context.Prioridades.Where(c => c.id == prioridad).FirstOrDefault();
+            ticket.Estado = _context.Estados.Where(c => c.id == estatud).FirstOrDefault();
+           
+                  
+              
+            _context.Tickets.Add(ticket);
+            return Save();
+            
         }
 
-        public object ConsultarTicketDAO()
+
+        public ICollection<TicketCDTO> GetTickets()
         {
-            try
-            {
-                var ticket = _context.Tickets.Where(
-                p => p.id == p.id).First(); //aca algo raro no debe ser p.id REVISAR
-                return TicketMapper.EntityToDto(ticket); ;
+            var q = (from tk in _context.Tickets
+                     join us in _context.Usuario on tk.creadopor equals us
+                     join us2 in _context.Usuario on tk.asginadoa equals us2
+                     join e in _context.Estados on tk.Estado equals e
+                     join p in _context.Prioridades on tk.prioridad equals p
+                     select new TicketCDTO()
+                     {
+                        nombre = tk.nombre,
+                        asginadoa = us2.email,
+                        creadopor = us.email,
+                        descripcion = tk.descripcion,
+                        fecha = tk.fecha,
+                        estado = e.nombre,
+                        prioridad = p.nombre
+                      }).ToList();
+            return q;
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
-            }
-        }
 
-        public TicketDTO EliminarTicketDAO(int id)
-        {
-            try
-            {
-                var ticket = _context.Tickets.Where(
-                    d => d.id == id).First();
-                _context.Tickets.Remove(ticket);
-                _context.DbContext.SaveChanges();
 
-                return TicketMapper.EntityToDto(ticket);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " || " + ex.StackTrace);
-                throw new Exception("Fallo al Eliminar el Ticket: " + id, ex);
-            }
-        }
-
-        public Usuario GetTicket(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICollection<Ticket> GetTickets()
-        {
-            return _context.Tickets.OrderBy(p => p.id).ToList();
-        }
-
-        public TicketDTO ModificarTicketDAO(Ticket ticket)
-        {
-            try
-            {
-                _context.Tickets.Update(ticket);
-                _context.DbContext.SaveChanges();
-
-                return TicketMapper.EntityToDto(ticket);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Transaccion Fallo", ex)!;
-            }
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            var saved = _context.DbContext.SaveChanges();
+            return saved > 0 ? true : false;
         }
 
-        object ITicketDao.AgregarTicketDAO(Ticket ticket)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
