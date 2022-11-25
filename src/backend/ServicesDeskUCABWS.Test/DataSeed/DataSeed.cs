@@ -16,8 +16,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
-
         public static Mock<DbSet<Plantilla>> mockSetPlantillas = new Mock<DbSet<Plantilla>>();
+        public static Mock<DbSet<ModeloParalelo>> mockSetModeloParalelo = new Mock<DbSet<ModeloParalelo>>();
+
+        public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
             var hash = new HMACSHA512();
@@ -225,6 +227,44 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     notifications = new List<Notification>()
                 }
             };
+            //ModeloParalelo
+            var requestsModeloParalelo = new List<ModeloParalelo>
+            {
+                new ModeloParalelo
+                {
+                    paraid=1,
+                    cantidadAprobaciones=2,
+                    categoriaId=1,
+                    nombre="prueba",
+                    categoria= new Categoria()
+                },
+                new ModeloParalelo
+                {
+                    paraid=2,
+                    cantidadAprobaciones=3,
+                    categoriaId=1,
+                    nombre="prueba2",
+                    categoria= new Categoria()
+                }
+            };
+            //Estado
+            var requestsEstado = new List<Estado>
+            {
+                new Estado
+                {
+                    id=1,
+                    nombre="Estado1",
+                    EtiquetaId=1,
+                    etiqueta= new Etiqueta()
+                },
+                new Estado
+                {
+                    id=2,
+                    nombre="Estado2",
+                    EtiquetaId=2,
+                    etiqueta= new Etiqueta()
+                }
+            };
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -262,6 +302,16 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
+            //ModeloParalelo DataSeed
+            _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);            
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloParalelo.Where(x => x.paraid == i).Single());
+            //Estados DataSeed
+            _mockContext.Setup(t => t.Estados).Returns(mockSetEstados.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Estados).Returns(requestsEstado.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEstado.Where(x => x.id == i).Single());
         }
     }
 }

@@ -11,5 +11,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public Etiqueta? etiqueta { get; set; }
 
         public Notification? notification { get; set; }
+
+        public ICollection<Ticket> tickets {get;set;}
     }
 }

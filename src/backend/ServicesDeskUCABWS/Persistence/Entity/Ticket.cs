@@ -13,14 +13,11 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public Usuario? creadopor {get; set;}
         public Usuario? asginadoa { get; set; }
         public Prioridad? prioridad { get; set; }
+        
+        public FlujoAprobacion? FlujoAprobacion {get; set;}
+        public Categoria? categoria {get;set;}
+      
+        public Estado? Estado { get; set; }
 
-        public Ticket? delegacion { get; set; }
-
-        public virtual ICollection<Ticket> Tickets { get; set; }
-        public virtual ICollection<FlujoAprobacion> Flujo { get; set; }
-
-        private Estado? status;
-
-        public Estado Status {get => status!; set => status = value;}
     }
 }

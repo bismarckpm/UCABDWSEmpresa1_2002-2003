@@ -12,8 +12,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             CreateMap<ModeloJerarquicoCreateDTO, ModeloJerarquico>();
             CreateMap<ModeloJerarquico, ModeloJerarquicoCreateDTO>();
             CreateMap<ModeloJerarquico, ModeloJerarquicoDTO>();
-            CreateMap<ModeloJerarquicoDTO, ModeloJerarquico>();
-        
+            CreateMap<ModeloJerarquicoDTO, ModeloJerarquico>();        
         }
 
     }

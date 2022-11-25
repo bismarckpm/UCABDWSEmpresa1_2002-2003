@@ -5,6 +5,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
     public class FlujoAprobacion
     {
         public int id { get; set; }
+        public int ticketid { get; set; }
         public virtual Ticket? ticket {get; set;}
         public virtual ModeloJerarquico? modeloJerarquico {get; set; }
         public int modelojerarquicoid
@@ -12,6 +13,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
             get; set;
         }
         public virtual ModeloParalelo? modeloParalelo {get; set;}
+        public int paraleloid {get; set;}
         public virtual Usuario? usuario {get;set;}
         public int secuencia {get;set;}
         public Status status {get; set;}

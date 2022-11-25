@@ -9,20 +9,13 @@
                <form>
                   <div class="form-group">
                      <label>E-mail</label>
-                     <input type="email" name="email" class="form-control" placeholder="Email">
+                     <input type="email" name="email" class="form-control" placeholder="Email" required>
                   </div>
                   
                   <div class="botones">
                     <button type="submit" class="btn btn-success">Resetear contrasena</button>
-             
+                    <a class="btn btn-danger" asp-area="" asp-controller="Login" asp-action="Index">Cancelar</a>
                   </div>
-                     @if (@ViewBag.Result != null)
-{
-   <div class="alert alert-danger" role="alert">
- @ViewBag.Result
-</div>
-
-}
                </form>
             </div>
          </div>

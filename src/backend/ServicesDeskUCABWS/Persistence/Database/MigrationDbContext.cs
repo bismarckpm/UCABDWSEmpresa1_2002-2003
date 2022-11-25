@@ -83,7 +83,16 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
 
+        public virtual DbSet<ModeloParalelo> ModeloParalelos
+        {
+            get; set;
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Ticket>()
+        .HasOne(a => a.FlujoAprobacion)
+        .WithOne(b => b.ticket)
+        .HasForeignKey<FlujoAprobacion>(b => b.ticketid);
+}
     }
-       
-
 }

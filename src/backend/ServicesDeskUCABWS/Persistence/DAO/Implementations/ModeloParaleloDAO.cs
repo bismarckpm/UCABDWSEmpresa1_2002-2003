@@ -1,118 +1,112 @@
-//using ServicesDeskUCABWS.Persistence.DAO.Interface;
-//using ServicesDeskUCABWS.Persistence.Entity;
-//using ServicesDeskUCABWS.BussinessLogic.DTO;
-//using ServicesDeskUCABWS.BussinessLogic.Mapper;
-//using ServicesDeskUCABWS.Persistence.Database;
+using ServicesDeskUCABWS.Persistence.DAO.Interface;
+using ServicesDeskUCABWS.Persistence.Entity;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.Persistence.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using ServicesDeskUCABWS.Exceptions;
+using AutoMapper;
 
-//namespace ServicesDeskUCABWS.Persistence.DAO.Implementations;
+namespace ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
-//public class ModeloParaleloDAO : IModeloParaleloDAO
-//{
-//    private readonly IMigrationDbContext _context;
-//    public ModeloParaleloDAO(IMigrationDbContext context)
-//    {
-//        this._context = context;
-//    }
-//    public ModeloParaleloDTO AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
-//    {
-//        try
-//        {
-//            _context.ModeloParalelos.Add(modeloParalelo);
-//            _context.DbContext.SaveChanges();
+public class ModeloParaleloDAO : IModeloParaleloDAO
+{   
+    private readonly IMigrationDbContext context;
+    private readonly IMapper mapper;
+    public ModeloParaleloDAO(IMigrationDbContext Dbcontext, IMapper map)
+    {
+        this.context = Dbcontext;
+        this.mapper = map;
+    }
 
-//            var data = _context.ModeloParalelos.Where(a => a.paraleloId == modeloParalelo.paraleloId)
-//            .Select(
-//                    a => new ModeloParaleloDTO
-//                    {
-//                        id = a.paraleloId,
-//                        nombre = a.nombre,
-//                        cantidadAprobaciones = a.cantidadAprobaciones,
-//                        categoria = CategoriaMapper.EntityToDto(a.categoria)
-//                    }
-//                );
+    public async Task<ActionResult<ModeloParaleloDTO>> AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
+    {
+        try
+        {
+            var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
+            if (categoria == null)
+            {
+                throw new Exception("No existe el registro de la categoria para el modelo paralelo");
+            }
+            modeloParalelo.categoria = categoria;
+            context.ModeloParalelos.Add(modeloParalelo);
+            await context.DbContext.SaveChangesAsync();
+            return mapper.Map<ModeloParaleloDTO>(modeloParalelo);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ModeloParaleloException("Error al agregar el Modelo Paralelo", ex);
+        }       
+    }
 
-//                return data.First();
+    public Task<List<ModeloParalelo>> ConsultarModelosParalelosDAO()
+    {
+        try
+        {
+            return context.ModeloParalelos.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new ModeloParaleloException("Error al consultar los modelos paralelos", ex); 
+        } 
+    }
 
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.ToString());
-//                throw new Exception("Transaccion Fallida", ex);
-//            }
-//        }
+    public async Task<ActionResult<ModeloParalelo>> ConsultaModeloParaleloDAO(int id)
+    {
+        try
+        {
+            var consulta = await context.ModeloParalelos
+                                        .Include(cat => cat.categoria)
+                                        .FirstOrDefaultAsync(p => p.paraid == id);
+            if (consulta == null)
+            {
+                return new ModeloParalelo();
+            }
+            return consulta;                
+        }                          
+        catch (Exception ex)
+        {
+            throw new ModeloParaleloException("Error al consultar el modelo paralelo", ex);
+        } 
+    } 
 
-//         public List<ModeloParaleloDTO> ConsultarModelosParalelosDAO()
-//        {
-//            try
-//            {
-//                var data = _context.ModeloParalelos.Select(
-//                    p => new ModeloParaleloDTO
-//                    {
-//                        id = p.paraleloId,
-//                        nombre = p.nombre,
-//                        cantidadAprobaciones = p.cantidadAprobaciones,
-//                        categoria = CategoriaMapper.EntityToDto(p.categoria)
-//                    }
-//                );
+    public async Task<ActionResult<ModeloParalelo>> ActualizarModeloParaleloDAO(int id, ModeloParalelo modeloParalelo)
+    {
+        try
+        {
+            var modeloActual = await context.ModeloParalelos.FindAsync(id);
+            if (modeloActual == null)
+            {
+                return new ModeloParalelo();
+            }
+            modeloActual.nombre = modeloParalelo.nombre;
+            modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;
+            modeloActual.categoriaId = modeloParalelo.categoriaId;
+            await context.DbContext.SaveChangesAsync();
+            return modeloActual;
+        }
+        catch (Exception ex)
+        {
+            throw new ModeloParaleloException("Error al actualizar el modelo paralelo", ex);
+        }
+    }
 
-//                return data.ToList();
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.ToString());
-//                throw ex.InnerException!;
-//            }
-//        }
-//        public ModeloParaleloDTO ActualizarModeloParaleloDAO(ModeloParalelo modeloParalelo)
-//        {
-//            try
-//            {
-//                _context.ModeloParalelos.Update(modeloParalelo);
-//                _context.DbContext.SaveChanges();
-
-//                return ModeloParaleloMapper.EntityToDto(modeloParalelo);
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-//                throw new Exception("Transaccion Fallo", ex)!;
-//            }
-//        }
-
-//        public ModeloParaleloDTO EliminarModeloParaleloDAO(string id)
-//        {
-//            try
-//            {
-//                var modeloParalelo = (ModeloParalelo)_context.ModeloParalelos.Where(
-//                    p => p.paraleloId == Guid.Parse(id)).First();
-//                _context.ModeloParalelos.Remove(modeloParalelo);
-//                _context.DbContext.SaveChanges();
-
-//                return ModeloParaleloMapper.EntityToDto(modeloParalelo);
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-//                throw new Exception("Transaccion Fallo", ex)!;
-//            }
-//        }
-
-//        public ModeloParaleloDTO ConsultaModeloParaleloDAO(string id)
-//        {
-//            try
-//            {
-//                var modeloParalelo = _context.ModeloParalelos.Where(
-//                p => p.paraleloId == Guid.Parse(id)).First();
-//                return ModeloParaleloMapper.EntityToDto(modeloParalelo); ;
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.ToString());
-//                throw ex.InnerException!;
-//            }
-//        }
-//}
+    public async Task<ActionResult> EliminarModeloParaleloDAO(int id)
+    {
+        try
+        {
+            var modeloActual = await context.ModeloParalelos.FindAsync(id);
+            if(modeloActual == null)
+            {
+                return new NotFoundResult();    
+            }
+            context.ModeloParalelos.Remove(modeloActual);
+            await context.DbContext.SaveChangesAsync(); 
+            return new OkResult();
+        }
+        catch (Exception ex)
+        {
+            throw new ModeloParaleloException("Error al actualizar el modelo paralelo", ex);
+        }
+    }
+}
