@@ -87,5 +87,12 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Ticket>()
+        .HasOne(a => a.FlujoAprobacion)
+        .WithOne(b => b.ticket)
+        .HasForeignKey<FlujoAprobacion>(b => b.ticketid);
+}
     }
 }
