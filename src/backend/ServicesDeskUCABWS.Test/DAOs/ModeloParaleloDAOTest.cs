@@ -58,6 +58,17 @@ namespace ServicesDeskUCABWS.Test.DAOs
             Assert.IsType<ModeloParaleloDTO>(mpResult);
         }
 
+        [Fact(DisplayName = "Crear un modelo paralelo excepcion no categoria")]
+        public async Task CrearModeloParaleloNoCategoriaTestException()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new DbUpdateException());
+
+            // prueba de la funcion
+            await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao!.AgregarModeloParaleloDAO(new ModeloParalelo { categoriaId=1 }));
+        }
+
         [Fact(DisplayName = "Crear un modelo paralelo con excepcion")]
         public async Task CrearModeloParaleloTestException()
         {
@@ -136,8 +147,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarModeloParaleloIdTestException()
         {
             // preparacion de los datos
-            _servicesMock.Setup(c => c.ConsultaModeloParaleloDAO(It.IsAny<int>()))
-                .Throws(new Exception());
+            _contextMock.Setup(t => t.ModeloParalelos).Throws(new Exception());
 
             // prueba de la funcion
             await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao.ConsultaModeloParaleloDAO(-1));
