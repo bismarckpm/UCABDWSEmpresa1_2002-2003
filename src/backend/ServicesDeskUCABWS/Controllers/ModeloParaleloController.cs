@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
-using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ServicesDeskUCABWS.Persistence.Entity;
@@ -21,51 +20,69 @@ public class ModeloParaleloController : Controller
         mapper = map;
     }
 
-    [HttpGet ("consultar/{id}")]
-    public async Task<ActionResult<ModeloParaleloDTO>> Get([Required][FromRoute] int id)
+    [HttpGet ("consultar/{id:int}")]
+    public async Task<ActionResult<ModeloParaleloDTO>> Consultar([Required][FromRoute] int id)
     {
         if (id <= 0)
         {
-            return BadRequest("El id debe ser positivo");
+            return BadRequest("El id debe ser mayor a 0");
         }
         var consulta = await modeloParaleloDAO.ConsultaModeloParaleloDAO(id);
-        if (consulta.Value?.paraid == null)
+        if (consulta.Value?.paraid == id)
         {
-            return NotFound(" ModeloParalelo no encontrado");
+            return Ok(mapper.Map<ModeloParaleloDTO>(consulta.Value));
+            
         }
-        return mapper.Map<ModeloParaleloDTO>(consulta.Value);
+            return NotFound(" ModeloParalelo no encontrado");
+        
     }
 
     [HttpGet ("consultar")]
-    public IActionResult ConsultarTodos()
+    public async Task<ActionResult<List<ModeloParaleloDTO>>> ConsultarTodos()
     {
-        if (modeloParaleloDAO.ConsultarModelosParalelosDAO() == null)
+        var consulta = await modeloParaleloDAO.ConsultarModelosParalelosDAO();
+        if (consulta == null)
         {
             return BadRequest("No se encontraron los modelos paralelos");
         }
-        return Ok(modeloParaleloDAO.ConsultarModelosParalelosDAO());        
+        return Ok(mapper.Map<List<ModeloParaleloDTO>>(consulta));        
     }
 
     [HttpPost ("crear")]
-    public async Task<ActionResult> Post([FromBody] ModeloParaleloCreateDTO dto)
+    public async Task<ActionResult> Crear([Required][FromBody] ModeloParaleloCreateDTO dto)
     {
         var modeloParalelo = mapper.Map<ModeloParalelo>(dto);
         var result = await modeloParaleloDAO.AgregarModeloParaleloDAO(modeloParalelo);
-        return result;
+        return Ok(result);
     }
 
     [HttpPut ("actualizar/{id}")]
-    public IActionResult Actualizar([Required][FromRoute] int id, [Required][FromBody] ModeloParaleloDTO dto)
+    public async Task<ActionResult> Actualizar([Required][FromRoute] int id, [Required][FromBody] ModeloParaleloDTO dto)
     {
+        if (id <= 0)
+        {
+            return BadRequest("El id debe ser mayor a 0");
+        }
         var modeloParalelo = mapper.Map<ModeloParalelo>(dto);
-        modeloParaleloDAO.ActualizarModeloParaleloDAO(id, modeloParalelo);
-        return Ok();
+        var result = await modeloParaleloDAO.ActualizarModeloParaleloDAO(id, modeloParalelo);
+        if (result.Value!.paraid == id)
+        {
+            return Ok(result);
+        }
+        else
+        {
+            return NotFound("No se encontro el modelo paralelo");
+        }        
     }
 
     [HttpDelete ("eliminar/{id}")]
-    public IActionResult Eliminar([Required][FromRoute] int id)
+    public async Task<ActionResult> Eliminar([Required][FromRoute] int id)
     {
-        modeloParaleloDAO.EliminarModeloParaleloDAO(id);
-        return Ok();
+        if (id <= 0)
+        {
+            return BadRequest("El id debe ser mayor a 0");
+        }
+        var result = await modeloParaleloDAO.EliminarModeloParaleloDAO(id);
+        return Ok(result);
     }
 }

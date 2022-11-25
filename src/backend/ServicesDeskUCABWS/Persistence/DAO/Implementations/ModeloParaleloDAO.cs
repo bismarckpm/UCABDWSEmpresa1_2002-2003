@@ -1,57 +1,53 @@
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
-using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using ServicesDeskUCABWS.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using ServicesDeskUCABWS.Exceptions;
+using AutoMapper;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
 public class ModeloParaleloDAO : IModeloParaleloDAO
 {   
     private readonly IMigrationDbContext context;
-    public ModeloParaleloDAO(IMigrationDbContext Dbcontext)
+    private readonly IMapper mapper;
+    public ModeloParaleloDAO(IMigrationDbContext Dbcontext, IMapper map)
     {
         this.context = Dbcontext;
+        this.mapper = map;
     }
 
-    public async Task<ActionResult> AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
+    public async Task<ActionResult<ModeloParaleloDTO>> AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
     {
         try
         {
             var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
             if (categoria == null)
             {
-                return new NotFoundResult();
+                throw new Exception("No existe el registro de la categoria para el modelo paralelo");
             }
             modeloParalelo.categoria = categoria;
             context.ModeloParalelos.Add(modeloParalelo);
             await context.DbContext.SaveChangesAsync();
-            return new OkResult();
+            return mapper.Map<ModeloParaleloDTO>(modeloParalelo);
         }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine(ex.InnerException!.Message);
-            throw new Exception("Error al agregar el Modelo Paralelo");
+            throw new ModeloParaleloException("Error al agregar el Modelo Paralelo", ex);
         }       
     }
 
-    public IEnumerable<ModeloParalelo> ConsultarModelosParalelosDAO()
+    public Task<List<ModeloParalelo>> ConsultarModelosParalelosDAO()
     {
         try
         {
-            IEnumerable<ModeloParalelo> datos = context.ModeloParalelos;
-            if (datos == null)
-            {
-                return null;
-            }
-            return datos;
+            return context.ModeloParalelos.ToListAsync();
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.InnerException!.Message);
-            throw new Exception("Error al consultar los modelos paralelos", ex); 
+            throw new ModeloParaleloException("Error al consultar los modelos paralelos", ex); 
         } 
     }
 
@@ -59,56 +55,58 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
     {
         try
         {
-            var consulta = await context.ModeloParalelos.Include(cat => cat.categoria).FirstOrDefaultAsync(p => p.paraid == id);
+            var consulta = await context.ModeloParalelos
+                                        .Include(cat => cat.categoria)
+                                        .FirstOrDefaultAsync(p => p.paraid == id);
             if (consulta == null)
             {
-                return new ModeloParalelo(); 
+                return new ModeloParalelo();
             }
             return consulta;                
         }                          
         catch (Exception ex)
         {
-            Console.WriteLine(ex.InnerException!.Message);
-            throw new Exception("Error al obtener el Modelo Paralelo"); 
+            throw new ModeloParaleloException("Error al consultar el modelo paralelo", ex);
         } 
     } 
 
-    public async Task ActualizarModeloParaleloDAO(int id, ModeloParalelo modeloParalelo)
+    public async Task<ActionResult<ModeloParalelo>> ActualizarModeloParaleloDAO(int id, ModeloParalelo modeloParalelo)
     {
         try
         {
-            var modeloActual = context.ModeloParalelos.Find(id);
-            if (modeloActual != null)
+            var modeloActual = await context.ModeloParalelos.FindAsync(id);
+            if (modeloActual == null)
             {
-                modeloActual.paraid = modeloParalelo.paraid;
-                modeloActual.nombre = modeloParalelo.nombre;
-                modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;
-                modeloActual.categoriaId = modeloParalelo.categoriaId;
-                await context.DbContext.SaveChangesAsync();
+                return new ModeloParalelo();
             }
+            modeloActual.nombre = modeloParalelo.nombre;
+            modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;
+            modeloActual.categoriaId = modeloParalelo.categoriaId;
+            await context.DbContext.SaveChangesAsync();
+            return modeloActual;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-            throw new Exception("Transaccion Fallo", ex)!;
+            throw new ModeloParaleloException("Error al actualizar el modelo paralelo", ex);
         }
     }
 
-    public async Task EliminarModeloParaleloDAO(int id)
-        {
+    public async Task<ActionResult> EliminarModeloParaleloDAO(int id)
+    {
         try
         {
-            var modeloActual = context.ModeloParalelos.Find(id);
-            if(modeloActual != null)
+            var modeloActual = await context.ModeloParalelos.FindAsync(id);
+            if(modeloActual == null)
             {
-                context.DbContext.Remove(modeloActual);
-                await context.DbContext.SaveChangesAsync();
+                return new NotFoundResult();    
             }
+            context.ModeloParalelos.Remove(modeloActual);
+            await context.DbContext.SaveChangesAsync(); 
+            return new OkResult();
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-            throw new Exception("Transaccion Fallo", ex)!;
+            throw new ModeloParaleloException("Error al actualizar el modelo paralelo", ex);
         }
     }
 }
