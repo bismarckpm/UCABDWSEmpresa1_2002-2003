@@ -11,7 +11,7 @@ namespace ServicesDeskUCABWS.Controllers
 {
 
     [ApiController]
-    [Route("/Ticket")]
+    [Route("/Tickets")]
     public class TicketController : Controller
     {
         public readonly ITicketDao _ticketDao;
@@ -27,7 +27,7 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Ticket>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
         public IActionResult GetCollection()
         {
             var tickets =_ticketDao.GetTickets();
@@ -35,6 +35,45 @@ namespace ServicesDeskUCABWS.Controllers
                 return BadRequest(ModelState);
 
             return Ok(tickets);
+        }
+
+        [HttpGet("Tickect/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
+        public IActionResult GetTicket([FromRoute] int id)
+        {
+            var tickets =_ticketDao.GetTicket(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tickets);
+        }
+
+        [HttpPut("{ticketid}")]
+        public IActionResult UpdateTickect(int ticketid, 
+            [FromQuery] int asignadoaid, [FromQuery] int prioridadid,
+            [FromBody] TickeUDTO ticketupdate, [FromQuery] int Estadoid)
+        {
+            if (ticketupdate == null)
+                return BadRequest(ModelState);
+
+            if (ticketid != ticketupdate.Id)
+                return BadRequest(ModelState);
+
+            if (_ticketDao.GetTicket(ticketid) == null)
+                return NotFound();
+
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var ticketmap = _mapper.Map<Ticket>(ticketupdate);
+
+            if (!_ticketDao.Update(ticketmap,asignadoaid,prioridadid,Estadoid))
+            {
+                ModelState.AddModelError("", "Hubo un error ");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("Ticket Actualizado");
         }
 
         [HttpPost]
