@@ -238,6 +238,14 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre="prueba",
                     categoria= new Categoria()
                 },
+                new ModeloParalelo
+                {
+                    paraid=2,
+                    cantidadAprobaciones=3,
+                    categoriaId=1,
+                    nombre="prueba2",
+                    categoria= new Categoria()
+                }
             };
             //Estado
             var requestsEstado = new List<Estado>
@@ -295,9 +303,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
             //ModeloParalelo DataSeed
-            _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
+            _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);            
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloParalelo.Where(x => x.paraid == i).Single());
             //Estados DataSeed
             _mockContext.Setup(t => t.Estados).Returns(mockSetEstados.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);

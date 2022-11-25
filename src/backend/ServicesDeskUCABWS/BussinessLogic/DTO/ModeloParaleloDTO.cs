@@ -11,7 +11,8 @@ public class ModeloParaleloCreateDTO
 
 public class ModeloParaleloDTO
 {
+    public int paraid {get; set;}
     public string? nombre {get; set;}        
     public int? cantidadAprobaciones {get; set;}
-    public Categoria? categoria {get; set;}
+    public int categoriaId {get; set;}
 }
