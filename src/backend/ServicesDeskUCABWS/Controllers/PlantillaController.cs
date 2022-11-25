@@ -53,52 +53,40 @@ namespace ServicesDeskUCABWS.Controllers
         [HttpGet("{id:int}", Name = "obtenerPlantilla")]
         public async Task<ActionResult<PlantillaDTO>> Get(int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id debe ser mayor a 0");
-                }
-                var result = await _dao.ObtenerPlantillaDAO(id);
-                if (result.Value != null)
-                {
-                    _log.LogInformation("Plantilla consultada con exito");
-                    return Ok(_mapper.Map<PlantillaDTO>(result.Value));
-                }
-                else
-                {
-                    return NotFound("No se encontro la Plantilla");
-                }
 
-            }
-            catch (Exception ex)
+            if (id <= 0)
             {
-                _log.LogError(ex.ToString());
-                throw ex;
+                return BadRequest("El id debe ser mayor a 0");
             }
+            var result = await _dao.ObtenerPlantillaDAO(id);
+            if (result.Value != null)
+            {
+                _log.LogInformation("Plantilla consultada con exito");
+                return Ok(_mapper.Map<PlantillaDTO>(result.Value));
+            }
+            else
+            {
+                return NotFound("No se encontro la Plantilla");
+            }
+
         }
+
 
 
         [HttpPut("{id:int}")]
 
         public async Task<ActionResult> ActualizarPlantilla([FromBody] PlantillaDTOCreate dto, int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id debe ser mayor a 0");
-                }
-                var Plantilla = _mapper.Map<Plantilla>(dto);
-                var result = await _dao.ActualizarPlantillaDAO(Plantilla, id);
-                return Ok(result);
 
-            }
-            catch (Exception ex)
+
+            if (id <= 0)
             {
-                _log.LogError(ex.ToString());
-                throw ex;
+                return BadRequest("El id debe ser mayor a 0");
             }
+            var Plantilla = _mapper.Map<Plantilla>(dto);
+            var result = await _dao.ActualizarPlantillaDAO(Plantilla, id);
+            return Ok(result);
+
         }
 
         [HttpDelete("{id:int}")]

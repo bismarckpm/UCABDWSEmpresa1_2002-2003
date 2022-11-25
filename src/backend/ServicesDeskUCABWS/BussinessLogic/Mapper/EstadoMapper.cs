@@ -8,8 +8,6 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
     {
         public EstadoMapper()
         {
-            CreateMap<EstadoEtiquetaDTO, Estado>();
-            CreateMap<Estado, EstadoEtiquetaDTO>();
             CreateMap<Estado, EstadoDTO>();
             CreateMap<EstadoDTO, Estado>();
             CreateMap<EstadoCreateDTO, Estado>();
