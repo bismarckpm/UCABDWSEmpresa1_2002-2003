@@ -58,11 +58,6 @@ namespace ServicesDeskUCABWS.Controllers
                 _log.LogError(ex.Message);
                 return NotFound(ex.Message);
             }
-            catch (Exception e)
-            {
-                _log.LogError(e.Message);
-                throw e;
-            }
         }
 
         [HttpPut("{id:int}")]
@@ -83,11 +78,6 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 _log.LogError(e.Message);
                 return BadRequest(e.Message);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex;
             }
         }
 
@@ -117,11 +107,6 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 _log.LogError(es.Message);
                 return BadRequest(es.Message);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex;
             }
         }
 
