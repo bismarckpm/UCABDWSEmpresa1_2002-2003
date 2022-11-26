@@ -36,19 +36,20 @@ namespace ServicesDeskUCABWS.Controllers
             var ModeloJerarquico = _mapper.Map<ModeloJerarquico>(dto);
             var result = await _dao.AgregarModeloJerarquicoDAO(ModeloJerarquico);
             _log.LogInformation("ModeloJerarquico agregada con exito");
-            return result;
+            return Ok(result);
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<List<ModeloJerarquicoDTO>>> Get()
-        // {
-
-        //     var result = await _dao.ConsultarModeloJerarquicosDAO();
-        //     _log.LogInformation("ModeloJerarquicos consultadas con exito");
-        //     return Ok(_mapper.Map<List<ModeloJerarquicoDTO>>(result));
-
-
-        // }
+        [HttpGet]
+        public async Task<ActionResult<List<ModeloJerarquicoDTO>>> Get()
+        {
+          var result = await _dao.ConsultarModeloJerarquicosDAO();
+          if (result == null)
+          {
+            return BadRequest("No se encontraron los modelos paralelos");
+          }
+            _log.LogInformation("ModeloJerarquicos consultadas con exito");
+            return Ok(_mapper.Map<List<ModeloJerarquicoDTO>>(result));
+        }        
 
         [HttpGet("Jerarquico/{id:int}", Name = "obtenerModeloJerarquico")]
         public async Task<ActionResult<ModeloJerarquicoDTO>> Get(int id)
@@ -59,36 +60,34 @@ namespace ServicesDeskUCABWS.Controllers
                 return BadRequest("El id debe ser mayor a 0");
             }
             var result = await _dao.ObtenerModeloJerarquicoDAO(id);
-            if (result.Value?.Id == null)
+            if (result.Value?.Id == id)
             {
-                return NotFound("No se encontro el ModeloJerarquico");
+                return Ok(_mapper.Map<ModeloJerarquicoDTO>(result.Value));  
             }
-            return _mapper.Map<ModeloJerarquicoDTO>(result.Value);
+            return NotFound("No se encontro el ModeloJerarquico");
         }
 
 
-        // [HttpPut("{id:int}")]
-
-        // public async Task<ActionResult> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoDTOCreate dto, int id)
-        // {
-
-        //     if (id <= 0)
-        //     {
-        //         return BadRequest("El id debe ser mayor a 0");
-        //     }
-        //     var ModeloJerarquico = _mapper.Map<ModeloJerarquico>(dto);
-        //     var result = await _dao.ActualizarModeloJerarquicoDAO(ModeloJerarquico, id);
-        //     if (result.Value!.id == id)
-        //     {
-        //         _log.LogInformation("ModeloJerarquico actualizada con exito");
-        //         return Ok(result);
-        //     }
-        //     else
-        //     {
-        //         return NotFound("No se encontro la ModeloJerarquico");
-        //     }
-
-        // }
+         [HttpPut("{id:int}")]
+         public async Task<ActionResult> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoCreateDTO dto, int id)
+         {
+             if (id <= 0)
+             {
+                 return BadRequest("El id debe ser mayor a 0");
+             }
+             var ModeloJerarquico = _mapper.Map<ModeloJerarquicoCreateDTO>(dto);
+             var result = await _dao.ActualizarModeloJerarquicoDAO(ModeloJerarquico, id);
+             if (result.Value!.Id == id)
+             {
+                 _log.LogInformation("ModeloJerarquico actualizada con exito");
+                 return result.Result;
+             }
+             else
+             {
+                 return NotFound("No se encontro la ModeloJerarquico");
+             }
+             
+         }
 
         [HttpDelete("Jerarquico/{id:int}")]
         public async Task<ActionResult> EliminarModeloJerarquico([Required] int id)
@@ -98,11 +97,8 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 return BadRequest("El id debe ser mayor a 0");
             }
-
             var result = await _dao.EliminarModeloJerarquicoDAO(id);
             return result;
-
         }
-
     }
 }

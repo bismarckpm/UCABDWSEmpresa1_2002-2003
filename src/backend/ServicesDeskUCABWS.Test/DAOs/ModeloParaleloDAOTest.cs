@@ -106,13 +106,19 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarModeloParaleloIdTest()
         {
             // preparacion de los datos
+            _contextMock.Setup(e => e.Categorias.FindAsync(It.IsAny<int>()))
+            .ReturnsAsync(new Categoria ()
+            {
+                id = 1,
+                nombre = "Prueba"
+            });
             _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>()))
             .ReturnsAsync(new ModeloParalelo()
             {
                 paraid = 1,
                 nombre = "ModeloParalelo1",
                 cantidadAprobaciones = 3,
-                categoriaId=2
+                categoriaId = 1
             });
 
 
@@ -130,17 +136,13 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public async Task ConsultarModeloParaleloIdNoExisteTest()
         {
             // preparacion de los datos
-            // no obtener ninguna etiqueta
+            // no obtener ningun modelo paralelo
             _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(null as ModeloParalelo);
 
-
+        // prueba de la funcion
             var id = 4;
-            // prueba de la funcion
-            var result = await _dao.ConsultaModeloParaleloDAO(id);
-            var mpResult = result.Value;
-
-            // verificacion de la prueba
-            Assert.Equal(0, mpResult!.paraid);
+        // verificacion de la prueba           
+            await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao.ConsultaModeloParaleloDAO(id));    
         }
 
         [Fact(DisplayName = "Consultar modelo paralelo por Id con Excepcion")]
@@ -165,15 +167,15 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 cantidadAprobaciones = 3,
                 categoriaId=2
             });
-            var modeloParalelo = new ModeloParalelo()
+            var paraid = 1;
+            var modeloParalelo = new ModeloParaleloCreateDTO()
             {
-                paraid = 1,
                 nombre = "Modificada",
                 cantidadAprobaciones = 3,
                 categoriaId=2
             };
             // prueba de la funcion
-            var result = await _dao.ActualizarModeloParaleloDAO(modeloParalelo.paraid, modeloParalelo);
+            var result = await _dao.ActualizarModeloParaleloDAO(paraid, modeloParalelo);
             var mpResult = result.Value;
             // verificacion de la prueba
             Assert.IsType<ModeloParalelo>(mpResult);
@@ -185,12 +187,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
             // preparacion de los datos
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
             _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(null as ModeloParalelo);
-            var modeloParalelo = new ModeloParalelo();
-            // prueba de la funcion
-            var result = await _dao.ActualizarModeloParaleloDAO(modeloParalelo.paraid, modeloParalelo);
-            var mpResult = result.Value;
+            var paraid = 5;
+            var modeloParalelo = new ModeloParaleloCreateDTO();
             // verificacion de la prueba
-            Assert.IsType<ModeloParalelo>(mpResult);
+            Assert.ThrowsAsync<ModeloParaleloException>(async () => await _dao.ActualizarModeloParaleloDAO(paraid, modeloParalelo));
         }
 
         [Fact(DisplayName = "Actualizar un modelo paralelo con Excepcion")]
@@ -202,7 +202,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 .ThrowsAsync(new Exception());
 
             // prueba de la funcion
-            await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao!.ActualizarModeloParaleloDAO(id, new ModeloParalelo()));
+            await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao!.ActualizarModeloParaleloDAO(id, new ModeloParaleloCreateDTO()));
         }
 
         [Fact(DisplayName = "Eliminar un modelo paralelo")]

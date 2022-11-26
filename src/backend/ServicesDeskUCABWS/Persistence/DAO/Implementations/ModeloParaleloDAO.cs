@@ -60,7 +60,7 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
                                         .FirstOrDefaultAsync(p => p.paraid == id);
             if (consulta == null)
             {
-                return new ModeloParalelo();
+            throw new Exception("Error al consultar el modelo paralelo");
             }
             return consulta;                
         }                          
@@ -70,14 +70,20 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
         } 
     } 
 
-    public async Task<ActionResult<ModeloParalelo>> ActualizarModeloParaleloDAO(int id, ModeloParalelo modeloParalelo)
+    public async Task<ActionResult<ModeloParalelo>> ActualizarModeloParaleloDAO(int id, ModeloParaleloCreateDTO modeloParalelo)
     {
         try
         {
             var modeloActual = await context.ModeloParalelos.FindAsync(id);
             if (modeloActual == null)
             {
-                return new ModeloParalelo();
+                throw new NullReferenceException("No existe el modelo paralelo a actualizar");
+            }
+            // Validar categoria 
+            var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
+            if (categoria == null)
+            {
+                throw new NullReferenceException("No existe en el modelo paralelo la categoria a actualizar");
             }
             modeloActual.nombre = modeloParalelo.nombre;
             modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;

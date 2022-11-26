@@ -14,10 +14,10 @@
 
     public class ModeloJerarquicoDTO
     {
-        public string? Nombre {get; set;}
-        
+        public int id {get; set;}
+        public string? Nombre {get; set;}        
         public List<TipoCargo>? orden {get; set;}
-        public Categoria? categoria {get; set;}
+        public int CategoriaId {get; set;}
     }
  }
  

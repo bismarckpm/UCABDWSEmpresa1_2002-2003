@@ -20,6 +20,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Plantilla>> mockSetPlantillas = new Mock<DbSet<Plantilla>>();
         public static Mock<DbSet<ModeloParalelo>> mockSetModeloParalelo = new Mock<DbSet<ModeloParalelo>>();
         public static Mock<DbSet<Ticket>> mockSetTicket = new Mock<DbSet<Ticket>>();
+        public static Mock<DbSet<ModeloJerarquico>> mockSetModeloJerarquico = new Mock<DbSet<ModeloJerarquico>>();
 
         public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
@@ -311,6 +312,26 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     FlujoAprobacion = new FlujoAprobacion()
                 }
             };
+            //ModeloJerarquico
+            var requestsModeloJerarquico = new List<ModeloJerarquico>
+            {
+                new ModeloJerarquico
+                {
+                    Id=1,
+                    Nombre = "paralelo1",
+                    orden = new List<TipoCargo>(),
+                    CategoriaId = 1,
+                    categoria= new Categoria()
+                },
+                new ModeloJerarquico
+                {
+                    Id=2,
+                    Nombre = "paralelo1",
+                    orden = new List<TipoCargo>(),
+                    CategoriaId = 2,
+                    categoria= new Categoria()
+                }
+            };
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -362,7 +383,11 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
-
+            //ModeloJerarquico DataSeed
+            _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);            
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
         }
     }
 }
