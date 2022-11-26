@@ -49,7 +49,6 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                prioridad.id = 0;
                 HttpClient client = new HttpClient();
                 var _client = await client.PostAsJsonAsync<PrioridadDTO>("https://localhost:7198/Prioridad/CreatePrioridad", prioridad);
                 return RedirectToAction("GestionPrioridades");
