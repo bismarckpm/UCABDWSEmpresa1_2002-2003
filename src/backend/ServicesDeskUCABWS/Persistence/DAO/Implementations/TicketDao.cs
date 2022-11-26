@@ -10,8 +10,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     public class TicketDao : ITicketDao
     {
         private readonly IMigrationDbContext _context;
-          private readonly IEmailDao _emailRepository;
-        public TicketDao(MigrationDbContext context, IEmailDao emailDao)
+        private readonly IEmailDao _emailRepository;
+
+        public TicketDao(IMigrationDbContext context, IEmailDao emailDao)
         {
             _context = context;
             _emailRepository = emailDao;

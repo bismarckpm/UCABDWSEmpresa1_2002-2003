@@ -18,7 +18,7 @@ namespace ServicesDeskUCAB.Controllers
             {
                 List<CategoriaDTO> listCategorias = new List<CategoriaDTO>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7267/Categoria/ConsultaCategorias");
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Categoria/ConsultaCategorias");
                 var _client = await client.SendAsync(request);
                 if (_client.IsSuccessStatusCode)
                 {
@@ -51,7 +51,7 @@ namespace ServicesDeskUCAB.Controllers
             {
                 categoria.id = 0;
                 HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<CategoriaDTO>("https://localhost:7267/Categoria/CreateCategoria", categoria);
+                var _client = await client.PostAsJsonAsync<CategoriaDTO>("https://localhost:7198/Categoria/CreateCategoria", categoria);
                 return RedirectToAction("GestionCategorias");
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
                 HttpClient client = new HttpClient();
-                var _client = await client.DeleteAsync("https://localhost:7267/Categoria/Eliminar/" + id.ToString());
+                var _client = await client.DeleteAsync("https://localhost:7198/Categoria/Eliminar/" + id.ToString());
                 return RedirectToAction("GestionCategorias");
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace ServicesDeskUCAB.Controllers
             {
                 CategoriaDTO categoria = new CategoriaDTO();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7267/Categoria/ConsultaCategoria/" + id.ToString());
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Categoria/ConsultaCategoria/" + id.ToString());
                 var _client = await client.SendAsync(request);
                 if (_client.IsSuccessStatusCode)
                 {
@@ -112,7 +112,7 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
                 HttpClient client = new HttpClient();
-                var _client = await client.PutAsJsonAsync("https://localhost:7267/Categoria/Actualizar", categoria);
+                var _client = await client.PutAsJsonAsync("https://localhost:7198/Categoria/Actualizar", categoria);
                 return RedirectToAction("GestionCategorias");
             }
             catch (Exception ex)
