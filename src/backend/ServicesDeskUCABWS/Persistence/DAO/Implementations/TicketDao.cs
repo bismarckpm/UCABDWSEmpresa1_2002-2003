@@ -10,9 +10,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     public class TicketDao : ITicketDao
     {
         private readonly IMigrationDbContext _context;
-        public TicketDao(MigrationDbContext context)
+          private readonly IEmailDao _emailRepository;
+        public TicketDao(MigrationDbContext context, IEmailDao emailDao)
         {
             _context = context;
+            _emailRepository = emailDao;
 
         }
 
@@ -25,9 +27,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             ticket.categoria = _context.Categorias.Where(c => c.id == categoriaid).FirstOrDefault();
            
             ticket.Estado = _context.Estados.Where(c => c.id == estatud).FirstOrDefault();
-           
-                  
-              
+            var email = new EmailDTO();
+            email.para = ticket.asginadoa.email;
+            email.Cuerpo ="Descripcion del ticket: " + ticket.descripcion;
+            email.asunto = "Ticket " + ticket.nombre + " Creado con exito asignado a " + ticket.asginadoa.email;
+            _emailRepository.SendEmail(email);
             _context.Tickets.Add(ticket);
             return Save();
             
@@ -40,6 +44,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             ticket.Estado = _context.Estados.Where(c => c.id == Estadoid).FirstOrDefault();
             ticket.categoria = _context.Categorias.Where(c => c.id == categoriaid).FirstOrDefault();
             _context.Tickets.Update(ticket);
+             var email = new EmailDTO();
+            email.para = ticket.asginadoa.email;
+            email.Cuerpo ="Descripcion del ticket: " + ticket.descripcion;
+            email.asunto = "Ticket " + ticket.nombre + " Ha sido actualizado ";
+            _emailRepository.SendEmail(email);
+            _context.Tickets.Add(ticket);
             return Save();
         }
 
