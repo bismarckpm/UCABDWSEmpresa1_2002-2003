@@ -77,6 +77,18 @@ namespace ServicesDeskUCABWS.Controllers
 
             return Ok(usuarios);
         }
+
+         [HttpGet("Empleados/Departamento/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
+        public IActionResult GetUsuarioDepartamento([FromRoute] int id)
+        {
+            var usuarios = _UsuarioRepository.GetUsuariosPorDepartamento(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usuarios);
+        }
+
        
         [HttpPost("Registrar")]
         public IActionResult CreateUsuario([FromQuery] int cargoid,[FromQuery] int Departamentoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
