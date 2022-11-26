@@ -15,6 +15,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         Usuario ChangePassword(string usuarname, string newpassword, string confirmationpassword);       
         bool CreateUsuario(Usuario usuario, int cargoid, int Departamentoid);
         Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO);
+         ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid);
         bool Save();
 
         Usuario CreatePasswordHash(Usuario usuario, string clave);

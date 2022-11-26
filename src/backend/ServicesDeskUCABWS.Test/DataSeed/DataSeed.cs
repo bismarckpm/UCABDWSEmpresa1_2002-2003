@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using Moq;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ServicesDeskUCABWS.Test.DataSeed
 {
@@ -18,6 +19,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
         public static Mock<DbSet<Plantilla>> mockSetPlantillas = new Mock<DbSet<Plantilla>>();
         public static Mock<DbSet<ModeloParalelo>> mockSetModeloParalelo = new Mock<DbSet<ModeloParalelo>>();
+        public static Mock<DbSet<Ticket>> mockSetTicket = new Mock<DbSet<Ticket>>();
 
         public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
@@ -122,6 +124,20 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 {
                     id=1,
                     email="prueba@gmail.com",
+                    cargo= new Cargo{ id=1 },
+                    Departamento = new Departamento { id=1 },
+                    VerificationToken = "prueba",
+                    VerifiedAt = new DateTime(),
+                    PasswordResetToken=Guid.NewGuid().ToString(),
+                    ResetTokenExpires= new DateTime(),
+                    ticketsasignados = new List<Ticket>(),
+                    ticketscreados= new List<Ticket>(),
+                    Flujo = new List<FlujoAprobacion>()
+                },
+                new Empleado
+                {
+                    id=2,
+                    email="prueba2@gmail.com",
                     cargo= new Cargo{ id=1 },
                     Departamento = new Departamento { id=1 },
                     VerificationToken = "prueba",
@@ -265,6 +281,36 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     etiqueta= new Etiqueta()
                 }
             };
+            //Tickets
+            var requestsTickets = new List<Ticket>
+            {
+                new Ticket
+                {
+                    id = 1,
+                    nombre = "nombre",
+                    asginadoa = new Empleado(),
+                    creadopor = new Empleado(),
+                    descripcion = "descripcion",
+                    fecha = It.IsAny<DateTime>(),
+                    Estado = new Estado(),
+                    prioridad = new Prioridad(),
+                    categoria = new Categoria(),
+                    FlujoAprobacion = new FlujoAprobacion()
+                },
+                new Ticket
+                {
+                    id = 2,
+                    nombre = "nombre2",
+                    asginadoa = new Empleado(),
+                    creadopor = new Empleado(),
+                    descripcion = "descripcion2",
+                    fecha = It.IsAny<DateTime>(),
+                    Estado = new Estado(),
+                    prioridad = new Prioridad(),
+                    categoria = new Categoria(),
+                    FlujoAprobacion = new FlujoAprobacion()
+                }
+            };
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -312,6 +358,11 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Estados).Returns(requestsEstado.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEstado.Where(x => x.id == i).Single());
+            //Tickets DataSeed
+            _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
+
         }
     }
 }

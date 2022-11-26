@@ -52,6 +52,19 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             return null!;
         }   
 
+         public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
+            var q = (from usua in _context.Usuario
+                     join dep in _context.Departamentos on usua.Departamento equals dep
+                     where dep.id == departamentoid
+                     select new UsuarioDTO()
+                     {
+                        id = usua.id,
+                        Email = usua.email
+                      }).ToList();
+            return q;
+        }
+
+
         public bool CreateUsuario(Usuario usuario, 
             int cargoid, int Departamentoid){
             usuario.cargo = 

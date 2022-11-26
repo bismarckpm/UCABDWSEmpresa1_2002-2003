@@ -1,3 +1,4 @@
+using System;
 namespace ServicesDeskUCABWS.Persistence.Entity
 {
     public class Ticket
@@ -6,7 +7,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public string? nombre { get; set; }
 
-        public string? fecha { get; set; }
+        public DateTime? fecha { get; set; }
 
         public string descripcion { get; set; }
 

@@ -7,7 +7,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.DTO
        
       
         public string? nombre { get; set; }
-        public string? fecha { get; set; }
+        public DateTime? fecha { get; set; }
         public string? descripcion { get; set; }
 
 

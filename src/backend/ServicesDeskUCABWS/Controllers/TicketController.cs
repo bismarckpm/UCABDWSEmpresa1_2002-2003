@@ -17,6 +17,7 @@ namespace ServicesDeskUCABWS.Controllers
         public readonly ITicketDao _ticketDao;
         public readonly IMapper _mapper;
         private readonly ILogger<TicketController> _log;
+       
 
         public TicketController(ITicketDao ticketDao, IMapper mapper, ILogger<TicketController> logger)
         {
@@ -36,6 +37,7 @@ namespace ServicesDeskUCABWS.Controllers
 
             return Ok(tickets);
         }
+        
 
         [HttpGet("Tickect/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
@@ -47,11 +49,54 @@ namespace ServicesDeskUCABWS.Controllers
 
             return Ok(tickets);
         }
+        [HttpGet("Tickect/asginado/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
+        public IActionResult GetTicketasignados([FromRoute] int id)
+        {
+            var tickets =_ticketDao.GetTicketporusuarioasignado(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tickets);
+        }
+         [HttpGet("Tickect/estado/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
+        public IActionResult GetTicketEstados([FromRoute] int id)
+        {
+            var tickets =_ticketDao.GetTicketporestado(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tickets);
+        }
+         [HttpGet("Tickect/Departamento/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
+        public IActionResult GetTicketDepartamento([FromRoute] int id)
+        {
+            var tickets =_ticketDao.GetTicketsPorDepartamento(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tickets);
+        }
+         [HttpGet("Tickect/Categoria/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
+        public IActionResult GetTicketPorCategoria([FromRoute] int id)
+        {
+            var tickets =_ticketDao.GetTicketsPorCategoria(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(tickets);
+        }
+
+
+
 
         [HttpPut("{ticketid}")]
         public IActionResult UpdateTickect(int ticketid, 
             [FromQuery] int asignadoaid, [FromQuery] int prioridadid,
-            [FromBody] TickeUDTO ticketupdate, [FromQuery] int Estadoid)
+            [FromBody] TickeUDTO ticketupdate, [FromQuery] int Estadoid,[FromQuery] int categoriaid )
         {
             if (ticketupdate == null)
                 return BadRequest(ModelState);
@@ -68,7 +113,7 @@ namespace ServicesDeskUCABWS.Controllers
 
             var ticketmap = _mapper.Map<Ticket>(ticketupdate);
 
-            if (!_ticketDao.Update(ticketmap,asignadoaid,prioridadid,Estadoid))
+            if (!_ticketDao.Update(ticketmap,asignadoaid,prioridadid,Estadoid,categoriaid))
             {
                 ModelState.AddModelError("", "Hubo un error ");
                 return StatusCode(500, ModelState);
@@ -78,14 +123,14 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPost]
         [Route("CreateTicket")]
-         public IActionResult CreateTicket([FromQuery] int creadopor,[FromQuery] int asignadaa, [FromBody] TicketDTO ticket, [FromQuery] int prioridad,[FromQuery] int estatud)
+         public IActionResult CreateTicket([FromQuery] int creadopor,[FromQuery] int asignadaa, [FromBody] TicketDTO ticket, [FromQuery] int prioridad,[FromQuery] int estatud,[FromQuery] int categoriaid )
         {
             if (ticket == null)
                 return BadRequest(ModelState);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var Tickectmap = _mapper.Map<Ticket>(ticket);
-            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor,asignadaa,prioridad,estatud))
+            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor,asignadaa,prioridad,estatud,categoriaid))
             {
                 ModelState.AddModelError("", "Error al guardar");
                 return StatusCode(500, ModelState);
