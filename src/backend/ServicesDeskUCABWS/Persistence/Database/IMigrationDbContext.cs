@@ -68,6 +68,10 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        DbSet<Grupo> Grupo
+        {
+            get;set;
+        }
 
         DbSet<ModeloJerarquico> ModeloJerarquicos
         {

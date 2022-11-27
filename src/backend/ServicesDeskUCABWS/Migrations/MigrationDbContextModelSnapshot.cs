@@ -348,6 +348,22 @@ namespace ServicesDeskUCABWS.Migrations
                     b.ToTable("Tickets");
                 });
 
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
+            {
+                b.Property<int>("id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                b.Property<string>("nombre")
+                    .HasColumnType("nvarchar(max)");
+
+                b.HasKey("id");
+
+                b.ToTable("grupos");
+            });
+
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", b =>
                 {
                     b.Property<int>("id")
