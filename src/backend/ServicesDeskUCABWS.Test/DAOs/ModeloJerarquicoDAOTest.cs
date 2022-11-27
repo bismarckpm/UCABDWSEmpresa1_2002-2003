@@ -60,8 +60,30 @@ namespace ServicesDeskUCABWS.Test.DAOs
             Assert.IsType<ModeloJerarquicoDTO>(mpResult);
         }
 
-        [Fact(DisplayName = "Crear un modelo jerarquico con excepcion")]
+        [Fact(DisplayName = "Crear un modelo jerarquico con excepcion ")]
         public async Task CrearModeloJerarquicoTestException()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            TipoCargo tCargo = new TipoCargo { id = 1, nombre = "Prueba" };
+            List<TipoCargo> lista = new List<TipoCargo>();
+            lista.Add(tCargo);
+            var mj = new ModeloJerarquico()
+            {
+                Id = 1,
+                Nombre = "jerarquico1",
+                orden = lista,
+                CategoriaId = 1
+            };
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new DbUpdateException());
+
+            // prueba de la funcion
+            await Assert.ThrowsAsync<NullReferenceException>(() => _dao!.AgregarModeloJerarquicoDAO(mj));
+        }
+
+        [Fact(DisplayName = "Crear un modelo jerarquico con excepcion 2")]
+        public async Task CrearModeloJerarquicoTestDBException()
         {
             // preparacion de los datos
             _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -70,6 +92,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             // prueba de la funcion
             await Assert.ThrowsAsync<Exception>(() => _dao!.AgregarModeloJerarquicoDAO(new ModeloJerarquico()));
         }
+
 
         [Fact(DisplayName = "Consultar todos los modelos jerarquicos")]
         public async Task ConsultarModelosJerarquicosTest()
@@ -143,7 +166,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
             await Assert.ThrowsAsync<Exception>(() => _dao.ObtenerModeloJerarquicoDAO(-1));
         }
 
-         /* No pasa porque no esta encuentra nada en el include con categoria
         [Fact(DisplayName = "Actualizar un modelo jerarquico")]
         public async Task ActualizarModeloJerarquicoTest()
         {
@@ -171,7 +193,60 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var mpResult = result.Value;
             // verificacion de la prueba
             Assert.IsType<ModeloJerarquico>(mpResult);
-        }*/
+        }
+
+        [Fact(DisplayName = "Actualizar un modelo jerarquico con categoria nulo")]
+        public async Task ActualizarModeloJerarquicoSinCategoriaTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            TipoCargo tCargo = new TipoCargo { id = 1, nombre = "Prueba" };
+            List<TipoCargo> lista = new List<TipoCargo>();
+            lista.Add(tCargo);
+            _contextMock.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync(new ModeloJerarquico()
+            {
+                Id = 1,
+                Nombre = "jerarquico1",
+                orden = lista,
+                CategoriaId = 1
+            });
+            var Id = 1;
+            var modeloJerarquico = new ModeloJerarquicoCreateDTO()
+            {
+                Nombre = "Modificada",
+                orden = lista
+            };
+            // prueba de la funcion
+            // verificacion de la prueba
+            Assert.ThrowsAsync<NullReferenceException>(() => _dao.ActualizarModeloJerarquicoDAO(modeloJerarquico, Id));
+        }
+
+        [Fact(DisplayName = "Actualizar un modelo jerarquico con lista de cargos nulo")]
+        public async Task ActualizarModeloJerarquicoSinTipoCargosTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            TipoCargo tCargo = new TipoCargo { id = 1, nombre = "Prueba" };
+            List<TipoCargo> lista = new List<TipoCargo>();
+            lista.Add(tCargo);
+            _contextMock.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync(new ModeloJerarquico()
+            {
+                Id = 1,
+                Nombre = "jerarquico1",
+                orden = lista,
+                CategoriaId = 1
+            });
+            var Id = 1;
+            var modeloJerarquico = new ModeloJerarquicoCreateDTO()
+            {
+                Nombre = "Modificada",
+                orden = null,
+                CategoriaId = 2
+            };
+            // prueba de la funcion
+            // verificacion de la prueba
+            Assert.ThrowsAsync<NullReferenceException>(() => _dao.ActualizarModeloJerarquicoDAO(modeloJerarquico, Id));
+        }
 
         [Fact(DisplayName = "No existe modelo jerarquico para actualizar")]
         public async Task ActualizarModeloJerarquicoNoExisteTest()

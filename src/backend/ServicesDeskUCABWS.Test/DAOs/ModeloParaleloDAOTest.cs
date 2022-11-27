@@ -181,6 +181,28 @@ namespace ServicesDeskUCABWS.Test.DAOs
             Assert.IsType<ModeloParalelo>(mpResult);
         }
 
+        [Fact(DisplayName = "Actualizar un modelo paralelo sin categoria")]
+        public async Task ActualizarModeloParaleloSinCategoriaTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(new ModeloParalelo()
+            {
+                paraid = 1,
+                nombre = "paralelo1",
+                cantidadAprobaciones = 3
+            });
+            var paraid = 1;
+            var modeloParalelo = new ModeloParaleloCreateDTO()
+            {
+                nombre = "Modificada",
+                cantidadAprobaciones = 3
+            };
+            // prueba de la funcion
+            // verificacion de la prueba
+            Assert.ThrowsAsync<NullReferenceException>(async () => await _dao.ActualizarModeloParaleloDAO(paraid, modeloParalelo));
+        }
+
         [Fact(DisplayName = "No existe modelo paralelo para actualizar")]
         public async Task ActualizarModeloParaleloNoExisteTest()
         {

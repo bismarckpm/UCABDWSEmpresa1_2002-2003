@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\RegisroController.cs" />
+    <Compile Remove="Controllers\RegistroController.cs" />
     <Compile Remove="Migrations\20221101023721_InitDb.cs" />
     <Compile Remove="Migrations\20221101023721_InitDb.Designer.cs" />
   </ItemGroup>
