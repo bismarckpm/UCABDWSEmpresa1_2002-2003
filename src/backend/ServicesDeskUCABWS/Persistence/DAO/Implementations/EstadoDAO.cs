@@ -33,7 +33,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (etiqueta == null)
                 {
                     _logger.LogError("La etiqueta no existe");
-                    throw new EstadoException("La etiqueta no existe");
+                    return new NotFoundObjectResult("La etiqueta no existe");
                 }
                 // guardar en la base de datos
                 await _context.Estados.AddAsync(estado);
@@ -75,7 +75,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (estado == null)
                 {
                     _logger.LogError("El estado no existe");
-                    throw new EstadoException("El estado no existe");
+                    return new NotFoundObjectResult("El estado no existe");
                 }
                 _logger.LogInformation("Estado consultado exitosamente");
                 return _mapper.Map<EstadoDTO>(estado);
@@ -112,7 +112,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (estadoOld == null)
                 {
                     _logger.LogError("El estado no existe");
-                    throw new EstadoException("El estado no existe");
+                    return new NotFoundObjectResult("El estado no existe");
                 }
                 if (estadoOld.EtiquetaId != estado.EtiquetaId)
                 {
@@ -121,7 +121,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     if (etiqueta == null)
                     {
                         _logger.LogError("La etiqueta no existe");
-                        throw new EstadoException("La etiqueta no existe");
+                        return new NotFoundObjectResult("La etiqueta no existe");
                     }
                 }
                 estadoOld.nombre = estado.nombre;
@@ -145,7 +145,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (estado == null)
                 {
                     _logger.LogWarning("El estado no existe");
-                    return new NotFoundResult();
+                    return new NotFoundObjectResult("El estado no existe");
                 }
                 _context.Estados.Remove(estado);
                 await _context.DbContext.SaveChangesAsync();

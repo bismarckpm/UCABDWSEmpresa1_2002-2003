@@ -77,9 +77,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 nombre = "Nueva",
                 EtiquetaId = 1
             };
+            // prueba de la funcion
+            var result = await _dao.AgregarEstadoDAO(Estado);
 
             // verificacion de la prueba
-            await Assert.ThrowsAsync<EstadoException>(() => _dao.AgregarEstadoDAO(Estado));
+            Assert.IsType<NotFoundObjectResult>(result.Result);
         }
 
         [Fact(DisplayName = "Crear Estado con excepcion")]
@@ -151,11 +153,25 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Estado);
             var id = 4;
             // prueba de la funcion
-            await Assert.ThrowsAsync<EstadoException>(() => _dao.GetEstadoDAO(id));
+            var result = await _dao.GetEstadoDAO(id);
+            // verificacion de la prueba
+            Assert.IsType<NotFoundObjectResult>(result.Result);
         }
 
+        // [Fact(DisplayName = "Consultar Estado por Id con Excepcion")]
+        // public async Task ConsultarEstadoIdExcepcionTest()
+        // {
+        //     // preparacion de los datos
+        //     _servicesMock.Setup(c => c.GetEstadoDAO(It.IsAny<int>()))
+        //          .Throws(new Exception());
 
-        [Fact(DisplayName = "Actualizar una Estado")]
+
+        //     // prueba de la funcion
+        //     await Assert.ThrowsAsync<EstadoException>(() => _dao.GetEstadoDAO(-1));
+        // }
+
+
+        [Fact(DisplayName = "Actualizar un Estado")]
         public async Task ActualizarEstadoTest()
         {
             // preparacion de los datos
@@ -216,7 +232,9 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Estado);
             var id = 4;
             // prueba de la funcion
-            await Assert.ThrowsAsync<EstadoException>(() => _dao.ActualizarEstadoDAO(new Estado(), id));
+            var result = await _dao.ActualizarEstadoDAO(new Estado(), id);
+            // verificacion de la prueba
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact(DisplayName = "Etiqueta no encontrada para actualizar")]
@@ -239,7 +257,9 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 EtiquetaId = 2
             };
             // prueba de la funcion
-            await Assert.ThrowsAsync<EstadoException>(() => _dao.ActualizarEstadoDAO(Estado, id));
+            var result = await _dao.ActualizarEstadoDAO(Estado, id);
+            // verificacion de la prueba
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact(DisplayName = "Eliminar Estado")]
@@ -287,54 +307,9 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var id = 4;
             var result = await _dao.EliminarEstadoDAO(id);
             // prueba de la funcion
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
-        // [Fact(DisplayName = "Eliminar una Estado")]
-        // public async Task EliminarEstadoTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync(new Estado()
-        //     {
-        //         id = 1,
-        //         nombre = "Prueba",
-        //         descripcion = "Creada"
-        //     });
-        //     var id = 1;
-        //     // prueba de la funcion
-        //     var result = await _dao.EliminarEstadoDAO(id);
-
-        //     // verificacion de result Ok
-        //     Assert.IsType<OkResult>(result);
-
-        // }
-
-        // [Fact(DisplayName = "No existe Estado para eliminar")]
-        // public async Task EliminarEstadoNoExisteTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Estado);
-        //     var id = 1;
-        //     // prueba de la funcion
-        //     var result = await _dao.EliminarEstadoDAO(id);
-
-        //     // verificacion de result NotFound
-        //     Assert.IsType<NotFoundResult>(result);
-        // }
-
-        // [Fact(DisplayName = "Eliminar una Estado con Excepcion")]
-        // public async Task EliminarEstadoTestException()
-        // {
-        //     // preparacion de los datos
-        //     var id = 1;
-        //     _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
-        //         .ThrowsAsync(new Exception());
-
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<EstadoException>(() => _dao!.EliminarEstadoDAO(id));
-        // }
 
 
     }

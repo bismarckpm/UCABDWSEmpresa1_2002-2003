@@ -44,12 +44,11 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             var dto = new EstadoCreateDTO() { Nombre = "Estado 1", EtiquetaId = 1 };
             // preparacion de los datos
-            _servicesMock.Setup(x => x.AgregarEstadoDAO(new Estado())).ReturnsAsync(new EstadoDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 });
+            _servicesMock.Setup(x => x.AgregarEstadoDAO(It.IsAny<Estado>())).ReturnsAsync(new EstadoDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 });
             //probar metodo post
             var result = await _controller.Post(dto);
-            var estadoResult = result.Result;
             //verificar 
-            Assert.IsType<OkObjectResult>(estadoResult);
+            Assert.IsType<OkObjectResult>(result.Result);
         }
 
         [Fact(DisplayName = "Agregar Estado con Etiqueta inexistente")]
@@ -57,13 +56,14 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             var dto = new EstadoCreateDTO() { Nombre = "Estado 1", EtiquetaId = 1 };
             // preparacion de los datos
-            _servicesMock.Setup(x => x.AgregarEstadoDAO(new Estado())).ThrowsAsync(It.IsAny<EstadoException>());
+            // return not found object result
+            _servicesMock.Setup(x => x.AgregarEstadoDAO(It.IsAny<Estado>())).ReturnsAsync(new NotFoundObjectResult("Etiqueta no encontrada"));
             //probar metodo post - catch EstadoException
             var result = await _controller.Post(dto);
             var estadoResult = result.Result;
 
             //verificar
-            Assert.IsType<BadRequestObjectResult>(estadoResult);
+            Assert.IsType<NotFoundObjectResult>(estadoResult);
 
         }
 
@@ -109,7 +109,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public async void GetNoExisteEstadoControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.GetEstadoDAO(5)).ReturnsAsync(new ActionResult<EstadoDTO>(new NotFoundResult()));
+            _servicesMock.Setup(x => x.GetEstadoDAO(It.IsAny<int>())).ReturnsAsync(new NotFoundObjectResult("Estado no encontrado"));
             //probar metodo get
             var result = await _controller.Get(5);
             // validar statusCode
