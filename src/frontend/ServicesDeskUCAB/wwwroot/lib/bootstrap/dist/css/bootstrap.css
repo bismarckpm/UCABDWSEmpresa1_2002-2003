@@ -3962,13 +3962,12 @@ textarea.form-control-lg {
 }
 
 .navbar {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+    font-size: 1.15em;
+    font-weight: 400;
+    background-color: #006b96;
+    padding: 10px;
+    border: 0px;
+    border-radius: 0px;
 }
 .navbar > .container,
 .navbar > .container-fluid,
@@ -4067,7 +4066,7 @@ textarea.form-control-lg {
   }
   .navbar-expand-sm .navbar-nav .nav-link {
     padding-right: 0.5rem;
-    padding-left: 0.5rem;
+    padding-left: 1rem;
   }
   .navbar-expand-sm .navbar-nav-scroll {
     overflow: visible;

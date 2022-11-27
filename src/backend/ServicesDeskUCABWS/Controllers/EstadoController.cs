@@ -42,53 +42,34 @@ namespace ServicesDeskUCABWS.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<EstadoDTO>> Get([FromRoute][Required] int id)
         {
-            try
+
+            if (id <= 0)
             {
-                if (id <= 0)
-                {
-                    _log.LogError("El id del estado no puede ser menor o igual a 0");
-                    return BadRequest("El id del estado no puede ser menor o igual a 0");
-                }
-                var result = await _dao_Estado.GetEstadoDAO(id);
-                _log.LogInformation("Estado obtenido exitosamente");
-                return Ok(result.Value);
+                _log.LogError("El id del estado no puede ser menor o igual a 0");
+                return BadRequest("El id del estado no puede ser menor o igual a 0");
             }
-            catch (EstadoException ex)
+            var result = await _dao_Estado.GetEstadoDAO(id);
+            _log.LogInformation("Estado obtenido exitosamente");
+            if (result.Value == null)
             {
-                _log.LogError(ex.Message);
-                return NotFound(ex.Message);
+                return NotFound("Id de estado no encontrado");
             }
-            catch (Exception e)
-            {
-                _log.LogError(e.Message);
-                throw e;
-            }
+            return Ok(result.Value);
+
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put([FromBody] EstadoCreateDTO dto, [FromRoute][Required] int id)
         {
-            try
-            {
-                if (id <= 0)
-                {
-                    return BadRequest("El id del estado debe ser mayor a 0");
-                }
 
-                var estado = _mapper.Map<Estado>(dto);
 
-                return await _dao_Estado.ActualizarEstadoDAO(estado, id);
-            }
-            catch (EstadoException e)
+            if (id <= 0)
             {
-                _log.LogError(e.Message);
-                return BadRequest(e.Message);
+                return BadRequest("El id del estado debe ser mayor a 0");
             }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex;
-            }
+            var estado = _mapper.Map<Estado>(dto);
+            return await _dao_Estado.ActualizarEstadoDAO(estado, id);
+
         }
 
         [HttpDelete("{id:int}")]
@@ -107,22 +88,16 @@ namespace ServicesDeskUCABWS.Controllers
         [HttpPost]
         public async Task<ActionResult<EstadoDTO>> Post([FromBody] EstadoCreateDTO dto)
         {
-            try
+
+
+            var estado = _mapper.Map<Estado>(dto);
+            var result = await _dao_Estado.AgregarEstadoDAO(estado);
+            if (result.Value == null)
             {
-                var estado = _mapper.Map<Estado>(dto);
-                var result = await _dao_Estado.AgregarEstadoDAO(estado);
-                return Ok(result);
+                return NotFound("Id de etiqueta no encontrado");
             }
-            catch (EstadoException es)
-            {
-                _log.LogError(es.Message);
-                return BadRequest(es.Message);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex;
-            }
+            return Ok(result.Value);
+
         }
 
 

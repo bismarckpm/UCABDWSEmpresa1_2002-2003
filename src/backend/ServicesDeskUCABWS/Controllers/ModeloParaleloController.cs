@@ -30,11 +30,9 @@ public class ModeloParaleloController : Controller
         var consulta = await modeloParaleloDAO.ConsultaModeloParaleloDAO(id);
         if (consulta.Value?.paraid == id)
         {
-            return Ok(mapper.Map<ModeloParaleloDTO>(consulta.Value));
-            
+            return Ok(mapper.Map<ModeloParaleloDTO>(consulta.Value));            
         }
-            return NotFound(" ModeloParalelo no encontrado");
-        
+            return NotFound(" ModeloParalelo no encontrado");        
     }
 
     [HttpGet ("consultar")]
@@ -57,17 +55,17 @@ public class ModeloParaleloController : Controller
     }
 
     [HttpPut ("actualizar/{id}")]
-    public async Task<ActionResult> Actualizar([Required][FromRoute] int id, [Required][FromBody] ModeloParaleloDTO dto)
+    public async Task<ActionResult> Actualizar([Required][FromRoute] int id, [Required][FromBody] ModeloParaleloCreateDTO dto)
     {
         if (id <= 0)
         {
             return BadRequest("El id debe ser mayor a 0");
         }
-        var modeloParalelo = mapper.Map<ModeloParalelo>(dto);
+        var modeloParalelo = mapper.Map<ModeloParaleloCreateDTO>(dto);
         var result = await modeloParaleloDAO.ActualizarModeloParaleloDAO(id, modeloParalelo);
-        if (result.Value!.paraid == id)
+        if (result.Value.paraid == id)
         {
-            return Ok(result);
+            return result.Result;
         }
         else
         {
@@ -83,6 +81,6 @@ public class ModeloParaleloController : Controller
             return BadRequest("El id debe ser mayor a 0");
         }
         var result = await modeloParaleloDAO.EliminarModeloParaleloDAO(id);
-        return Ok(result);
+        return result;
     }
 }
