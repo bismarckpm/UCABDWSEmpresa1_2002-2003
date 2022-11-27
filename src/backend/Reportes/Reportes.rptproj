@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Report Include="Report1 Prueba.rdl" />
+    <Report Include="Ticket entre dos fechas.rdl" />
     <Report Include="Tickets Creados Por Clientes.rdl" />
     <Report Include="Tickets por Departamento en Estado X.rdl" />
     <Report Include="Tickets Por Departamento.rdl" />
