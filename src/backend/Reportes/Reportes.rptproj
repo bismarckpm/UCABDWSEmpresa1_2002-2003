@@ -55,12 +55,11 @@
     <DataSource Include="DataSource1.rds" />
   </ItemGroup>
   <ItemGroup>
-    <Report Include="Report1 Prueba.rdl" />
     <Report Include="Ticket entre dos fechas.rdl" />
     <Report Include="Tickets Creados Por Clientes.rdl" />
     <Report Include="Tickets por Departamento en Estado X.rdl" />
-    <Report Include="Tickets Por Departamento.rdl" />
     <Report Include="Tickets Por Departamentos.rdl" />
+    <Report Include="Tickets rechazados.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>
