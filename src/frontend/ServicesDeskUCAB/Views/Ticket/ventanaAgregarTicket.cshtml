@@ -1,4 +1,4 @@
-﻿@model ServicesDeskUCAB.DTO.TicketDTO
+﻿@model ServicesDeskUCAB.Models.AgrupacionTKDtos
 @section scripts{
 }
 @{
@@ -26,8 +26,23 @@
             @using (Html.BeginForm("AgregarTicket", "Ticket", FormMethod.Post))
             {
                 <div class="modal-body">
-                    <span>Ticket: </span> @Html.TextBoxFor(m => m.nombre)
-                    @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
+                    <span>Titulo: </span> @Html.TextBoxFor(m => m.tk.nombre, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.nombre ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Descripción: </span> @Html.TextBoxFor(m => m.tk.descripcion, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Destinatario: </span> @Html.TextBoxFor(m => m.asginadoa, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Prioridad: </span> @Html.TextBoxFor(m => m.prioridad, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Estado: </span> @Html.TextBoxFor(m => m.estado,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Categoria: </span> @Html.TextBoxFor(m => m.categoria,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
                     <br />
                     <!--AGREGAR CAMPOS RESTANTES-->
                 </div>
