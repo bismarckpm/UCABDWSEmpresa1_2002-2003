@@ -42,7 +42,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                throw ;
             }
         }
 
@@ -73,6 +73,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             try
             {
                 var cargo = await _context.Cargos.FindAsync(id);
+
                 if (cargo == null)
                 {
                     return new Cargo();
@@ -81,8 +82,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Error al Consultar por id: " + id, ex);
             }
         }
 
@@ -96,14 +97,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var cargoOld = await ObtenerCargoByIdDAO(id);
-                if (cargoOld.Value == null)
+                var cargoOld = await _context.Cargos.FindAsync(id);
+                if (cargoOld == null)
                 {
                     return new Cargo();
                 }
 
-                cargoOld.Value.nombre = cargo.nombre;
-                cargoOld.Value.tipoCargoId = cargo.tipoCargoId;
+                cargoOld.nombre = cargo.nombre;
+                cargoOld.tipoCargoId = cargo.tipoCargoId;
 
                 await _context.DbContext.SaveChangesAsync();
                 return cargoOld;
@@ -112,7 +113,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                throw;
             }
         }
 
@@ -125,13 +126,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var existe = await ObtenerCargoByIdDAO(id);
-                if (existe.Value?.id == 0)
+                var existe = await _context.Cargos.FindAsync(id);
+                if (existe == null)
                 {
                     return new NotFoundResult();
                 }
 
-                _context.Cargos.Remove(existe.Value!);
+                _context.Cargos.Remove(existe);
                 await _context.DbContext.SaveChangesAsync();
 
                 return new OkResult();
@@ -139,27 +140,29 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                throw ;
 
             }
         }
 
-        /// <summary>
-        /// Obtener Usuarios By CargoId   -- En elaboracion
-        /// </summary>
-        /// <param name="cargoid"></param>
-        /// <returns></returns>
-        public async Task<List<Usuario>> ObtenerUsuariosByCargoIdDAO(int cargoid)
-        {
-            try
-            {
-                return _context.Usuario.Where(p => p.cargo.id == cargoid).ToList();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
-            }
-        }
+        ///// <summary>
+        ///// Obtener Usuarios By CargoId   -- En elaboracion
+        ///// </summary>
+        ///// <param name="cargoid"></param>
+        ///// <returns></returns>
+        //public async Task<List<Usuario>> ObtenerUsuariosByCargoIdDAO(int cargoid)
+        //{
+        //    try
+        //    {
+        //        return _context.Usuario.Where(p => p.cargo.id == cargoid).ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+        //        throw ex.InnerException!;
+        //    }
+        //}
+
+       
     }
 }

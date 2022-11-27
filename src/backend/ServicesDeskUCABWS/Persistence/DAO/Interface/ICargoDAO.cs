@@ -17,6 +17,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 
         public Task<ActionResult> EliminarCargoDAO(int id);
 
-        public Task<List<Usuario>> ObtenerUsuariosByCargoIdDAO(int id);
+       // public Task<List<Usuario>> ObtenerUsuariosByCargoIdDAO(int id);
     }
 }
