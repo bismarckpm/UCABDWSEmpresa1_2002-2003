@@ -7,29 +7,36 @@ namespace ServicesDeskUCABWS.BussinessLogic.DTO
     {
         public int id { get; set; }
 
-        public string? Titulo { get; set; }
+        public string? operacion { get; set; }
 
+        public bool titulo { get; set; }
 
-        public string? Cuerpo { get; set; }
+        public bool fecha { get; set; }
 
+        public bool descripcion { get; set; }
 
-        public string? Tipo { get; set; }
+        public bool asignadoa { get; set; }
+
+        //Fk de la tabla Tickets
+        public int TicketId { get; set; }
 
     }
 
     public class PlantillaDTOCreate
     {
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        [StringLength(maximumLength: 128, ErrorMessage = "El campo {0} no debe de tener más de {1} carácteres")]
-        public string? Titulo { get; set; }
 
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        [StringLength(maximumLength: 255, ErrorMessage = "El campo {0} no debe de tener más de {1} carácteres")]
-        public string? Cuerpo { get; set; }
+        public string? operacion { get; set; }
 
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        [StringLength(maximumLength: 128, ErrorMessage = "El campo {0} no debe de tener más de {1} carácteres")]
-        public string? Tipo { get; set; }
+        public bool titulo { get; set; }
+
+        public bool fecha { get; set; }
+
+        public bool descripcion { get; set; }
+
+        public bool asignadoa { get; set; }
+
+        //Fk de la tabla Tickets
+        public int TicketId { get; set; }
 
     }
 

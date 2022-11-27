@@ -85,9 +85,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     return new NotFoundResult();
                 }
 
+                plantillaOld.operacion = plantilla.operacion;
                 plantillaOld.titulo = plantilla.titulo;
-                plantillaOld.cuerpo = plantilla.cuerpo;
-                plantillaOld.tipo = plantilla.tipo;
+                plantillaOld.fecha = plantilla.fecha;
+                plantillaOld.descripcion = plantilla.descripcion;
+                plantillaOld.asignadoa = plantilla.asignadoa;
+                plantillaOld.TicketId = plantilla.TicketId;
 
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla actualizada exitosamente");

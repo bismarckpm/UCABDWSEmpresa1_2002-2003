@@ -225,25 +225,25 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 }
             };
             //Plantillas
-            var requestsPlantillas = new List<Plantilla>
-            {
-                new Plantilla
-                {
-                    id = 1,
-                    titulo = "Plantilla1",
-                    cuerpo = "Cuerpo1",
-                    tipo = "Tipo1",
-                    notifications = new List<Notification>()
-                },
-                new Plantilla
-                {
-                    id = 2,
-                    titulo = "Plantilla2",
-                    cuerpo = "Cuerpo2",
-                    tipo = "Tipo2",
-                    notifications = new List<Notification>()
-                }
-            };
+            // var requestsPlantillas = new List<Plantilla>
+            // {
+            //     new Plantilla
+            //     {
+            //         id = 1,
+            //         titulo = "Plantilla1",
+            //         cuerpo = "Cuerpo1",
+            //         tipo = "Tipo1",
+            //         notifications = new List<Notification>()
+            //     },
+            //     new Plantilla
+            //     {
+            //         id = 2,
+            //         titulo = "Plantilla2",
+            //         cuerpo = "Cuerpo2",
+            //         tipo = "Tipo2",
+            //         notifications = new List<Notification>()
+            //     }
+            // };
             //ModeloParalelo
             var requestsModeloParalelo = new List<ModeloParalelo>
             {
@@ -369,10 +369,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(c => c.Etiquetas).Returns(requestsEtiquetas.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEtiquetas.Where(x => x.id == i).Single());
             //Plantillas DataSeed
-            _mockContext.Setup(t => t.Plantillas).Returns(mockSetPlantillas.Object);
-            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
+            // _mockContext.Setup(t => t.Plantillas).Returns(mockSetPlantillas.Object);
+            // _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            // _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
+            // _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
             //ModeloParalelo DataSeed
             _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -388,7 +388,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
             //ModeloJerarquico DataSeed
-            _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);            
+            _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
