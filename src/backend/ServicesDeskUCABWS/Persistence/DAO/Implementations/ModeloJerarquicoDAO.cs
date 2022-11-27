@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System;
+using System.Reflection;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
@@ -14,15 +17,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
     public class ModeloJerarquicoDAO : IModeloJerarquicoDAO
     {
         private readonly IMigrationDbContext _context;
+        private readonly IMapper mapper;
 
-        public ModeloJerarquicoDAO( IMigrationDbContext context)
+        public ModeloJerarquicoDAO( IMigrationDbContext context, IMapper map)
         {
-            _context = context;
+            this._context = context;
+            this.mapper = map;
         }
 
 
 
-        public async Task<ActionResult> AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
+        public async Task<ActionResult<ModeloJerarquicoDTO>> AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
         {
             try
             {
@@ -30,7 +35,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == modeloJerarquico.CategoriaId);
                 if (categoria == null)
                 {
-                    return new NotFoundResult();
+                    throw new Exception("No existe el registro de la categoria para el modelo paralelo");
+
                 }
                 modeloJerarquico.categoria = categoria;
                 // Validar orden
@@ -61,7 +67,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 // Guardar modelo
                 _context.ModeloJerarquicos.Add(modeloJerarquico);
                 await _context.DbContext.SaveChangesAsync();
-                return new OkResult();
+                return mapper.Map<ModeloJerarquicoDTO>(modeloJerarquico);
             }
             catch (DbUpdateException ex)
             {
@@ -79,7 +85,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException!.Message);
                 throw new Exception("Error al consultar los Modelos Jerarquicos");
             }
         }
@@ -96,19 +101,19 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 
                 if (ModeloJerarquico == null)
                 {
-                    return new ModeloJerarquico();
+                    throw new Exception("Error al consultar el modelo jerarquico");
+
                 }
                 //ModeloJerarquico.orden = listCargos;
                 return ModeloJerarquico;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException!.Message);
                 throw new Exception("Error al obtener el Modelo Jerarquico");
             }
         }
 
-        public async Task<ActionResult<ModeloJerarquico>> ActualizarModeloJerarquicoDAO(ModeloJerarquico ModeloJerarquico, int id)
+        public async Task<ActionResult<ModeloJerarquico>> ActualizarModeloJerarquicoDAO(ModeloJerarquicoCreateDTO modeloJerarquico, int id)
         {
 
             try
@@ -116,59 +121,64 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var ModeloJerarquicoDB = await _context.ModeloJerarquicos.FindAsync(id);
                 if (ModeloJerarquicoDB == null)
                 {
-                    return new NotFoundResult();
+                    throw new NullReferenceException("No existe el modelo jerarquico a actualizar");
                 }
                 // Validar categoria 
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == ModeloJerarquico.CategoriaId);
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == modeloJerarquico.CategoriaId);
                 if (categoria == null)
                 {
-                    return new NotFoundResult();
+                    throw new NullReferenceException("No existe en el modelo jerarquico la categoria a actualizar");
                 }
                 // Validar orden
-                if (ModeloJerarquico.orden == null)
+                if (modeloJerarquico.orden == null)
                 {
-                    return new BadRequestResult();
+                    throw new NullReferenceException("No existe en el modelo jerarquico la lista de orden a actualizar");
+
                 }
-                foreach (var cargo in ModeloJerarquico.orden)
+                foreach (var cargo in modeloJerarquico.orden)
                 {
                     var cargoDB = await _context.TipoCargos.FirstOrDefaultAsync(c => c.id == cargo.id);
                     if (cargoDB == null)
                     {
-                        return new NotFoundResult();
+                        throw new NullReferenceException("No existe en el modelo jerarquico el cargo a actualizar");
+
                     }
 
                 }
                 // Actualizar modelo
-                ModeloJerarquicoDB.CategoriaId = ModeloJerarquico.CategoriaId;
-                ModeloJerarquicoDB.orden = ModeloJerarquico.orden;
+                ModeloJerarquicoDB.CategoriaId = modeloJerarquico.CategoriaId;
+                ModeloJerarquicoDB.orden = modeloJerarquico.orden;
                 await _context.DbContext.SaveChangesAsync();
                 return ModeloJerarquicoDB;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException!.Message);
-                throw new Exception("Error al actualizar el Modelo Jerarquico");
+                throw new Exception("Error al actualizar el Modelo Jerarquico", ex);
             }
-
         }
 
+        /*
+        System.InvalidOperationException: The property 'ModeloJerarquico.Id' has a temporary value while attempting to 
+        change the entity's state to 'Deleted'. Either set a permanent value explicitly, or ensure that the database is configured to generate values for this property.
+        */
         public async Task<ActionResult> EliminarModeloJerarquicoDAO(int id)
         {
             try
             {
-                var existe = await ObtenerModeloJerarquicoDAO(id);
-
-                _context.ModeloJerarquicos.Remove(existe.Value!);
+                var existe = await _context.ModeloJerarquicos.FindAsync(id);
+                if(existe == null)
+                {
+                    return new NotFoundResult();
+                }
+                _context.ModeloJerarquicos.Remove(existe);
                 await _context.DbContext.SaveChangesAsync();
 
                 return new OkResult();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException!.Message);
-                throw new Exception("Error al eliminar el Modelo Jerarquico");
+                throw new Exception("Error al eliminar el Modelo Jerarquico", ex);
             }
         }
-
     }
 }

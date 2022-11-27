@@ -8,10 +8,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
     {
         public Task<List<ModeloJerarquico>> ConsultarModeloJerarquicosDAO();
 
-        public Task<ActionResult> AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
+        public Task<ActionResult<ModeloJerarquicoDTO>> AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
 
         public Task<ActionResult<ModeloJerarquico>> ObtenerModeloJerarquicoDAO(int id);
-        public Task<ActionResult<ModeloJerarquico>> ActualizarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico, int id);
+        public Task<ActionResult<ModeloJerarquico>> ActualizarModeloJerarquicoDAO(ModeloJerarquicoCreateDTO modeloJerarquico, int id);
 
         public Task<ActionResult> EliminarModeloJerarquicoDAO(int id);
     }
