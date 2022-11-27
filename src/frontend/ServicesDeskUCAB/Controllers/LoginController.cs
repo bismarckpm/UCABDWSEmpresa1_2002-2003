@@ -25,9 +25,9 @@ namespace ServicesDeskUCAB.Controllers
                     {
                          string response2 = await response.Content.ReadAsStringAsync();
                          user = JsonConvert.DeserializeObject<LoginDTO>(response2);
-                        HttpContext.Session.SetInt32("userid",user.id);
+                        HttpContext.Session.SetString("userid",user.id.ToString());
                         HttpContext.Session.SetString("email", user.email);
-                      return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Home");
                     }
                     
                     string apiResponse = await response.Content.ReadAsStringAsync();

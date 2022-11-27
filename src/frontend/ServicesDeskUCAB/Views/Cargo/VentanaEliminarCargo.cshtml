@@ -15,7 +15,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Eliminar Cargo</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="location.href='@Url.Action("GestionCargos", "Cargo")'>
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -23,7 +23,7 @@
                 ¿Está seguro de que desea eliminar el Cargo seleccionado?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionCargos", "Cargo")'>Cancelar</button>
                 <button type="button" class="btn btn-primary"
                         onclick="location.href='@Url.Action("EliminarCargo", "Cargo",new { id = Model })'">
                     Aceptar

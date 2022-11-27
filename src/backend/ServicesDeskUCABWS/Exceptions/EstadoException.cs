@@ -10,10 +10,6 @@ namespace ServicesDeskUCABWS.Exceptions
             logger.LogError(message, innerException);
         }
 
-        public EstadoException(string message) : base(message)
-        {
-            Console.WriteLine(message);
-        }
 
     }
 }

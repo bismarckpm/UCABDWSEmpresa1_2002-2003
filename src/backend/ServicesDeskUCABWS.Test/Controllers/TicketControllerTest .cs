@@ -182,7 +182,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
                 var result = _controller.UpdateTickect(3, It.IsAny<int>(), It.IsAny<int>(), tk, It.IsAny<int>(), It.IsAny<int>());
 
-                Assert.IsType<NotFoundObjectResult>(result);
+                Assert.IsType<NotFoundResult>(result);
                 return Task.CompletedTask;
             }
 
