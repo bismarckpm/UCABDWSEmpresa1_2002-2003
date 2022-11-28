@@ -87,7 +87,7 @@ namespace ServicesDeskUCAB.Controllers
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
  
-                using (var response = await httpClient.PostAsync("https://localhost:7198/Ticket/CreateTicket?creadopor="+1+"&asignadaa="+asignadoa+"&prioridad="+prioridad+"&estatud="+estatus+"&categoriaid="+categoria, content))
+                using (var response = await httpClient.PostAsync("https://localhost:7198/Tickets/CreateTicket?creadopor="+1+"&asignadaa="+asignadoa+"&prioridad="+prioridad+"&estatud="+estatus+"&categoriaid="+categoria, content))
                 {
                     if (response.IsSuccessStatusCode)
                     {
