@@ -10,7 +10,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public string? tipo { get; set; }
 
 
-        public List<Notification>? notifications { get; set; }
+        //public List<Notification>? notifications { get; set; }
 
     }
 }
