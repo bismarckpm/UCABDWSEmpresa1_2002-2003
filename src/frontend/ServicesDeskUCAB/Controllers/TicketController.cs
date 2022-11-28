@@ -55,8 +55,7 @@ namespace ServicesDeskUCAB.Controllers
             try
             {               
                 infoTK.tk.fecha= DateTime.Now;
-                //int userId = Int32.Parse(HttpContext.Session.GetString("userid"));
-                //var userId = HttpContext.Session.GetString("userid");
+                //ASIGNAR AL DE ABAJO EL ID DE USUARIO
                 infoTK.creadopor = 1;
                 HttpClient client = new HttpClient();
                 var _client = await client.PostAsJsonAsync<TicketDTO>("https://localhost:7198/Ticket/CreateTicket?creadopor="+infoTK.creadopor+"&asignadaa="+infoTK.asginadoa+"&prioridad="+infoTK.prioridad+"&estatud="+infoTK.estado+"&categoriaid="+infoTK.categoria, infoTK.tk);
