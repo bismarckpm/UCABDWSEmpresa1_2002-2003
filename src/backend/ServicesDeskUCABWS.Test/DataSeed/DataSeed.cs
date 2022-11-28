@@ -375,7 +375,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     paraleloid = 1,
                     usuario = It.IsAny<Usuario>(),
                     secuencia = 1,
-                    status = Status.Pendiente
+                    status = Status.Pendiente,
+                    modeloJerarquico = new ModeloJerarquico(),
+                    modeloParalelo = new ModeloParalelo(),
+                    ticket = new Ticket()
                 },
                 new FlujoAprobacion
                 {
@@ -385,7 +388,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     paraleloid = 2,
                     usuario = It.IsAny<Usuario>(),
                     secuencia = 1,
-                    status = Status.Aprobado
+                    status = Status.Aprobado,
+                    modeloJerarquico = new ModeloJerarquico(),
+                    modeloParalelo = new ModeloParalelo(),
+                    ticket = new Ticket()
                 }
             };
 
