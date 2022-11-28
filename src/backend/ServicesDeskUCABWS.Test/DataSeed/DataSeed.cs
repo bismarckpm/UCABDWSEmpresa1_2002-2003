@@ -50,15 +50,21 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Categoria
                 {
                     id = 1,
-                    nombre = "Prueba"
+                    nombre = "Prueba",
+                    modelosjerruicos = new List<ModeloJerarquico>(),
+                    ModeloParalelos = new List<ModeloParalelo>()
                 }, new Categoria
                 {
                     id = 2,
-                    nombre = "pruebacateg"
+                    nombre = "pruebacateg",
+                    modelosjerruicos = new List<ModeloJerarquico>(),
+                    ModeloParalelos = new List<ModeloParalelo>()
                 }, new Categoria
                 {
                     id = 3,
-                    nombre = "probado"
+                    nombre = "probado",
+                    modelosjerruicos = new List<ModeloJerarquico>(),
+                    ModeloParalelos = new List<ModeloParalelo>()
                 }
             };
             //Prioridad
@@ -345,7 +351,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Nombre = "paralelo1",
                     orden = new List<TipoCargo>(),
                     CategoriaId = 1,
-                    categoria= new Categoria()
+                    categoria= new Categoria(),
+                    flujoAprobacion = new FlujoAprobacion()
                 },
                 new ModeloJerarquico
                 {
@@ -353,7 +360,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Nombre = "paralelo1",
                     orden = new List<TipoCargo>(),
                     CategoriaId = 2,
-                    categoria= new Categoria()
+                    categoria= new Categoria(),
+                    flujoAprobacion = new FlujoAprobacion()
                 }
             };
             //TipoCargo DataSeed
