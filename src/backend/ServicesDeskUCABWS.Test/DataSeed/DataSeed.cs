@@ -22,7 +22,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<ModeloParalelo>> mockSetModeloParalelo = new Mock<DbSet<ModeloParalelo>>();
         public static Mock<DbSet<Ticket>> mockSetTicket = new Mock<DbSet<Ticket>>();
         public static Mock<DbSet<ModeloJerarquico>> mockSetModeloJerarquico = new Mock<DbSet<ModeloJerarquico>>();
-
+        public static Mock<DbSet<FlujoAprobacion>> mockSetFlujoAprobacion = new Mock<DbSet<FlujoAprobacion>>();
         public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
@@ -364,6 +364,37 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     flujoAprobacion = new FlujoAprobacion()
                 }
             };
+            //ModeloJerarquico
+            var requestsFlujoAprobacion = new List<FlujoAprobacion>
+            {
+                new FlujoAprobacion
+                {
+                    id = 1,
+                    ticketid = 1,
+                    modelojerarquicoid = 1,
+                    paraleloid = 1,
+                    usuario = It.IsAny<Usuario>(),
+                    secuencia = 1,
+                    status = Status.Pendiente,
+                    modeloJerarquico = new ModeloJerarquico(),
+                    modeloParalelo = new ModeloParalelo(),
+                    ticket = new Ticket()
+                },
+                new FlujoAprobacion
+                {
+                    id = 2,
+                    ticketid = 2,
+                    modelojerarquicoid = 2,
+                    paraleloid = 2,
+                    usuario = It.IsAny<Usuario>(),
+                    secuencia = 1,
+                    status = Status.Aprobado,
+                    modeloJerarquico = new ModeloJerarquico(),
+                    modeloParalelo = new ModeloParalelo(),
+                    ticket = new Ticket()
+                }
+            };
+
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -424,6 +455,12 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
+            
+            _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.FlujoAprobaciones).Returns(requestsFlujoAprobacion.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.FlujoAprobaciones.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsFlujoAprobacion.Where(x => x.id == i).Single());
+
         }
     }
 }
