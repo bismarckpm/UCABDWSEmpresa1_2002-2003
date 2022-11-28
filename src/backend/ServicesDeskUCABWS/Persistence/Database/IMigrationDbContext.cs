@@ -14,10 +14,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        DbSet<Notification> Notifications
-        {
-            get; set;
-        }
         DbSet<Prioridad> Prioridades
         {
             get; set;
@@ -68,6 +64,10 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        DbSet<Grupo> Grupo
+        {
+            get;set;
+        }
 
         DbSet<ModeloJerarquico> ModeloJerarquicos
         {
@@ -78,5 +78,10 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        DbSet<FlujoAprobacion> FlujoAprobaciones
+        {
+            get; set;
+        }
+
     }
 }

@@ -21,10 +21,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        public virtual DbSet<Notification> Notifications
-        {
-            get; set;
-        }
         public virtual DbSet<Prioridad> Prioridades
         {
             get; set;
@@ -83,7 +79,15 @@ namespace ServicesDeskUCABWS.Persistence.Database
             get; set;
         }
 
+        public virtual DbSet<Grupo> Grupo
+        {
+            get;set;
+        } 
         public virtual DbSet<ModeloParalelo> ModeloParalelos
+        {
+            get; set;
+        }
+        public virtual DbSet<FlujoAprobacion> FlujoAprobaciones
         {
             get; set;
         }

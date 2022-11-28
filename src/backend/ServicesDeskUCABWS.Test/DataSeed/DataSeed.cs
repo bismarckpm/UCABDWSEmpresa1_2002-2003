@@ -14,6 +14,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Categoria>> mockSetCategorias = new Mock<DbSet<Categoria>>();
         public static Mock<DbSet<Prioridad>> mockSetPrioridades = new Mock<DbSet<Prioridad>>();
         public static Mock<DbSet<Departamento>> mockSetDepartamentos = new Mock<DbSet<Departamento>>();
+        public static Mock<DbSet<Grupo>>mockSetGrupo = new Mock<DbSet<Grupo>>();
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
@@ -21,7 +22,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<ModeloParalelo>> mockSetModeloParalelo = new Mock<DbSet<ModeloParalelo>>();
         public static Mock<DbSet<Ticket>> mockSetTicket = new Mock<DbSet<Ticket>>();
         public static Mock<DbSet<ModeloJerarquico>> mockSetModeloJerarquico = new Mock<DbSet<ModeloJerarquico>>();
-
+        public static Mock<DbSet<FlujoAprobacion>> mockSetFlujoAprobacion = new Mock<DbSet<FlujoAprobacion>>();
         public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
@@ -49,15 +50,21 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Categoria
                 {
                     id = 1,
-                    nombre = "Prueba"
+                    nombre = "Prueba",
+                    modelosjerruicos = new List<ModeloJerarquico>(),
+                    ModeloParalelos = new List<ModeloParalelo>()
                 }, new Categoria
                 {
                     id = 2,
-                    nombre = "pruebacateg"
+                    nombre = "pruebacateg",
+                    modelosjerruicos = new List<ModeloJerarquico>(),
+                    ModeloParalelos = new List<ModeloParalelo>()
                 }, new Categoria
                 {
                     id = 3,
-                    nombre = "probado"
+                    nombre = "probado",
+                    modelosjerruicos = new List<ModeloJerarquico>(),
+                    ModeloParalelos = new List<ModeloParalelo>()
                 }
             };
             //Prioridad
@@ -84,20 +91,39 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 {
                     id = 1,
                     nombre = "departamento1",
-                    grupos = new List<Grupo>(),
                     Usuarios = new List<Usuario>()
                 }, new Departamento
                 {
                     id = 2,
                     nombre = "departamento2",
-                    grupos = new List<Grupo>(),
                     Usuarios = new List<Usuario>()
                 }, new Departamento
                 {
                     id = 3,
                     nombre = "departamento3",
-                    grupos = new List<Grupo>(),
                     Usuarios = new List<Usuario>()
+                }
+            };
+            //Grupo
+            var requestsGrupo = new List<Grupo>
+            {
+                new Grupo
+                {
+                    id=1,
+                    nombre = "Grupo1",
+                    departamentoid =1,
+                },
+                new Grupo
+                {
+                    id=2,
+                    nombre = "Grupo2",
+                    departamentoid =2,
+                },
+                new Grupo
+                {
+                    id=3,
+                    nombre = "Grupo3",
+                    departamentoid =3,
                 }
             };
             //Usuario
@@ -233,7 +259,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     titulo = "Plantilla1",
                     cuerpo = "Cuerpo1",
                     tipo = "Tipo1",
-                    notifications = new List<Notification>()
+                    //notifications = new List<Notification>()
                 },
                 new Plantilla
                 {
@@ -241,7 +267,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     titulo = "Plantilla2",
                     cuerpo = "Cuerpo2",
                     tipo = "Tipo2",
-                    notifications = new List<Notification>()
+                    //notifications = new List<Notification>()
                 }
             };
             //ModeloParalelo
@@ -273,7 +299,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre="Estado1",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
-                    notification = new Notification(),
+                    //notification = new Notification(),
                     tickets = new List<Ticket>()
                 },
                 new Estado
@@ -282,7 +308,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre="Estado2",
                     EtiquetaId=2,
                     etiqueta= new Etiqueta(),
-                    notification = new Notification(),
+                    //notification = new Notification(),
                     tickets = new List<Ticket>()
                 }
             };
@@ -325,7 +351,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Nombre = "paralelo1",
                     orden = new List<TipoCargo>(),
                     CategoriaId = 1,
-                    categoria= new Categoria()
+                    categoria= new Categoria(),
+                    flujoAprobacion = new FlujoAprobacion()
                 },
                 new ModeloJerarquico
                 {
@@ -333,9 +360,35 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Nombre = "paralelo1",
                     orden = new List<TipoCargo>(),
                     CategoriaId = 2,
-                    categoria= new Categoria()
+                    categoria= new Categoria(),
+                    flujoAprobacion = new FlujoAprobacion()
                 }
             };
+            //ModeloJerarquico
+            var requestsFlujoAprobacion = new List<FlujoAprobacion>
+            {
+                new FlujoAprobacion
+                {
+                    id = 1,
+                    ticketid = 1,
+                    modelojerarquicoid = 1,
+                    paraleloid = 1,
+                    usuario = It.IsAny<Usuario>(),
+                    secuencia = 1,
+                    status = Status.Pendiente
+                },
+                new FlujoAprobacion
+                {
+                    id = 2,
+                    ticketid = 2,
+                    modelojerarquicoid = 2,
+                    paraleloid = 2,
+                    usuario = It.IsAny<Usuario>(),
+                    secuencia = 1,
+                    status = Status.Aprobado
+                }
+            };
+
             //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -352,6 +405,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
+            // Grupo Dataseed
+            _mockContext.Setup(t => t.Grupo).Returns(mockSetGrupo.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
             //Usuario DataSeed
             _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -392,6 +449,12 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
+            
+            _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.FlujoAprobaciones).Returns(requestsFlujoAprobacion.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.FlujoAprobaciones.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsFlujoAprobacion.Where(x => x.id == i).Single());
+
         }
     }
 }

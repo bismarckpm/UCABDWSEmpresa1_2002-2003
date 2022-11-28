@@ -1,4 +1,4 @@
-﻿@model List<ServicesDeskUCAB.DTO.TicketDTO>
+﻿@model List<ServicesDeskUCAB.DTO.TicketCDTO>
 
 @section scripts{
 
@@ -19,24 +19,6 @@
         })
     </script>
 
-
-    <!-- JS PARA TRAER LA VENTANA EMERGENTE DE EDICION DE PRIORIDAD -->
-    <script>
-        $(function () {
-            var PlaceHolderElement = $('#PlaceHolderEditar');
-            $("#btnEditar, .btn-primary").click(function (event) {
-                var id = $(this).closest('tr').find('.id').text();
-                var url = $(this).data('url').replace("idTicket", id);
-                $.get(url).done(function (data) {
-                    PlaceHolderElement.html(data);
-                    PlaceHolderElement.find('header').empty();
-                    PlaceHolderElement.find('footer').empty();
-                    PlaceHolderElement.find('.modal').modal('show');
-                })
-            })
-
-        })
-    </script>
 }
 
 @{
@@ -65,6 +47,27 @@
         <th>
             Fecha
         </th>
+        <th>
+            Descripción
+        </th>
+        <th>
+            Origen
+        </th>
+        <th>
+            Destinatario
+        </th>
+        <th>
+            Prioridad
+        </th>
+        <th>
+            Estado
+        </th>
+        <th>
+            Categoria
+        </th>
+        <th>
+            Acciones
+        </th>
     </tr>
 
     @foreach (var item in Model)
@@ -80,9 +83,25 @@
                 @Html.DisplayFor(i => item.fecha)
             </td>
             <td>
-                <button id=btnEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarTicket","Ticket",new { id = "idTicket" })">
-                    Editar
-                </button>
+                @Html.DisplayFor(i => item.descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.creadopor)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.asginadoa)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.prioridad)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.estado)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.categoria)
+            </td>
+            <td>
+                <!--acciones-->
             </td>
         </tr>
     }
