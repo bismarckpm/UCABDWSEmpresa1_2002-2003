@@ -1,0 +1,29 @@
+@*
+*@
+@{
+
+}
+<div class="main">
+         <div class="col-md-12 col-sm-12">
+            <div class="contenedorlogin">
+               <form asp-action="VerificarUsuario"  method="post">
+                  <div class="form-group">
+                     <label>Introduzca el token enviado a su correo para validar usuario</label>
+                    <input type="text" class="form-control" name="token" placeholder="Token"required>
+                  </div>
+                  
+                  <div class="botones">
+                    <button type="submit" class="btn btn-success">Validar usuario</button>
+             
+                  </div>
+                  @if (@ViewBag.Result != null)
+{
+   <div class="alert alert-danger" role="alert">
+ @ViewBag.Result
+</div>
+
+}
+               </form>
+            </div>
+         </div>
+      </div>

@@ -1,0 +1,129 @@
+@model List<ServicesDeskUCAB.DTO.PlantillaDTO>
+
+
+@section scripts{
+
+<!-- JS PARA TRAER LA VENTANA EMERGENTE DEL BOTON "CREAR Plantilla" -->
+<script>
+    $(function () {
+        var PlaceHolderElement = $('#PlaceHolderPlantilla');
+        $('#btnAgregar').click(function (event) {
+            var url = $(this).data('url');
+            $.get(url).done(function (data) {
+                PlaceHolderElement.html(data);
+                PlaceHolderElement.find('header').empty();
+                PlaceHolderElement.find('footer').empty();
+                PlaceHolderElement.find('.modal').modal('show');
+            })
+        })
+
+    })
+</script>
+
+<!-- JS PARA TRAER LA VENTANA EMERGENTE DE CONFIRMACION DE ELIMINACION -->
+<script>
+    $(function () {
+        var PlaceHolderElement = $('#PlaceHolderEliminar');
+        $("#btnEliminar, .btn-danger").click(function (event) {
+            var id = $(this).closest('tr').find('.id').text();
+            var url = $(this).data('url').replace("idPlantilla", id);
+            $.get(url).done(function (data) {
+                PlaceHolderElement.html(data);
+                PlaceHolderElement.find('header').empty();
+                PlaceHolderElement.find('footer').empty();
+                PlaceHolderElement.find('.modal').modal('show');
+            })
+        })
+
+    })
+</script>
+
+
+<!-- JS PARA TRAER LA VENTANA EMERGENTE DE EDICION DE Plantilla -->
+<script>
+    $(function () {
+        var PlaceHolderElement = $('#PlaceHolderEditar');
+        $("#btnEditar, .btn-primary").click(function (event) {
+            var id = $(this).closest('tr').find('.id').text();
+            var url = $(this).data('url').replace("idPlantilla", id);
+            $.get(url).done(function (data) {
+                PlaceHolderElement.html(data);
+                PlaceHolderElement.find('header').empty();
+                PlaceHolderElement.find('footer').empty();
+                PlaceHolderElement.find('.modal').modal('show');
+            })
+        })
+
+    })
+</script>
+}
+
+
+@{
+    ViewData["Title"] = "Gestion Plantillas";
+}
+
+<!-- DIVS CONTENEDORES DE LAS DIFERENTES VENTANAS EMERGENTES -->
+<div id="PlaceHolderPlantilla"></div>
+<div id="PlaceHolderEliminar"></div>
+<div id="PlaceHolderEditar"></div>
+
+<!-- BOTON PARA ACCIONAR LA VENTANA EMERGENTE -->
+<button id=btnAgregar type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#popUpAgregar"
+    data-url="@Url.Action("VentanaAgregarPlantilla")">
+    Crear Plantilla
+</button>
+<br />
+<br />
+
+<!-- INICIO DE TABLA DE DATOS -->
+<table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Titulo
+        </th>
+        <th>
+            Cuerpo
+        </th>
+        <th>
+            Tipo
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="id">
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.cuerpo)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.tipo)
+            </td>
+            <td>
+                <button id=btnEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal"
+                data-target="#popUpEditar"
+                data-url="@Url.Action("VentanaEditarPlantilla","Plantilla",new { id = "idPlantilla" })">
+                    Editar
+                </button>
+                <button id=btnEliminar type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal"
+                data-target="#popUpEliminar"
+                data-url="@Url.Action("VentanaEliminarPlantilla","Plantilla",new { id = "idPlantilla" })">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+    }
+
+</table>
