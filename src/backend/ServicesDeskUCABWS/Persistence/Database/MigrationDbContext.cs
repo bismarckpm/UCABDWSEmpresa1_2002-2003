@@ -87,6 +87,10 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        public virtual DbSet<FlujoAprobacion> FlujoAprobaciones
+        {
+            get; set;
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     modelBuilder.Entity<Ticket>()

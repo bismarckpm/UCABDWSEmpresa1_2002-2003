@@ -40,7 +40,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("tipoCargoId");
 
-                    b.ToTable("Cargos", (string)null);
+                    b.ToTable("Cargos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Categoria", b =>
@@ -56,7 +56,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Categorias", (string)null);
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Departamento", b =>
@@ -72,7 +72,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Departamentos", (string)null);
+                    b.ToTable("Departamentos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
@@ -89,16 +89,11 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("notificationid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("EtiquetaId");
 
-                    b.HasIndex("notificationid");
-
-                    b.ToTable("Estados", (string)null);
+                    b.ToTable("Estados");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Etiqueta", b =>
@@ -117,7 +112,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Etiquetas", (string)null);
+                    b.ToTable("Etiquetas");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.FlujoAprobacion", b =>
@@ -161,7 +156,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("usuarioid");
 
-                    b.ToTable("FlujoAprobacion", (string)null);
+                    b.ToTable("FlujoAprobaciones");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
@@ -172,7 +167,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("Departamentoid")
+                    b.Property<int>("departamentoid")
                         .HasColumnType("int");
 
                     b.Property<string>("nombre")
@@ -180,9 +175,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Departamentoid");
-
-                    b.ToTable("Grupo", (string)null);
+                    b.ToTable("Grupo");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
@@ -203,7 +196,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("CategoriaId");
 
-                    b.ToTable("ModeloJerarquicos", (string)null);
+                    b.ToTable("ModeloJerarquicos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloParalelo", b =>
@@ -227,39 +220,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("categoriaId");
 
-                    b.ToTable("ModeloParalelos", (string)null);
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int?>("Plantillaid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("descripcion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("fecha")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("titulo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("usuarioid")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("Plantillaid");
-
-                    b.HasIndex("usuarioid");
-
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("ModeloParalelos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
@@ -281,7 +242,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Plantillas", (string)null);
+                    b.ToTable("Plantillas");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Prioridad", b =>
@@ -297,7 +258,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Prioridades", (string)null);
+                    b.ToTable("Prioridades");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
@@ -345,24 +306,8 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("prioridadid");
 
-                    b.ToTable("Tickets", (string)null);
+                    b.ToTable("Tickets");
                 });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
-            {
-                b.Property<int>("id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                b.Property<string>("nombre")
-                    .HasColumnType("nvarchar(max)");
-
-                b.HasKey("id");
-
-                b.ToTable("grupos");
-            });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", b =>
                 {
@@ -382,7 +327,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("ModeloJerarquicoId");
 
-                    b.ToTable("TipoCargos", (string)null);
+                    b.ToTable("TipoCargos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
@@ -399,9 +344,6 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Grupoid")
-                        .HasColumnType("int");
 
                     b.Property<string>("PasswordResetToken")
                         .HasColumnType("nvarchar(max)");
@@ -433,11 +375,9 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("Departamentoid");
 
-                    b.HasIndex("Grupoid");
-
                     b.HasIndex("cargoid");
 
-                    b.ToTable("Usuario", (string)null);
+                    b.ToTable("Usuario");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Usuario");
                 });
@@ -482,13 +422,7 @@ namespace ServicesDeskUCABWS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Notification", "notification")
-                        .WithMany()
-                        .HasForeignKey("notificationid");
-
                     b.Navigation("etiqueta");
-
-                    b.Navigation("notification");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.FlujoAprobacion", b =>
@@ -522,13 +456,6 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Navigation("usuario");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Departamento", null)
-                        .WithMany("grupos")
-                        .HasForeignKey("Departamentoid");
-                });
-
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
                 {
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Categoria", "categoria")
@@ -549,19 +476,6 @@ namespace ServicesDeskUCABWS.Migrations
                         .IsRequired();
 
                     b.Navigation("categoria");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Plantilla", null)
-                        .WithMany("notifications")
-                        .HasForeignKey("Plantillaid");
-
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "usuario")
-                        .WithMany()
-                        .HasForeignKey("usuarioid");
-
-                    b.Navigation("usuario");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
@@ -610,10 +524,6 @@ namespace ServicesDeskUCABWS.Migrations
                         .WithMany("Usuarios")
                         .HasForeignKey("Departamentoid");
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Grupo", null)
-                        .WithMany("usuarios")
-                        .HasForeignKey("Grupoid");
-
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Cargo", "cargo")
                         .WithMany("Usuarios")
                         .HasForeignKey("cargoid");
@@ -638,8 +548,6 @@ namespace ServicesDeskUCABWS.Migrations
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Departamento", b =>
                 {
                     b.Navigation("Usuarios");
-
-                    b.Navigation("grupos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
@@ -652,21 +560,11 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Navigation("estados");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
-                {
-                    b.Navigation("usuarios");
-                });
-
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
                 {
                     b.Navigation("flujoAprobacion");
 
                     b.Navigation("orden");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
-                {
-                    b.Navigation("notifications");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
