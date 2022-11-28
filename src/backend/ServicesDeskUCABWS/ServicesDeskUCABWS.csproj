@@ -1,8 +1,47 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="BussinessLogic\DTO\NotificacionDTO.cs" />
+    <Compile Remove="BussinessLogic\DTO\UsuarioRegistroDto.cs" />
+    <Compile Remove="BussinessLogic\Mapper\NotificacionMapper.cs" />
+    <Compile Remove="Controllers\NotificacionController.cs" />
+    <Compile Remove="Controllers\RegisroController.cs" />
+    <Compile Remove="Controllers\RegistroController.cs" />
+    <Compile Remove="Migrations\20221101023721_InitDb.cs" />
+    <Compile Remove="Migrations\20221101023721_InitDb.Designer.cs" />
+    <Compile Remove="Persistence\DAO\Implementations\NotificacionDAO.cs" />
+    <Compile Remove="Persistence\DAO\Interface\INotificacionDAO.cs" />
+    <Compile Remove="Persistence\Entity\Notification.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="MailKit" Version="3.4.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlserver" Version="6.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://citation-file-format.github.io/1.2.0/schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

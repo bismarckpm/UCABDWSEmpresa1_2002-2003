@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ServicesDeskUCAB</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ServicesDeskUCAB.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <header>
+        @if (Context.Session.GetString("email") != null) {
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">ServicesDeskUCAB</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+
+
+
+                </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="GestionTickets">Tickets</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" asp-area="" asp-controller="" asp-action="">Configuracion de Tickets</a>
+                            <div class="dropdown-menu">
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Prioridad" asp-action="GestionPrioridades">Prioridades</a>
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Categoria" asp-action="GestionCategorias">Categorias</a>
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Estado" asp-action="GestionEstados">Estados</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Configuracion de Empleados</a>
+                            <div class="dropdown-menu">
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Cargo" asp-action="GestionCargos">Cargos</a>
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="TipoCargo" asp-action="GestionTipoCargo">Tipo de Cargo</a>
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Departamento" asp-action="GestionDepartamentos">Departamentos</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Configuracion de Notificaciones</a>
+                            <div class="dropdown-menu">
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Etiqueta" asp-action="GestionEtiquetas">Etiquetas</a>
+                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Plantilla" asp-action="GestionPlantillas">Plantillas</a>
+                            </div>
+                        </li>
+
+                         <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Login"
+                                asp-action="Cerrar">Cerrar sesion</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        }
+       
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - ServicesDeskUCAB
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
