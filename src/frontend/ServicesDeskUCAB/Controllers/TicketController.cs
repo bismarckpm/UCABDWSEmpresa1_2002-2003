@@ -108,5 +108,32 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
+        public async Task<IActionResult> VentanaEditarTicket(int id)
+        {
+            try
+            {
+                
+                return View();
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException!;
+            }
+        }
+
+        public async Task<IActionResult> EditarTicket(TicketDTO tk)
+        {
+            try
+            {
+
+                return View();
+                
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException!;
+            }
+        }
+
     }
 }
