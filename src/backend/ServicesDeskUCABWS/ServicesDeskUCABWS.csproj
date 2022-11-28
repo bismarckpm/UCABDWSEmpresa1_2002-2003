@@ -7,10 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BussinessLogic\DTO\NotificacionDTO.cs" />
+    <Compile Remove="BussinessLogic\Mapper\NotificacionMapper.cs" />
+    <Compile Remove="Controllers\NotificacionController.cs" />
     <Compile Remove="Controllers\RegisroController.cs" />
     <Compile Remove="Controllers\RegistroController.cs" />
     <Compile Remove="Migrations\20221101023721_InitDb.cs" />
     <Compile Remove="Migrations\20221101023721_InitDb.Designer.cs" />
+    <Compile Remove="Persistence\DAO\Implementations\NotificacionDAO.cs" />
+    <Compile Remove="Persistence\DAO\Interface\INotificacionDAO.cs" />
+    <Compile Remove="Persistence\Entity\Notification.cs" />
   </ItemGroup>
 
   <ItemGroup>

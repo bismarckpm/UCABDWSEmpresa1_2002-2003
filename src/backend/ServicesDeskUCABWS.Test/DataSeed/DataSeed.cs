@@ -253,7 +253,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     titulo = "Plantilla1",
                     cuerpo = "Cuerpo1",
                     tipo = "Tipo1",
-                    notifications = new List<Notification>()
+                    //notifications = new List<Notification>()
                 },
                 new Plantilla
                 {
@@ -261,7 +261,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     titulo = "Plantilla2",
                     cuerpo = "Cuerpo2",
                     tipo = "Tipo2",
-                    notifications = new List<Notification>()
+                    //notifications = new List<Notification>()
                 }
             };
             //ModeloParalelo
@@ -293,7 +293,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre="Estado1",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
-                    notification = new Notification(),
+                    //notification = new Notification(),
                     tickets = new List<Ticket>()
                 },
                 new Estado
@@ -302,7 +302,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre="Estado2",
                     EtiquetaId=2,
                     etiqueta= new Etiqueta(),
-                    notification = new Notification(),
+                    //notification = new Notification(),
                     tickets = new List<Ticket>()
                 }
             };

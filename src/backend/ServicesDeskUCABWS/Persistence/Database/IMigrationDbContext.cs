@@ -14,10 +14,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        DbSet<Notification> Notifications
-        {
-            get; set;
-        }
         DbSet<Prioridad> Prioridades
         {
             get; set;
