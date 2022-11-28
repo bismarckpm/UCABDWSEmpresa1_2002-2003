@@ -65,14 +65,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Obtiene listado de Usuarios por Departamento")]
-        public Task ListaUsuariosPorDepartamentoTest()
-        {
-            var lista = _dao.GetUsuariosPorDepartamento(1);
-            Assert.IsType<List<UsuarioDTO>>(lista);
-            return Task.CompletedTask;
-        }
-
         [Fact(DisplayName = "Trim to Upper")]
         public Task GetUserTrimToUpperTest()
         {

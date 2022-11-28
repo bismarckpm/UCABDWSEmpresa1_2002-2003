@@ -78,10 +78,5 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        DbSet<FlujoAprobacion> FlujoAprobaciones
-        {
-            get; set;
-        }
-
     }
 }

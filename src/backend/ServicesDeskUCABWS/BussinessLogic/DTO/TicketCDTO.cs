@@ -2,7 +2,6 @@ namespace ServicesDeskUCABWS.BussinessLogic.DTO
 {
     public class TicketCDTO
     {
-        public int? id {get;set;}
         public string? nombre { get; set; }
         public DateTime? fecha { get; set; }
         public string? descripcion { get; set; }

@@ -65,7 +65,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                      join ca in _context.Categorias on tk.categoria equals ca
                      select new TicketCDTO()
                      {
-                        id = tk.id,
                         nombre = tk.nombre,
                         asginadoa = us2.email,
                         creadopor = us.email,

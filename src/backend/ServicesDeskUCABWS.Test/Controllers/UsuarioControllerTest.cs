@@ -13,16 +13,15 @@ using AutoMapper;
 using System;
 using Moq;
 using Xunit;
-using ServicesDeskUCABWS.Test.Configuraciones;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
-    public class UsuarioControllerTest : BasePrueba
+    public class UsuarioControllerTest
     {
         private readonly UsuarioController _controller;
         private readonly Mock<IUsuarioDao> _servicesMock;
         private readonly Mock<ICargoDAO> _serMockCargo;
-     //   private readonly Mock<IMapper>  _serMapper;
+        private readonly Mock<IMapper>  _serMapper;
         private readonly Mock<IEmailDao> _emailMock;
         private readonly Mock<ILogger<UsuarioController>> _log;
         public List<Usuario> lista = new List<Usuario>()
@@ -58,20 +57,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
                     passwordHash = new byte[32],
                     passwordSalt = new byte[32], 
                     VerificationToken= "eossa"
-                },
-                new Empleado()
-                {
-                    email = "empleado1@gmail.com",
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerificationToken = "l7s3oj4end21"
-                },
-                new administrador()
-                {
-                    email = "admin5421@gmail.com",
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerificationToken = "p2odju9ll2di4"                    
                 }
             };
             RegistroDTO _registro = new RegistroDTO(){Email = "creaUser@gmail.com", 
@@ -90,13 +75,13 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
         public UsuarioControllerTest()
         {
-            var _mapper =  ConfigurarAutoMapper();
             _log = new Mock<ILogger<UsuarioController>>();
             _servicesMock = new Mock<IUsuarioDao>();
-            _serMockCargo = new Mock<ICargoDAO>();   
+            _serMockCargo = new Mock<ICargoDAO>();
+            _serMapper = new Mock<IMapper>();
             _emailMock = new Mock<IEmailDao>();
             _controller = new UsuarioController(_log.Object,_servicesMock.Object
-            ,_serMockCargo.Object,_mapper,_emailMock.Object);
+            ,_serMockCargo.Object,_serMapper.Object,_emailMock.Object);
 
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
@@ -118,14 +103,15 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-         [Fact(DisplayName="Obtener listado Fallido")]
+     //    [Fact(DisplayName="Obtener listado Fallido")]
          public Task GetUsuariosCollectionBadRequest()
          {
-            _controller.ModelState.AddModelError("400","");
-             var result = _controller.GetCollection();
-                
+            List<Usuario> userList = null;
+             _servicesMock.Setup(u=>u.GetUsuarios()).Returns(userList);
 
-             Assert.False(_controller.ModelState.IsValid);
+             var result = _controller.GetCollection();
+
+             Assert.IsType<BadRequestResult>(result);
              return Task.CompletedTask;
          }
 
@@ -140,16 +126,16 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Obtener listado Fallido")]
-        public Task GetEmpleadosCollectionBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
+        // [Fact(DisplayName="Obtener listado Fallido")]
+        // public Task GetEmpleadosCollectionBadRequest()
+        // {
+        //     _servicesMock.Setup(u=>u.GetEmpleados()).Returns(It.IsAny<ICollection<Empleado>>());
 
-            var result = _controller.GetCollectionE();
+        //     var result = _controller.GetCollectionE();
 
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
+        //     Assert.IsType<BadRequestResult>(result);
+        //     return Task.CompletedTask;
+        // }
 
         [Fact(DisplayName="Obtener Listado de Clientes")]
         public Task GetClienteCollectionTest()
@@ -162,16 +148,16 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Fallo al obtener Listado de Clientes")]
-        public Task GetClienteCollectionBadRequest()
-        {
-             _controller.ModelState.AddModelError("400","");
+        // [Fact(DisplayName = "Fallo al obtener Listado de Clientes")]
+        // public Task GetClienteCollectionBadRequest()
+        // {
+        //      _servicesMock.Setup(u=>u.GetClientes()).Returns(It.IsAny<ICollection<Cliente>>());
 
-             var result = _controller.GetCollectionC();
+        //      var result = _controller.GetCollectionC();
 
-             Assert.False(_controller.ModelState.IsValid);
-             return Task.CompletedTask;
-        }
+        //      Assert.IsType<BadRequestResult>(result);
+        //      return Task.CompletedTask;
+        // }
 
         [Fact(DisplayName="Obtener Listado de Administradores")]
         public Task GetAdministradorCollectionTest()
@@ -184,38 +170,39 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-       [Fact(DisplayName="Fallo al obtener Listado Administradores")]
+//        [Fact(DisplayName="Fallo al obtener Listado Administradores")]
         public Task GetAdministradorCollectionBadRequest()
         {
-              _controller.ModelState.AddModelError("400","");
+              _servicesMock.Setup(u=>u.GetAdministradores()).Returns(It.IsAny<ICollection<administrador>>());  
 
               var result = _controller.GetCollectionA();
 
-              Assert.False(_controller.ModelState.IsValid);
+              Assert.IsType<BadRequestObjectResult>(result);
             return Task.CompletedTask;
         }
 
 //                    Pendiente
-    //    [Fact(DisplayName="Crear Usuario")]
+       // [Fact(DisplayName="Crear Usuario")]
         public Task CreateUser()
         {
-            
-            var cargoid = 0;
-            var depid = 0;
+            var cargoid = 1;
+            var depid = 1;
             var dto = new RegistroDTO()
             {
-                Email = "prueba@gmail.com",
+                Email = "prueba123@gmail.com",
                 Password = "12oasda*&qw2",
                 confirmationpassword = "12oasda*&qw2"
             };
 
-            var registro = new RegistroDTO(){Email = "prueba@gmail.com"};
+            var registro = new RegistroDTO(){Email = "creaUser@gmail.com", 
+                                             Password= "123osdaker*$5",
+                                             confirmationpassword="123osdaker*$5"};
             var tipoUser = 3;
 
             _servicesMock.Setup(u=>u.CreateUsuario(It.IsAny<Usuario>(),It.IsAny<int>(),It.IsAny<int>()))
             .Returns(true);
             _servicesMock.Setup(u=>u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
-            
+
             var result = _controller.CreateUsuario(cargoid, depid, dto,tipoUser);
 
             Assert.IsType<OkObjectResult>(result);
@@ -251,36 +238,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
             Assert.IsType<ObjectResult>(result);
             return Task.CompletedTask;
         }
-
-        [Fact(DisplayName= "Fallo al crear Usuario")]
-        public Task CreateUserBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-            var cargoid = 1;
-            var depid = 1;
-            var dto = new RegistroDTO()
-            {
-                Email = "prueba123@gmail.com",
-                Password = "12oasda*&qw2",
-                confirmationpassword = "12oasda*&qw2"
-            };
-
-            var registro = new RegistroDTO(){Email = "creaUser@gmail.com", 
-                                             Password= "123osdaker*$5",
-                                             confirmationpassword="123osdaker*$5"};
-            var tipoUser = 3;
-
-            _servicesMock.Setup(u=>u.CreateUsuario(It.IsAny<Usuario>(),It.IsAny<int>(),It.IsAny<int>()))
-            .Returns(true);
-            _servicesMock.Setup(u=>u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
-
-            var result = _controller.CreateUsuario(cargoid, depid, dto,tipoUser);
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }   
-
-
 
 //              LOGIN
         [Fact(DisplayName="Inicio de Sesion")]
@@ -326,24 +283,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Fallo al Iniciar Sesion")]
-        public Task LoginFailedBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-            _servicesMock.Setup(u=>u.VerifyPasswordHash(It.IsAny<string>(),It.IsAny<byte[]>(),It.IsAny<byte[]>()))
-            .Returns(true);
-             _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista); 
-
-            UserLoginDTO user = new UserLoginDTO(){
-                Email = "cosa",
-                Password = "ssss"
-            };
-
-            var result = _controller.Login(user);
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
         [Fact(DisplayName="Inicio de Sesion Fallido por Verificacion Contraseña")]
         public Task LoginFailedByVerifyPasswordTest()
         {              
@@ -375,7 +314,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-//          VERIFICACION TOKEN     
         [Fact(DisplayName="Verifica Token")]
         public Task VerificarTest()
         {
@@ -400,23 +338,8 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Falla al Verificar token")]
-        public Task VerificarBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            
-            var token = "12Seso9#sassdKlOijm";
-            var result = _controller.Verificar(token);
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Token fallo al Guardar")]
-        public Task VerificarFailedSaveTest()
+        [Fact(DisplayName = "Token fallo por BadRequest")]
+        public Task VerificarBadRequestTest()
         {
             _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
             _servicesMock.Setup(u=>u.Save()).Returns(false);
@@ -429,7 +352,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-//              CONTRASENA OLVIDADA
         [Fact(DisplayName="Contraseña olvidada")]
         public Task OlvidoContrasenaTest()
         {
@@ -455,21 +377,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Fallo en el envio de token")]
-        public Task OlvidoContrasenaBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            var email = "cosa2la@gmail.com";
-
-            var result = _controller.olvidoContrasena(email);
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
         [Fact(DisplayName="Olvido Contraseña error al guardar")]
         public Task OvidoContrasenaBadRequestToSavePwdTest()
         {
@@ -482,8 +389,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
             Assert.IsType<BadRequestObjectResult>(result);
             return Task.CompletedTask;
         }
-
-//          RESETEO DE CONTRASENA
 
        // [Fact(DisplayName="Reseteo de Contraseña")]
         public Task ResetPasswordTest()
@@ -545,41 +450,5 @@ namespace ServicesDeskUCABWS.Test.Controllers
             Assert.IsType<ObjectResult>(result);
             return Task.CompletedTask;
         }
-
-        [Fact(DisplayName = "Fallo de reseteo de contrasena por mala peticion")]
-        public Task ResetPasswordBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-
-            var client_local = new Cliente()
-        {
-            email = "prueba@gmail.com", 
-            passwordHash = new byte[32],
-            passwordSalt = new byte[32], 
-            VerifiedAt = DateTime.Today,
-            VerificationToken = "12Seso9#sassdKlOijm", 
-            PasswordResetToken = "Lsp34mAv$le",
-            ResetTokenExpires = DateTime.Now
-        };
-            
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            _servicesMock.Setup(u=>u.CreatePasswordHash(client_local,"123456789"))
-            .Returns(_clienteNuevo);
-
-            var pwd = new ResetPasswordDTO()
-            {
-                token = "12Seso9#sassdKlOijm",
-                Password = "3356*$sdsa",
-                confirmationpassword = "3356*$sdsa"
-            };
-
-            var result = _controller.ResetPassword(pwd);
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
-
     }
 }

@@ -1,5 +1,4 @@
-﻿@model dynamic
-@using ServicesDeskUCAB.DTO
+﻿@model ServicesDeskUCAB.Models.AgrupacionTKDtos
 @section scripts{
 }
 @{
@@ -24,68 +23,34 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form asp-action="VentanaAgregarTicket"  method="post">
-            <div class="form-group">
-                <label for="prioridad">Prioridad</label>
-                <select class="form-control" id="prioridad" name="prioridad">
-                    @foreach (PrioridadDTO prioridad in Model.Prioridades)
-
-                    {
-                        <option value="@prioridad.id">@prioridad.nombre</option>
-
-                    }
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="categoria">categoria</label>
-                <select class="form-control" id="categoria" name="categoria">
-                    @foreach (CategoriaDTO usuario in Model.Categorias)
-
-                    {
-                        <option value="@usuario.id">@usuario.nombre</option>
-
-                    }
-                </select>
-
-            </div>
-             <div class="form-group">
-                <label for="estatus">Estado</label>
-                <select class="form-control" id="estatus" name="estatus">
-                    @foreach (EstadoDTO usuario in Model.Estados)
-
-                    {
-                        <option value="@usuario.id">@usuario.nombre</option>
-
-                    }
-                </select>
-
-            </div>
-            <div class="form-group">
-                <label for="asignadoa">Asignado a</label>
-                <select class="form-control" id="asignadoa" name="asignadoa">
-                    @foreach (EmpleadosDTO usuario in Model.Empleados)
-
-                    {
-                        <option value="@usuario.id">@usuario.Email</option>
-
-                    }
-                </select>
-
-            </div>
-            <div class="form-group">
-                <label>Nombre</label>
-                <input type="text" name="nombre" class="form-control" placeholder="Nombre del ticket">
-            </div>
-            <div class="form-group">
-                <label>Descripcion</label>
-                <input type="text" name="descripcion" class="form-control"
-                    placeholder="Descripcion del ticket">
-            </div>
-            <div class="botones">
-                <button type="submit" class="btn btn-success">Crear</button>
-            </div>
-        </form>
+            @using (Html.BeginForm("AgregarTicket", "Ticket", FormMethod.Post))
+            {
+                <div class="modal-body">
+                    <span>Titulo: </span> @Html.TextBoxFor(m => m.tk.nombre, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.nombre ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Descripción: </span> @Html.TextBoxFor(m => m.tk.descripcion, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Destinatario: </span> @Html.TextBoxFor(m => m.asginadoa, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Prioridad: </span> @Html.TextBoxFor(m => m.prioridad, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Estado: </span> @Html.TextBoxFor(m => m.estado,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <span>Categoria: </span> @Html.TextBoxFor(m => m.categoria,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tk.descripcion ,null, new { @class = "text-danger" })
+                    <br />
+                    <!--AGREGAR CAMPOS RESTANTES-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"onclick="location.href='@Url.Action("GestionTickets", "Ticket")'">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            }
         </div>
     </div>
 </div>

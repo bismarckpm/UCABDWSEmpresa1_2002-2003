@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ServicesDeskUCABWS.Migrations
 {
-    public partial class Init : Migration
+    public partial class DBinit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,20 +47,6 @@ namespace ServicesDeskUCABWS.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Etiquetas", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Grupo",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    departamentoid = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Grupo", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,23 +119,22 @@ namespace ServicesDeskUCABWS.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Estados",
+                name: "Grupo",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EtiquetaId = table.Column<int>(type: "int", nullable: false)
+                    Departamentoid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Estados", x => x.id);
+                    table.PrimaryKey("PK_Grupo", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Estados_Etiquetas_EtiquetaId",
-                        column: x => x.EtiquetaId,
-                        principalTable: "Etiquetas",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Grupo_Departamentos_Departamentoid",
+                        column: x => x.Departamentoid,
+                        principalTable: "Departamentos",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -206,7 +191,8 @@ namespace ServicesDeskUCABWS.Migrations
                     email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     cargoid = table.Column<int>(type: "int", nullable: true),
                     Departamentoid = table.Column<int>(type: "int", nullable: true),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Grupoid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,6 +207,64 @@ namespace ServicesDeskUCABWS.Migrations
                         column: x => x.Departamentoid,
                         principalTable: "Departamentos",
                         principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Usuario_Grupo_Grupoid",
+                        column: x => x.Grupoid,
+                        principalTable: "Grupo",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    titulo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    fecha = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    usuarioid = table.Column<int>(type: "int", nullable: true),
+                    Plantillaid = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Plantillas_Plantillaid",
+                        column: x => x.Plantillaid,
+                        principalTable: "Plantillas",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Usuario_usuarioid",
+                        column: x => x.usuarioid,
+                        principalTable: "Usuario",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Estados",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EtiquetaId = table.Column<int>(type: "int", nullable: false),
+                    notificationid = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Estados", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Estados_Etiquetas_EtiquetaId",
+                        column: x => x.EtiquetaId,
+                        principalTable: "Etiquetas",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Estados_Notifications_notificationid",
+                        column: x => x.notificationid,
+                        principalTable: "Notifications",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -230,22 +274,17 @@ namespace ServicesDeskUCABWS.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    fecha = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    fecha = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     creadoporid = table.Column<int>(type: "int", nullable: true),
                     asginadoaid = table.Column<int>(type: "int", nullable: true),
                     prioridadid = table.Column<int>(type: "int", nullable: true),
-                    categoriaid = table.Column<int>(type: "int", nullable: true),
+                    delegacionid = table.Column<int>(type: "int", nullable: true),
                     Estadoid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tickets", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Tickets_Categorias_categoriaid",
-                        column: x => x.categoriaid,
-                        principalTable: "Categorias",
-                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Tickets_Estados_Estadoid",
                         column: x => x.Estadoid,
@@ -255,6 +294,11 @@ namespace ServicesDeskUCABWS.Migrations
                         name: "FK_Tickets_Prioridades_prioridadid",
                         column: x => x.prioridadid,
                         principalTable: "Prioridades",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Tickets_Tickets_delegacionid",
+                        column: x => x.delegacionid,
+                        principalTable: "Tickets",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Tickets_Usuario_asginadoaid",
@@ -269,12 +313,12 @@ namespace ServicesDeskUCABWS.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FlujoAprobaciones",
+                name: "FlujoAprobacion",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ticketid = table.Column<int>(type: "int", nullable: false),
+                    ticketid = table.Column<int>(type: "int", nullable: true),
                     modelojerarquicoid = table.Column<int>(type: "int", nullable: false),
                     modeloParaleloparaid = table.Column<int>(type: "int", nullable: true),
                     paraleloid = table.Column<int>(type: "int", nullable: false),
@@ -284,26 +328,25 @@ namespace ServicesDeskUCABWS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FlujoAprobaciones", x => x.id);
+                    table.PrimaryKey("PK_FlujoAprobacion", x => x.id);
                     table.ForeignKey(
-                        name: "FK_FlujoAprobaciones_ModeloJerarquicos_modelojerarquicoid",
+                        name: "FK_FlujoAprobacion_ModeloJerarquicos_modelojerarquicoid",
                         column: x => x.modelojerarquicoid,
                         principalTable: "ModeloJerarquicos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FlujoAprobaciones_ModeloParalelos_modeloParaleloparaid",
+                        name: "FK_FlujoAprobacion_ModeloParalelos_modeloParaleloparaid",
                         column: x => x.modeloParaleloparaid,
                         principalTable: "ModeloParalelos",
                         principalColumn: "paraid");
                     table.ForeignKey(
-                        name: "FK_FlujoAprobaciones_Tickets_ticketid",
+                        name: "FK_FlujoAprobacion_Tickets_ticketid",
                         column: x => x.ticketid,
                         principalTable: "Tickets",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_FlujoAprobaciones_Usuario_usuarioid",
+                        name: "FK_FlujoAprobacion_Usuario_usuarioid",
                         column: x => x.usuarioid,
                         principalTable: "Usuario",
                         principalColumn: "id");
@@ -320,26 +363,35 @@ namespace ServicesDeskUCABWS.Migrations
                 column: "EtiquetaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlujoAprobaciones_modelojerarquicoid",
-                table: "FlujoAprobaciones",
+                name: "IX_Estados_notificationid",
+                table: "Estados",
+                column: "notificationid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FlujoAprobacion_modelojerarquicoid",
+                table: "FlujoAprobacion",
                 column: "modelojerarquicoid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlujoAprobaciones_modeloParaleloparaid",
-                table: "FlujoAprobaciones",
+                name: "IX_FlujoAprobacion_modeloParaleloparaid",
+                table: "FlujoAprobacion",
                 column: "modeloParaleloparaid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlujoAprobaciones_ticketid",
-                table: "FlujoAprobaciones",
-                column: "ticketid",
-                unique: true);
+                name: "IX_FlujoAprobacion_ticketid",
+                table: "FlujoAprobacion",
+                column: "ticketid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlujoAprobaciones_usuarioid",
-                table: "FlujoAprobaciones",
+                name: "IX_FlujoAprobacion_usuarioid",
+                table: "FlujoAprobacion",
                 column: "usuarioid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Grupo_Departamentoid",
+                table: "Grupo",
+                column: "Departamentoid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ModeloJerarquicos_CategoriaId",
@@ -352,19 +404,29 @@ namespace ServicesDeskUCABWS.Migrations
                 column: "categoriaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_Plantillaid",
+                table: "Notifications",
+                column: "Plantillaid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_usuarioid",
+                table: "Notifications",
+                column: "usuarioid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_asginadoaid",
                 table: "Tickets",
                 column: "asginadoaid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_categoriaid",
-                table: "Tickets",
-                column: "categoriaid");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_creadoporid",
                 table: "Tickets",
                 column: "creadoporid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_delegacionid",
+                table: "Tickets",
+                column: "delegacionid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_Estadoid",
@@ -390,18 +452,17 @@ namespace ServicesDeskUCABWS.Migrations
                 name: "IX_Usuario_Departamentoid",
                 table: "Usuario",
                 column: "Departamentoid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuario_Grupoid",
+                table: "Usuario",
+                column: "Grupoid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FlujoAprobaciones");
-
-            migrationBuilder.DropTable(
-                name: "Grupo");
-
-            migrationBuilder.DropTable(
-                name: "Plantillas");
+                name: "FlujoAprobacion");
 
             migrationBuilder.DropTable(
                 name: "ModeloParalelos");
@@ -416,19 +477,28 @@ namespace ServicesDeskUCABWS.Migrations
                 name: "Prioridades");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "Etiquetas");
 
             migrationBuilder.DropTable(
-                name: "Etiquetas");
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "Plantillas");
+
+            migrationBuilder.DropTable(
+                name: "Usuario");
 
             migrationBuilder.DropTable(
                 name: "Cargos");
 
             migrationBuilder.DropTable(
-                name: "Departamentos");
+                name: "Grupo");
 
             migrationBuilder.DropTable(
                 name: "TipoCargos");
+
+            migrationBuilder.DropTable(
+                name: "Departamentos");
 
             migrationBuilder.DropTable(
                 name: "ModeloJerarquicos");
