@@ -14,6 +14,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Categoria>> mockSetCategorias = new Mock<DbSet<Categoria>>();
         public static Mock<DbSet<Prioridad>> mockSetPrioridades = new Mock<DbSet<Prioridad>>();
         public static Mock<DbSet<Departamento>> mockSetDepartamentos = new Mock<DbSet<Departamento>>();
+        public static Mock<DbSet<Grupo>>mockSetGrupo = new Mock<DbSet<Grupo>>();
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
@@ -84,20 +85,39 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 {
                     id = 1,
                     nombre = "departamento1",
-                    grupos = new List<Grupo>(),
                     Usuarios = new List<Usuario>()
                 }, new Departamento
                 {
                     id = 2,
                     nombre = "departamento2",
-                    grupos = new List<Grupo>(),
                     Usuarios = new List<Usuario>()
                 }, new Departamento
                 {
                     id = 3,
                     nombre = "departamento3",
-                    grupos = new List<Grupo>(),
                     Usuarios = new List<Usuario>()
+                }
+            };
+            //Grupo
+            var requestsGrupo = new List<Grupo>
+            {
+                new Grupo
+                {
+                    id=1,
+                    nombre = "Grupo1",
+                    departamentoid =1,
+                },
+                new Grupo
+                {
+                    id=2,
+                    nombre = "Grupo2",
+                    departamentoid =2,
+                },
+                new Grupo
+                {
+                    id=3,
+                    nombre = "Grupo3",
+                    departamentoid =3,
                 }
             };
             //Usuario
@@ -352,6 +372,10 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
+            // Grupo Dataseed
+            _mockContext.Setup(t => t.Grupo).Returns(mockSetGrupo.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
             //Usuario DataSeed
             _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
