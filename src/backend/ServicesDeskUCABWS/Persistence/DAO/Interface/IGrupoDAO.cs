@@ -6,12 +6,15 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IGrupoDAO
     {
-        public List<GrupoDTO> ConsultarGrupo();
+        public GrupoDTO AgregarGrupoDAO(Grupo grupo);
 
-        public GrupoDTO ActualizarGrupo(Grupo grupo);
+        public List<GrupoDTO> ConsultarGrupoDAO();
 
-        public GrupoDTO EliminarGrupo(int id);
+        public GrupoDTO ActualizarGrupoDAO(Grupo grupo);
 
-        public GrupoDTO AgregarGrupo(Grupo grupo);
+        public GrupoDTO EliminarGrupoDAO(int id);
+
+        public GrupoDTO ConsultaGrupoIdDAO(int id);
+
     }
 }

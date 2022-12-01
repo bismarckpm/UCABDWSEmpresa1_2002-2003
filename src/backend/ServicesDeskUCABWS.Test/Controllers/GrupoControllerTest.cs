@@ -29,7 +29,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             _log = new Mock<ILogger<GrupoController>>();
             _servicesMock = new Mock<IGrupoDAO>();
-            _controller = new GrupoController(_servicesMock.Object, _log.Object);
+            _controller = new GrupoController(_log.Object, _servicesMock.Object);
             _controller.ControllerContext = new ControllerContext();
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
             _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
@@ -44,7 +44,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 nombre = "Grupo2",
                 departamentoid = 1
             };
-            _servicesMock.Setup(t =>t.AgregarGrupo(tipo)).Returns(grupo);
+            _servicesMock.Setup(t =>t.AgregarGrupoDAO(tipo)).Returns(grupo);
 
             var result = _controller.AgregarGrupo(dto);
 
@@ -55,7 +55,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Agregar Grupo con Excepcion")]
         public Task CreateGrupoControllerTestException()
         {
-            _servicesMock.Setup(t => t.AgregarGrupo(tipo))
+            _servicesMock.Setup(t => t.AgregarGrupoDAO(tipo))
             .Throws(new NullReferenceException());
 
             Assert.Throws<NullReferenceException>(() => _controller.AgregarGrupo(grupo));
@@ -65,7 +65,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Consultar Lista Grupo")]
         public Task ConsultarGrupoControllerTest()
         {
-            _servicesMock.Setup(t => t.ConsultarGrupo())
+            _servicesMock.Setup(t => t.ConsultarGrupoDAO())
             .Returns(new List<GrupoDTO>());
 
             var result = _controller.ConsultarGrupo();
@@ -78,7 +78,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task ConsultarGrupoControllerTestException()
         {
             _servicesMock
-                .Setup(t => t.ConsultarGrupo())
+                .Setup(t => t.ConsultarGrupoDAO())
                 .Throws(new Exception("", new NullReferenceException()));
 
             Assert.Throws<NullReferenceException>(() => _controller.ConsultarGrupo());
@@ -92,7 +92,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var tipo1 = new GrupoDTO() {
                 id = 1, nombre = "Grupo 6", departamentoid =1  };
 
-            _servicesMock.Setup(t => t.ActualizarGrupo(tipo))
+            _servicesMock.Setup(t => t.ActualizarGrupoDAO(tipo))
                 .Returns(new GrupoDTO());
 
             var result = _controller.ActualizarGrupo(tipo1);
@@ -103,7 +103,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Actualiza Grupo con Excepcion")]
         public Task ActualizarGrupoControllerTestException()
         {
-            _servicesMock.Setup(t => t.ActualizarGrupo(tipo)).Throws(new Exception("", new NullReferenceException()));
+            _servicesMock.Setup(t => t.ActualizarGrupoDAO(tipo)).Throws(new Exception("", new NullReferenceException()));
 
             Assert.Throws<NullReferenceException>(() => _controller.ActualizarGrupo(grupo));
             return Task.CompletedTask;
@@ -113,7 +113,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task EliminarGrupoControllerTest()
         {
             var codigo = 1;
-            _servicesMock.Setup(t => t.EliminarGrupo(It.IsAny<int>())).Returns(It.IsAny<GrupoDTO>());
+            _servicesMock.Setup(t => t.EliminarGrupoDAO(It.IsAny<int>())).Returns(It.IsAny<GrupoDTO>());
 
             var result = _controller.EliminarGrupo(codigo);
 
@@ -124,16 +124,35 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Elimina un Grupo con excepcion")]
         public Task EliminarGrupoControllerTestException()
         {
-            _servicesMock.Setup(t => t.EliminarGrupo(It.IsAny<int>()))
+            _servicesMock.Setup(t => t.EliminarGrupoDAO(It.IsAny<int>()))
             .Throws(new Exception("", new NullReferenceException()));
 
             Assert.Throws<NullReferenceException>(() => _controller.EliminarGrupo(It.IsAny<int>()));
             return Task.CompletedTask;
         }
 
+        [Fact(DisplayName = "Consultar Grupo por id")]
+        public Task ConsultarGrupoIdControllerTest()
+        {
+            _servicesMock.Setup(t => t.ConsultaGrupoIdDAO(It.IsAny<int>()))
+            .Returns(grupo);
+
+            var result = _controller.ConsultaGrupoId(1);
+
+            Assert.IsType<ActionResult<GrupoDTO>>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Valida consultar Grupo por id excepcion")]
+        public Task ConsultarGrupoIdControllerTestException()
+        {
+            _servicesMock.Setup(t => t.ConsultaGrupoIdDAO(It.IsAny<int>()))
+            .Throws((new Exception("", new NullReferenceException())));
+
+            Assert.Throws<NullReferenceException>(() => _controller.ConsultaGrupoId(It.IsAny<int>())); ;
+            return Task.CompletedTask;
+        }
+
     }
-
-
-
 
 }

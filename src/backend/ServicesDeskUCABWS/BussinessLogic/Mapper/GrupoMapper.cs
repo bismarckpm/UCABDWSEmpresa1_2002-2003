@@ -6,7 +6,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
 {
     public class GrupoMapper
     {
-        public static GrupoDTO EnityToDto(Grupo grupo)
+        public static GrupoDTO EntityToDto(Grupo grupo)
         {
             return new GrupoDTO()
             {

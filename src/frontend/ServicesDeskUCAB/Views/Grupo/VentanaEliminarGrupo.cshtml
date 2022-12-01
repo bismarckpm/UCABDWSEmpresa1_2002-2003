@@ -1,6 +1,6 @@
 @model int
 @{
-    ViewData["Title"] = "Gestion Cargo";
+    ViewData["Title"] = "Gestion Grupo";
 }
 
 <!-- IMPORTACIONES DE LIBRERIAS -->
@@ -14,19 +14,17 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Eliminar Cargo</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="location.href='@Url.Action("GestionCargos", "Cargo")'>
+                <h5 class="modal-title" id="exampleModalLongTitle">Eliminar Grupo</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="location.href='@Url.Action("GestionGrupos", "Grupo")'>
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                ¿Está seguro de que desea eliminar el Cargo seleccionado?
+                ¿Está seguro de que desea eliminar el Grupo seleccionado?
             </div>
             <div class="modal-footer">
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionCargos", "Cargo")'">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EliminarCargo", "Cargo",new { id = Model })'">Aceptar</button>
-                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionGrupos", "Grupo")'">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EliminarGrupo", "Grupo",new { id = Model })'">Aceptar</button>
             </div>
         </div>
     </div>

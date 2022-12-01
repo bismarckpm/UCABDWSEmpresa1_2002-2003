@@ -2,108 +2,121 @@
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
-using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
-using System;
-using System.Data;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
-
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class GrupoDAO : IGrupoDAO
     {
-        private readonly IMigrationDbContext _dbContext;
+        private readonly IMigrationDbContext _context;
 
-        public GrupoDAO(IMigrationDbContext dbContext)
+        public GrupoDAO(IMigrationDbContext context)
         {
-            _dbContext = dbContext;
+            this._context = context;
         }
 
-        public GrupoDTO AgregarGrupo(Grupo grupo)
+        public GrupoDTO AgregarGrupoDAO(Grupo grupo)
         {
             try
             {
-                _dbContext.Grupo.Add(grupo);
-                _dbContext.DbContext.SaveChanges();
+                _context.Grupo.Add(grupo);
+                _context.DbContext.SaveChanges();
 
-                var variable = GrupoMapper.EnityToDto(grupo);
+                var data = _context.Grupo.Where(a => a.id == grupo.id)
+                .Select(
+                        a => new GrupoDTO
+                        {
+                            id = a.id,
+                            nombre = a.nombre,
+                            departamentoid = a.departamentoid
+                        }
+                    );
 
-                //var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
-                //  .Select(a => new GrupoDTO
-                //  {
-                //      id = a.id,
-                //      nombre = a.nombre,
-                //      departamentoid = a.departamentoid,
-
-                //  });
-
-                return variable;
-
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message + "ex start trace ===" + ex.StackTrace);
-                throw ex.InnerException!;
-            }
-        }
-        public GrupoDTO ActualizarGrupo(Grupo grupo)
-        {
-            try
-            {
-                _dbContext.Grupo.Update(grupo);
-                _dbContext.DbContext.SaveChanges();
-
-                var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
-                    .Select(a => new GrupoDTO
-                    {
-                        nombre = a.nombre,
-                        id = a.id,
-                        departamentoid=a.departamentoid,
-                    });
                 return data.First();
-            }catch(Exception ex)
+
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error al actualizar: " + grupo.nombre, ex);
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Transaccion Fallida", ex);
             }
         }
-        public GrupoDTO EliminarGrupo(int id)
-        {                 
-            try
-            {
-                var data = _dbContext.Grupo.Where(a => a.id == id).FirstOrDefault();                                  
-                _dbContext.Grupo.Remove(data);
-                _dbContext.DbContext.SaveChanges();
 
-                return GrupoMapper.EnityToDto(data);
-
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error al Eliminar por id: " + id, ex);
-            }
-
-        }
-        public List<GrupoDTO> ConsultarGrupo()
+        public List<GrupoDTO> ConsultarGrupoDAO()
         {
             try
             {
-                var lista = _dbContext.Grupo.Select(a => new GrupoDTO
-                {
-                    id = a.id,
-                    nombre = a.nombre,
-                    departamentoid = a.departamentoid,
-                });
-                return lista.ToList();
+                var data = _context.Grupo.Select(
+                    g => new GrupoDTO
+                    {
+                        id = g.id,
+                        nombre = g.nombre,
+                        departamentoid = g.departamentoid
+                    }
+                );
 
-            }catch(Exception ex)
+                return data.ToList();
+
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error al consultar los Grupos");
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Error al Consultar: " + ex.Message, ex);
+            }
+        }
+
+        public GrupoDTO ActualizarGrupoDAO(Grupo grupo)
+        {
+            try
+            {
+                _context.Grupo.Update(grupo);
+                _context.DbContext.SaveChanges();
+
+                return GrupoMapper.EntityToDto(grupo);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw new Exception("Transaccion Fallo", ex)!;
+            }
+        }
+
+        public GrupoDTO EliminarGrupoDAO(int id)
+        {
+            try
+            {
+                var grupo = _context.Grupo.Where(
+                    g => g.id == id).First();
+                _context.Grupo.Remove(grupo);
+                _context.DbContext.SaveChanges();
+
+                return GrupoMapper.EntityToDto(grupo);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " || " + ex.StackTrace);
+                throw new Exception("Fallo al Eliminar Departamento: " + id, ex);
+            }
+        }
+
+        public GrupoDTO ConsultaGrupoIdDAO(int id)
+        {
+            try
+            {
+                var grupo = _context.Grupo.Where(
+                d => d.id == id).First();
+                return GrupoMapper.EntityToDto(grupo); ;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Error al Consultar por id: " + id, ex);
             }
         }
 
     }
+
 }

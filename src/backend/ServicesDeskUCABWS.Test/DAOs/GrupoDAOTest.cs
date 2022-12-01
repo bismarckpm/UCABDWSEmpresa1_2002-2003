@@ -39,7 +39,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 departamentoid = 1
             };
 
-            var result = _dao.AgregarGrupo(grupo);
+            var result = _dao.AgregarGrupoDAO(grupo);
 
            Assert.IsType<GrupoDTO>(result);
             return Task.CompletedTask;
@@ -51,14 +51,14 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Throws(new DbUpdateConcurrencyException());
             var grupo = new Grupo();
 
-            Assert.Throws<NullReferenceException>(() => _dao.ActualizarGrupo(null!));
-            return Task.CompletedTask;                        
+            Assert.Throws<Exception>(() => _dao!.AgregarGrupoDAO(grupo));
+            return Task.CompletedTask;
         }
 
          [Fact(DisplayName ="Consultar Lista de Grupo")]
         public Task ConsultarGrupoTest()
         {
-            List<GrupoDTO> listaDto = _dao.ConsultarGrupo();
+            List<GrupoDTO> listaDto = _dao.ConsultarGrupoDAO();
                 
                 var result = listaDto;
 
@@ -71,7 +71,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             _contextMock.Setup(c => c.Grupo).Throws(new Exception());
 
-            Assert.Throws<Exception>(() => _dao!.ConsultarGrupo());
+            Assert.Throws<Exception>(() => _dao!.ConsultarGrupoDAO());
             return Task.CompletedTask;
         }
 
@@ -87,7 +87,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 departamentoid = 1                
             };
 
-            var result = _dao.ActualizarGrupo(grupo);
+            var result = _dao.ActualizarGrupoDAO(grupo);
 
             Assert.IsType<GrupoDTO>(result);
             return Task.CompletedTask;
@@ -96,11 +96,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName = "Valida Actualizar Grupo excepcion")]
         public Task ActualizarGrupoTestException()
         {
-            _serviceMock.Setup(c => c.ActualizarGrupo(It.IsAny<Grupo>()))
+            _serviceMock.Setup(c => c.ActualizarGrupoDAO(It.IsAny<Grupo>()))
             .Throws(new Exception());
 
-
-            Assert.Throws<NullReferenceException>(() => _dao.ActualizarGrupo(null!));
+            Assert.Throws<Exception>(() => _dao.ActualizarGrupoDAO(null!));
             return Task.CompletedTask;
         }
 
@@ -109,7 +108,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
 
-            var result = _dao.EliminarGrupo(1);
+            var result = _dao.EliminarGrupoDAO(1);
 
             Assert.IsType<GrupoDTO>(result);
             return Task.CompletedTask;
@@ -118,13 +117,33 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName = "Valida eliminar Grupo excepcion")]
         public Task EliminarGrupoTestException()
         {
-            _serviceMock.Setup(c => c.EliminarGrupo(It.IsAny<int>()))
+            _serviceMock.Setup(c => c.EliminarGrupoDAO(It.IsAny<int>()))
              .Throws(new Exception());
 
-            Assert.Throws<Exception>(() => _dao.EliminarGrupo(-1));
+            Assert.Throws<Exception>(() => _dao.EliminarGrupoDAO(-1));
             return Task.CompletedTask;
         }
 
-       
+        [Fact(DisplayName = "Consultar Grupo por id")]
+        public Task ConsultarGrupoIdTest()
+        {
+            GrupoDTO dto = _dao.ConsultaGrupoIdDAO(1);
+            var result = dto;
+
+            Assert.IsType<GrupoDTO>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Valida consulta Grupo por id Excepcion")]
+        public Task ConsultarGrupoIdTestException()
+        {
+            _serviceMock.Setup(c => c.ConsultaGrupoIdDAO(It.IsAny<int>()))
+                .Throws(new Exception());
+            var result = _dao.ConsultarGrupoDAO();
+
+            Assert.Throws<Exception>(() => _dao.ConsultaGrupoIdDAO(-1));
+            return Task.CompletedTask;
+        }
+
     }
 }

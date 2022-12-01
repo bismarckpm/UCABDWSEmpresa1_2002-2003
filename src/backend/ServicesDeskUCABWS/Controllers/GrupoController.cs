@@ -11,24 +11,25 @@ namespace ServicesDeskUCABWS.Controllers
 {
     [ApiController]
     [Route("Grupo")]
-    public class GrupoController : ControllerBase 
+    public class GrupoController : ControllerBase
     {
-        private readonly ILogger<GrupoController> _logger;
-        private readonly IGrupoDAO _dao; 
+        private readonly IGrupoDAO _dao;
+        private readonly ILogger<GrupoController> _log;
 
-        public GrupoController(IGrupoDAO dao, ILogger<GrupoController> log)
+
+        public GrupoController(ILogger<GrupoController> logger, IGrupoDAO dao)
         {
+            this._log = logger;
             this._dao = dao;
-            this._logger= log;
         }
         [HttpPost]
-        [Route("CrearGrupos")]
+        [Route("CreateGrupo/")]
 
         public ActionResult<GrupoDTO> AgregarGrupo([FromBody] GrupoDTO dTo)
         {
             try
             {
-                var dao = _dao.AgregarGrupo(GrupoMapper.DtoToEntity(dTo));
+                var dao = _dao.AgregarGrupoDAO(GrupoMapper.DtoToEntity(dTo));
                 return dao;
             }
             catch (Exception ex)
@@ -37,27 +38,46 @@ namespace ServicesDeskUCABWS.Controllers
                 throw ex.InnerException!;
             }
         }
-        [HttpDelete]
-        [Route("EliminarGrupo")]
-        public ActionResult<GrupoDTO> EliminarGrupo([FromRoute]int id)
+
+        [HttpGet]
+        [Route("ConsultarGrupos/")]
+
+        public ActionResult<List<GrupoDTO>> ConsultarGrupo()
         {
             try
             {
-                return _dao.EliminarGrupo(id);
+                return _dao.ConsultarGrupoDAO();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 throw ex.InnerException!;
             }
         }
-        [HttpPut]
-        [Route("ActualizarGrupo")]
-        public ActionResult<GrupoDTO> ActualizarGrupo([FromBody]GrupoDTO grupo)
+
+        [HttpGet]
+        [Route("ConsultaGrupo/{id}")]
+        public ActionResult<GrupoDTO> ConsultaGrupoId([Required][FromRoute] int id)
         {
             try
             {
-                return _dao.ActualizarGrupo(GrupoMapper.DtoToEntity(grupo));
+                var data = _dao.ConsultaGrupoIdDAO(id);
+                return data;
+
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.ToString());
+                throw ex.InnerException!;
+            }
+        }
+
+        [HttpPut]
+        [Route("Actualizar/")]
+        public ActionResult<GrupoDTO> ActualizarGrupo([FromBody] GrupoDTO grupo)
+        {
+            try
+            {
+                return _dao.ActualizarGrupoDAO(GrupoMapper.DtoToEntity(grupo));
             }
             catch (Exception ex)
             {
@@ -66,20 +86,20 @@ namespace ServicesDeskUCABWS.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("ConsultarGrupo")]
-
-        public ActionResult<List<GrupoDTO>> ConsultarGrupo()
+        [HttpDelete]
+        [Route("Eliminar/{id}")]
+        public ActionResult<GrupoDTO> EliminarGrupo([FromRoute] int id)
         {
             try
             {
-                return _dao.ConsultarGrupo();
+                return _dao.EliminarGrupoDAO(id);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
-        }
 
+        }
     }
 }
