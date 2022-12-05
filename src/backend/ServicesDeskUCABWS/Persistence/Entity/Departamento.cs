@@ -6,6 +6,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public string? nombre { get; set; }
 
         
-        public ICollection<Usuario> Usuarios {get;set;}
+    
+        public ICollection<Grupo> Grupos {get;set;}
     }
 }

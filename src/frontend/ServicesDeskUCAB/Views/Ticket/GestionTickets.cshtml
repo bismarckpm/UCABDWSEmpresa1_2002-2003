@@ -25,7 +25,7 @@
             var PlaceHolderElement = $('#PlaceHolderEditar');
             $("#btnEditar, .btn-primary").click(function (event) {
                 var id = $(this).closest('tr').find('.id').text();
-                var url = $(this).data('url').replace("idPrioridad", id);
+                var url = $(this).data('url').replace("idTicket", id);
                 $.get(url).done(function (data) {
                     PlaceHolderElement.html(data);
                     PlaceHolderElement.find('header').empty();

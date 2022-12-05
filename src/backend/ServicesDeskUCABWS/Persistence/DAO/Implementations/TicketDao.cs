@@ -19,20 +19,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        public bool AgregarTicketDAO(Ticket ticket, int creadopor, int asignadaa, int prioridad, int estatud, int categoriaid)
+        public bool AgregarTicketDAO(Ticket ticket, int creadopor, int grupoid, int categoriaid)
         {
         
             ticket.creadopor = _context.Usuario.Where(c => c.id == creadopor).FirstOrDefault();
-            ticket.asginadoa = _context.Usuario.Where(c => c.id == asignadaa).FirstOrDefault();
-            ticket.prioridad = _context.Prioridades.Where(c => c.id == prioridad).FirstOrDefault();
             ticket.categoria = _context.Categorias.Where(c => c.id == categoriaid).FirstOrDefault();
-           
-            ticket.Estado = _context.Estados.Where(c => c.id == estatud).FirstOrDefault();
-            var email = new EmailDTO();
-            email.para = ticket.asginadoa.email;
-            email.Cuerpo ="Descripcion del ticket: " + ticket.descripcion;
-            email.asunto = "Ticket " + ticket.nombre + " Creado con exito asignado a " + ticket.asginadoa.email;
-            _emailRepository.SendEmail(email);
+            ticket.grupo = _context.Grupo.Where(c => c.id == grupoid).FirstOrDefault();
+            ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
             _context.Tickets.Add(ticket);
             return Save();
             
@@ -45,14 +38,16 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             ticket.Estado = _context.Estados.Where(c => c.id == Estadoid).FirstOrDefault();
             ticket.categoria = _context.Categorias.Where(c => c.id == categoriaid).FirstOrDefault();
             _context.Tickets.Update(ticket);
-             var email = new EmailDTO();
-            email.para = ticket.asginadoa.email;
-            email.Cuerpo ="Descripcion del ticket: " + ticket.descripcion;
-            email.asunto = "Ticket " + ticket.nombre + " Ha sido actualizado ";
-            _emailRepository.SendEmail(email);
             _context.Tickets.Add(ticket);
             return Save();
         }
+         public bool AsignarTicket(AsignarTicketDTO asignarTicket){
+            var ticket = _context.Tickets.Where(c => c.id == asignarTicket.ticketid).FirstOrDefault();
+            ticket.asginadoa =_context.Usuario.Where(c => c.id == asignarTicket.asginadoa).FirstOrDefault();
+            ticket.prioridad =_context.Prioridades.Where(c => c.id == asignarTicket.prioridadid).FirstOrDefault();
+            _context.Tickets.Update(ticket);
+            return Save();
+         }
 
 
         public ICollection<TicketCDTO> GetTickets()
@@ -67,12 +62,16 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                      {
                         id = tk.id,
                         nombre = tk.nombre,
+                        idasignad = us2.id,
                         asginadoa = us2.email,
                         creadopor = us.email,
                         descripcion = tk.descripcion,
                         fecha = tk.fecha,
+                        idestado = e.id,
                         estado = e.nombre,
+                        idprioridad =p.id,
                         prioridad = p.nombre,
+                        idcategoria = ca.id,
                         categoria = ca.nombre
                         
                       }).ToList();
@@ -81,20 +80,25 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         public TicketCDTO GetTicket(int ticketid){
             var q = (from tk in _context.Tickets
                      join us in _context.Usuario on tk.creadopor equals us
-                     join us2 in _context.Usuario on tk.asginadoa equals us2
+                     join us2 in _context.Usuario on tk.asginadoa equals us2 
                      join e in _context.Estados on tk.Estado equals e
                      join p in _context.Prioridades on tk.prioridad equals p
                      join ca in _context.Categorias on tk.categoria equals ca
                      where tk.id == ticketid
                      select new TicketCDTO()
                      {
+                        id = tk.id,
                         nombre = tk.nombre,
+                        idasignad = us2.id,
                         asginadoa = us2.email,
                         creadopor = us.email,
                         descripcion = tk.descripcion,
                         fecha = tk.fecha,
+                        idestado = e.id,
                         estado = e.nombre,
+                        idprioridad =p.id,
                         prioridad = p.nombre,
+                        idcategoria = ca.id,
                         categoria = ca.nombre
                       }).FirstOrDefault();
             return q;
@@ -154,7 +158,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                      join e in _context.Estados on tk.Estado equals e
                      join p in _context.Prioridades on tk.prioridad equals p
                      join ca in _context.Categorias on tk.categoria equals ca
-                     where us2.Departamento == usu
+                     where us2.Grupo.departamento == usu
                      select new TicketCDTO()
                      {
                         nombre = tk.nombre,

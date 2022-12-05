@@ -2,121 +2,108 @@
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
+using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
+using System;
+using System.Data;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
+
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class GrupoDAO : IGrupoDAO
     {
-        private readonly IMigrationDbContext _context;
+        private readonly IMigrationDbContext _dbContext;
 
-        public GrupoDAO(IMigrationDbContext context)
+        public GrupoDAO(IMigrationDbContext dbContext)
         {
-            this._context = context;
+            _dbContext = dbContext;
         }
 
-        public GrupoDTO AgregarGrupoDAO(Grupo grupo)
+        public GrupoDTO AgregarGrupo(Grupo grupo)
         {
             try
             {
-                _context.Grupo.Add(grupo);
-                _context.DbContext.SaveChanges();
+                _dbContext.Grupo.Add(grupo);
+                _dbContext.DbContext.SaveChanges();
 
-                var data = _context.Grupo.Where(a => a.id == grupo.id)
-                .Select(
-                        a => new GrupoDTO
-                        {
-                            id = a.id,
-                            nombre = a.nombre,
-                            departamentoid = a.departamentoid
-                        }
-                    );
+                var variable = GrupoMapper.EnityToDto(grupo);
 
-                return data.First();
+                //var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
+                //  .Select(a => new GrupoDTO
+                //  {
+                //      id = a.id,
+                //      nombre = a.nombre,
+                //      departamentoid = a.departamentoid,
+
+                //  });
+
+                return variable;
 
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw new Exception("Transaccion Fallida", ex);
+                Console.WriteLine(ex.Message + "ex start trace ===" + ex.StackTrace);
+                throw ex.InnerException!;
             }
         }
-
-        public List<GrupoDTO> ConsultarGrupoDAO()
+        public GrupoDTO ActualizarGrupo(Grupo grupo)
         {
             try
             {
-                var data = _context.Grupo.Select(
-                    g => new GrupoDTO
+                _dbContext.Grupo.Update(grupo);
+                _dbContext.DbContext.SaveChanges();
+
+                var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
+                    .Select(a => new GrupoDTO
                     {
-                        id = g.id,
-                        nombre = g.nombre,
-                        departamentoid = g.departamentoid
-                    }
-                );
-
-                return data.ToList();
-
-            }
-            catch (Exception ex)
+                        nombre = a.nombre,
+                        id = a.id
+                        
+                    });
+                return data.First();
+            }catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw new Exception("Error al Consultar: " + ex.Message, ex);
+                Console.WriteLine(ex.Message);
+                throw new Exception("Error al actualizar: " + grupo.nombre, ex);
             }
         }
+        public GrupoDTO EliminarGrupo(int id)
+        {                 
+            try
+            {
+                var data = _dbContext.Grupo.Where(a => a.id == id).FirstOrDefault();                                  
+                _dbContext.Grupo.Remove(data);
+                _dbContext.DbContext.SaveChanges();
 
-        public GrupoDTO ActualizarGrupoDAO(Grupo grupo)
+                return GrupoMapper.EnityToDto(data);
+
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new Exception("Error al Eliminar por id: " + id, ex);
+            }
+
+        }
+        public List<GrupoDTO> ConsultarGrupo()
         {
             try
             {
-                _context.Grupo.Update(grupo);
-                _context.DbContext.SaveChanges();
+                var lista = _dbContext.Grupo.Select(a => new GrupoDTO
+                {
+                    id = a.id,
+                    nombre = a.nombre
+                   
+                });
+                return lista.ToList();
 
-                return GrupoMapper.EntityToDto(grupo);
-
-            }
-            catch (Exception ex)
+            }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Transaccion Fallo", ex)!;
-            }
-        }
-
-        public GrupoDTO EliminarGrupoDAO(int id)
-        {
-            try
-            {
-                var grupo = _context.Grupo.Where(
-                    g => g.id == id).First();
-                _context.Grupo.Remove(grupo);
-                _context.DbContext.SaveChanges();
-
-                return GrupoMapper.EntityToDto(grupo);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + " || " + ex.StackTrace);
-                throw new Exception("Fallo al Eliminar Departamento: " + id, ex);
-            }
-        }
-
-        public GrupoDTO ConsultaGrupoIdDAO(int id)
-        {
-            try
-            {
-                var grupo = _context.Grupo.Where(
-                d => d.id == id).First();
-                return GrupoMapper.EntityToDto(grupo); ;
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                throw new Exception("Error al Consultar por id: " + id, ex);
+                Console.WriteLine(ex.Message);
+                throw new Exception("Error al consultar los Grupos");
             }
         }
 
     }
-
 }

@@ -23,12 +23,11 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
     {
         try
         {
-            var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
+            var categoria = "";
             if (categoria == null)
             {
                 throw new Exception("No existe el registro de la categoria para el modelo paralelo");
             }
-            modeloParalelo.categoria = categoria;
             context.ModeloParalelos.Add(modeloParalelo);
             await context.DbContext.SaveChangesAsync();
             return mapper.Map<ModeloParaleloDTO>(modeloParalelo);
@@ -55,14 +54,8 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
     {
         try
         {
-            var consulta = await context.ModeloParalelos
-                                        .Include(cat => cat.categoria)
-                                        .FirstOrDefaultAsync(p => p.paraid == id);
-            if (consulta == null)
-            {
-            throw new Exception("Error al consultar el modelo paralelo");
-            }
-            return consulta;                
+         
+            return null;                
         }                          
         catch (Exception ex)
         {
@@ -85,9 +78,7 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
             {
                 throw new NullReferenceException("No existe en el modelo paralelo la categoria a actualizar");
             }
-            modeloActual.nombre = modeloParalelo.nombre;
-            modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;
-            modeloActual.categoriaId = modeloParalelo.categoriaId;
+            
             await context.DbContext.SaveChangesAsync();
             return modeloActual;
         }

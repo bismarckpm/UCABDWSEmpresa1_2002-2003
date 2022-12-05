@@ -82,6 +82,10 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+         public  DbSet<TickectsRelacionados> TickectsRelacionados
+        {
+            get; set;
+        }
 
     }
 }

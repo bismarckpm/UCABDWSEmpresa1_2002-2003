@@ -101,8 +101,7 @@ namespace ServicesDeskUCABWS.Controllers
             if (ticketupdate == null)
                 return BadRequest(ModelState);
 
-            if (ticketid != ticketupdate.Id)
-                return BadRequest(ModelState);
+            
 
             if (_ticketDao.GetTicket(ticketid) == null)
                 return NotFound();
@@ -123,19 +122,37 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpPost]
         [Route("CreateTicket")]
-         public IActionResult CreateTicket([FromQuery] int creadopor,[FromQuery] int asignadaa, [FromBody] TicketDTO ticket, [FromQuery] int prioridad,[FromQuery] int estatud,[FromQuery] int categoriaid )
+         public IActionResult CreateTicket([FromQuery] int creadopor, [FromBody] TicketDTO ticket,[FromQuery] int categoriaid,[FromQuery] int grupoid )
         {
             if (ticket == null)
                 return BadRequest(ModelState);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var Tickectmap = _mapper.Map<Ticket>(ticket);
-            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor,asignadaa,prioridad,estatud,categoriaid))
+            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor, grupoid,categoriaid))
             {
                 ModelState.AddModelError("", "Error al guardar");
                 return StatusCode(500, ModelState);
             }
             return Ok("Ticket Creado");
+        }
+
+          [HttpPut("AsignarTicket/{ticketid}")]
+        public IActionResult AsignarTicket(int ticketid, AsignarTicketDTO asignarTicket)
+        {
+            if (asignarTicket == null)
+                return BadRequest(ModelState);
+
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            if (!_ticketDao.AsignarTicket(asignarTicket))
+            {
+                ModelState.AddModelError("", "Hubo un error ");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("Ticket Asignado");
         }
     }
 }

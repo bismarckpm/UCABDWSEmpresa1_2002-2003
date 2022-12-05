@@ -12,7 +12,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
          ICollection<TicketCDTO> GetTicketsPorCategoria(int categoriaid);
         ICollection<TicketCDTO> GetTicketporusuarioasignado(int usuarioasignado);
         bool Save();
-        bool AgregarTicketDAO(Ticket ticket,int creadopor, int asignadaa, int prioridad, int estatud, int categoriaid);
-      bool Update(Ticket ticket, int asignadoaid, int prioridadid, int Estadoid, int categoriaid);
+        bool AgregarTicketDAO(Ticket ticket,int creadopor,int grupoid, int categoriaid);
+        bool AsignarTicket( AsignarTicketDTO asignarTicket);
+        bool Update(Ticket ticket, int asignadoaid, int prioridadid, int Estadoid, int categoriaid);
     }
 }

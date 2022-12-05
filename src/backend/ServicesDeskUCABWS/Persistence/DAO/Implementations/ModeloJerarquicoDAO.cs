@@ -31,43 +31,44 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                // Validar categoria 
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == modeloJerarquico.CategoriaId);
-                if (categoria == null)
-                {
-                    throw new Exception("No existe el registro de la categoria para el modelo paralelo");
-
-                }
-                modeloJerarquico.categoria = categoria;
-                // Validar orden
-                if (modeloJerarquico.orden == null)
-                {
-                    return new BadRequestResult();
-                }
-                var listCargos = new List<TipoCargo>();
-                // modeloJerarquico.orden.ForEach(async o =>
+                // // Validar categoria 
+                // var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == modeloJerarquico.CategoriaId);
+                // if (categoria == null)
                 // {
-                //     var tipoCargo = await _context.TipoCargos.FirstOrDefaultAsync(tc => tc.id == o.id);
+                //     throw new Exception("No existe el registro de la categoria para el modelo paralelo");
+
+                // }
+                // modeloJerarquico.categoria = categoria;
+                // // Validar orden
+                // if (modeloJerarquico.orden == null)
+                // {
+                //     return new BadRequestResult();
+                // }
+                // var listCargos = new List<TipoCargo>();
+                // // modeloJerarquico.orden.ForEach(async o =>
+                // // {
+                // //     var tipoCargo = await _context.TipoCargos.FirstOrDefaultAsync(tc => tc.id == o.id);
+                // //     if (tipoCargo == null)
+                // //     {
+                // //         throw new Exception("Tipo de cargo no encontrado");
+                // //     }
+                // //     listCargos.Add(tipoCargo);
+                // // });
+                // foreach (var cargo in modeloJerarquico.orden)
+                // {
+                //     var tipoCargo = await _context.TipoCargos.FirstOrDefaultAsync(tc => tc.id == cargo.id);
                 //     if (tipoCargo == null)
                 //     {
-                //         throw new Exception("Tipo de cargo no encontrado");
+                //         return new NotFoundResult();
                 //     }
                 //     listCargos.Add(tipoCargo);
-                // });
-                foreach (var cargo in modeloJerarquico.orden)
-                {
-                    var tipoCargo = await _context.TipoCargos.FirstOrDefaultAsync(tc => tc.id == cargo.id);
-                    if (tipoCargo == null)
-                    {
-                        return new NotFoundResult();
-                    }
-                    listCargos.Add(tipoCargo);
-                }
-                modeloJerarquico.orden = listCargos;
-                // Guardar modelo
-                _context.ModeloJerarquicos.Add(modeloJerarquico);
-                await _context.DbContext.SaveChangesAsync();
-                return mapper.Map<ModeloJerarquicoDTO>(modeloJerarquico);
+                // }
+                // modeloJerarquico.orden = listCargos;
+                // // Guardar modelo
+                // _context.ModeloJerarquicos.Add(modeloJerarquico);
+                // await _context.DbContext.SaveChangesAsync();
+                // return mapper.Map<ModeloJerarquicoDTO>(modeloJerarquico);
+                return null;
             }
             catch (DbUpdateException ex)
             {
@@ -93,19 +94,19 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ModeloJerarquico = await _context.ModeloJerarquicos
-                                                     .Include(mj => mj.categoria)
-                                                     .FirstOrDefaultAsync(mj => mj.Id == id);
-                //var listCargos = await _context.TipoCargos.Where(tc => tc.ModeloJerarquicoId == id).ToListAsync();
+                // var ModeloJerarquico = await _context.ModeloJerarquicos
+                //                                      .Include(mj => mj.categoria)
+                //                                      .FirstOrDefaultAsync(mj => mj.Id == id);
+                // //var listCargos = await _context.TipoCargos.Where(tc => tc.ModeloJerarquicoId == id).ToListAsync();
                 
                 
-                if (ModeloJerarquico == null)
-                {
-                    throw new Exception("Error al consultar el modelo jerarquico");
+                // if (ModeloJerarquico == null)
+                // {
+                //     throw new Exception("Error al consultar el modelo jerarquico");
 
-                }
-                //ModeloJerarquico.orden = listCargos;
-                return ModeloJerarquico;
+                // }
+                // //ModeloJerarquico.orden = listCargos;
+                return null;
             }
             catch (Exception ex)
             {
@@ -145,11 +146,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     }
 
                 }
-                // Actualizar modelo
-                ModeloJerarquicoDB.CategoriaId = modeloJerarquico.CategoriaId;
-                ModeloJerarquicoDB.orden = modeloJerarquico.orden;
-                await _context.DbContext.SaveChangesAsync();
-                return ModeloJerarquicoDB;
+                // // Actualizar modelo
+                // ModeloJerarquicoDB.CategoriaId = modeloJerarquico.CategoriaId;
+                // ModeloJerarquicoDB.orden = modeloJerarquico.orden;
+                // await _context.DbContext.SaveChangesAsync();
+                // return ModeloJerarquicoDB;
+                return null;
             }
             catch (Exception ex)
             {
