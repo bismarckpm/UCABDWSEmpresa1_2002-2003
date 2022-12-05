@@ -21,7 +21,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
    
         public virtual ICollection<FlujoAprobacion> Flujo { get; set; }
         public virtual Cargo? cargo { get; set; }
-        public virtual Departamento? Departamento {get;set;}
+        public virtual Grupo? Grupo {get;set;}
         
     }   
 }

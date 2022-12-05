@@ -112,8 +112,35 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                
-                return View();
+                List<PrioridadDTO> listPri = new List<PrioridadDTO>();
+                TicketCDTO ticket1 = new TicketCDTO();
+                List<CategoriaDTO> listCate = new List<CategoriaDTO>();
+         using (var httpClient = new HttpClient())
+            {
+                using (var prioridad = await httpClient.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridades"))
+                {
+                    if (prioridad.IsSuccessStatusCode)
+                    {
+                   
+                    var categorias = await httpClient.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
+                    var ticket = await httpClient.GetAsync("https://localhost:7198/Tickets/Tickect/"+ id);
+                    string apiResponse = await prioridad.Content.ReadAsStringAsync();
+                    string apiResponse2 = await ticket.Content.ReadAsStringAsync();
+                    string apiResponse3 = await categorias.Content.ReadAsStringAsync();
+                    listPri = JsonConvert.DeserializeObject<List<PrioridadDTO>>(apiResponse);
+                    listCate = JsonConvert.DeserializeObject<List<CategoriaDTO>>(apiResponse3);
+                    ticket1 = JsonConvert.DeserializeObject<TicketCDTO>(apiResponse2);
+                    dynamic mymodel = new ExpandoObject();
+                     var tupleModel = new Tuple<List<PrioridadDTO>, List<CategoriaDTO>,TicketCDTO >(listPri, listCate,ticket1);
+                      mymodel.Prioridades = listPri;
+                      mymodel.Categorias = listCate;
+                      mymodel.Ticket = ticket1;
+                      Console.WriteLine(mymodel.Ticket);
+                     return View(tupleModel);
+                    }
+                }
+            }
+             return View();
             }
             catch (Exception ex)
             {
@@ -121,19 +148,35 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> EditarTicket(TicketDTO tk)
+        
+        [HttpPost]
+        public async Task<IActionResult> VentanaEditarTicket( int id2, int idasignad, int estatus, int idestado , int prioridad, int categoria, string nombre, string descripcion)
         {
-            try
+                       
+             TicketDTO ticket = new TicketDTO();
+             ticket.fecha = DateTime.Now;
+             ticket.descripcion= descripcion;
+             ticket.nombre = nombre;
+            using (var httpClient = new HttpClient())
             {
-
-                return View();
-                
-            }
-            catch (Exception ex)
-            {
-                throw ex.InnerException!;
-            }
+                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
+ 
+                using (var response = await httpClient.PutAsync("https://localhost:7198/Tickets/"+id2+"?creadopor="+1+"&asignadaa="+idasignad+"&prioridad="+prioridad+"&estatud="+estatus+"&categoriaid="+categoria, content))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                           return RedirectToAction("GestionTickets");
+                    }
+                    
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    ViewBag.Result = apiResponse;
+                    return View();
+                }
+           
         }
+        }
+
+    
 
     }
 }

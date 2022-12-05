@@ -54,7 +54,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
          public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
             var q = (from usua in _context.Usuario
-                     join dep in _context.Departamentos on usua.Departamento equals dep
+                     join dep in _context.Departamentos on usua.Grupo.departamento equals dep
                      where dep.id == departamentoid
                      select new UsuarioDTO()
                      {
@@ -66,10 +66,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
 
         public bool CreateUsuario(Usuario usuario, 
-            int cargoid, int Departamentoid){
+            int cargoid, int Grupoid){
             usuario.cargo = 
                 _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
-            usuario.Departamento = _context.Departamentos.Where(c => c.id == Departamentoid).FirstOrDefault();
+            usuario.Grupo = _context.Grupo.Where(c => c.id == Grupoid).FirstOrDefault();
              _context.Usuario.Add(usuario);
              return Save();
         }

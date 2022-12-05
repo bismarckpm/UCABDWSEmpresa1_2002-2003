@@ -91,7 +91,7 @@ namespace ServicesDeskUCABWS.Controllers
 
        
         [HttpPost("Registrar")]
-        public IActionResult CreateUsuario([FromQuery] int cargoid,[FromQuery] int Departamentoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
+        public IActionResult CreateUsuario([FromQuery] int cargoid,[FromQuery] int GrupoId, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
         {
             if (usuario == null)
                 return BadRequest(ModelState);
@@ -138,7 +138,7 @@ namespace ServicesDeskUCABWS.Controllers
 
 
 
-            if (!_UsuarioRepository.CreateUsuario(mapeado, cargoid, Departamentoid))
+            if (!_UsuarioRepository.CreateUsuario(mapeado, cargoid, GrupoId))
             {
                 ModelState.AddModelError("", "Error al guardar");
                 return StatusCode(500, ModelState);

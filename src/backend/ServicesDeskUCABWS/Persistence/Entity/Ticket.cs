@@ -14,7 +14,10 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public Usuario? creadopor {get; set;}
         public Usuario? asginadoa { get; set; }
         public Prioridad? prioridad { get; set; }
-        
+        public Grupo? grupo { get; set; }
+
+        public ICollection<TickectsRelacionados>? TickectsRelacionadosPadre { get; set; }
+        public ICollection<TickectsRelacionados>? TickectsRelacionadosHijos { get; set; }
         public FlujoAprobacion? FlujoAprobacion {get; set;}
         public Categoria? categoria {get;set;}
       

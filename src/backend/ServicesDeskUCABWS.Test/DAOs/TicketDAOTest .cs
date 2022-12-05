@@ -66,7 +66,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 FlujoAprobacion = new FlujoAprobacion()
             };
 
-            var result = _dao.AgregarTicketDAO(tk,1, 1, 1, 1, 1);
+            var result = _dao.AgregarTicketDAO(tk,1, 1,1);
 
             Assert.True(result);
             return Task.CompletedTask;
