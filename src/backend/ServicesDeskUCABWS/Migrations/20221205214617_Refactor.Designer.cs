@@ -156,8 +156,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("empleadoid");
 
-                    b.HasIndex("ticketid")
-                        .IsUnique();
+                    b.HasIndex("ticketid");
 
                     b.ToTable("FlujoAprobaciones");
                 });
