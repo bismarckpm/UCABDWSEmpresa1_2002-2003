@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using System.ComponentModel.DataAnnotations;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -120,39 +122,44 @@ namespace ServicesDeskUCABWS.Controllers
             return Ok("Ticket Actualizado");
         }
 
+
+
+
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TickectCreateDTO>))]
         [Route("CreateTicket")]
-         public IActionResult CreateTicket([FromQuery] int creadopor, [FromBody] TicketDTO ticket,[FromQuery] int categoriaid,[FromQuery] int grupoid )
+         public ApplicationResponse<string> CreateTicket( [FromBody] TickectCreateDTO ticket)
         {
-            if (ticket == null)
-                return BadRequest(ModelState);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var Tickectmap = _mapper.Map<Ticket>(ticket);
-            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor, grupoid,categoriaid))
+            var response = new ApplicationResponse<string>();
+             try
             {
-                ModelState.AddModelError("", "Error al guardar");
-                return StatusCode(500, ModelState);
+                response.Data= _ticketDao.AgregarTicketDAO(ticket);
             }
-            return Ok("Ticket Creado");
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
 
-          [HttpPut("AsignarTicket/{ticketid}")]
-        public IActionResult AsignarTicket(int ticketid, AsignarTicketDTO asignarTicket)
+        [HttpPut("AsignarTicket/{ticketid}")]
+        public ApplicationResponse<string> AsignarTicket(int ticketid, AsignarTicketDTO asignarTicket)
         {
-            if (asignarTicket == null)
-                return BadRequest(ModelState);
-
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            if (!_ticketDao.AsignarTicket(asignarTicket))
+              var response = new ApplicationResponse<string>();
+             try
             {
-                ModelState.AddModelError("", "Hubo un error ");
-                return StatusCode(500, ModelState);
+                response.Data= _ticketDao.AsignarTicket(asignarTicket);
             }
-            return Ok("Ticket Asignado");
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+          
         }
     }
 }

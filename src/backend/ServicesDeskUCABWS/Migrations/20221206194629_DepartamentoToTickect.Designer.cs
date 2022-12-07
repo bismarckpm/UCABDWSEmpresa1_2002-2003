@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicesDeskUCABWS.Persistence.Database;
 
@@ -11,9 +12,10 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221206194629_DepartamentoToTickect")]
+    partial class DepartamentoToTickect
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace ServicesDeskUCABWS.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("EstadoEtiqueta", b =>
-                {
-                    b.Property<int>("estadosid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("etiquetasid")
-                        .HasColumnType("int");
-
-                    b.HasKey("estadosid", "etiquetasid");
-
-                    b.HasIndex("etiquetasid");
-
-                    b.ToTable("EstadoEtiqueta");
-                });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
                 {
@@ -98,10 +85,15 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
+                    b.Property<int>("EtiquetaId")
+                        .HasColumnType("int");
+
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
+
+                    b.HasIndex("EtiquetaId");
 
                     b.ToTable("Estados");
                 });
@@ -479,21 +471,6 @@ namespace ServicesDeskUCABWS.Migrations
                     b.HasDiscriminator().HasValue("ModeloParalelo");
                 });
 
-            modelBuilder.Entity("EstadoEtiqueta", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Estado", null)
-                        .WithMany()
-                        .HasForeignKey("estadosid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Etiqueta", null)
-                        .WithMany()
-                        .HasForeignKey("etiquetasid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
                 {
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", "tipoCargo")
@@ -503,6 +480,17 @@ namespace ServicesDeskUCABWS.Migrations
                         .IsRequired();
 
                     b.Navigation("tipoCargo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
+                {
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Etiqueta", "etiqueta")
+                        .WithMany("estados")
+                        .HasForeignKey("EtiquetaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("etiqueta");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.FlujoAprobacion", b =>
@@ -679,6 +667,11 @@ namespace ServicesDeskUCABWS.Migrations
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
                 {
                     b.Navigation("tickets");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Etiqueta", b =>
+                {
+                    b.Navigation("estados");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
