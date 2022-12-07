@@ -8,6 +8,6 @@ namespace ServicesDeskUCABWS.BussinessLogic.DTO
 
         public string? nombre { get; set; }
 
-        public int departamentoid { get; set; }
+        //public int departamentoid { get; set; }
     }
 }

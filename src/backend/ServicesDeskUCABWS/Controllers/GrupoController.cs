@@ -56,7 +56,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ConsultaGrupo/{id}")]
-        public ActionResult<GrupoDTO> ConsultaGrupoId([Required][FromRoute] int id)
+        public ActionResult<GrupoDTO> ConsultaGrupoIdDAO([Required][FromRoute] int id)
         {
             try
             {

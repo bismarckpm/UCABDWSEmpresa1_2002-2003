@@ -21,14 +21,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             _dbContext = dbContext;
         }
 
-        public GrupoDTO AgregarGrupo(Grupo grupo)
+        public GrupoDTO AgregarGrupoDAO (Grupo grupo)
         {
             try
             {
                 _dbContext.Grupo.Add(grupo);
                 _dbContext.DbContext.SaveChanges();
 
-                var variable = GrupoMapper.EnityToDto(grupo);
+                var variable = GrupoMapper.EntityToDto(grupo);
 
                 //var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
                 //  .Select(a => new GrupoDTO
@@ -48,7 +48,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw ex.InnerException!;
             }
         }
-        public GrupoDTO ActualizarGrupo(Grupo grupo)
+        public GrupoDTO ActualizarGrupoDAO (Grupo grupo)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new Exception("Error al actualizar: " + grupo.nombre, ex);
             }
         }
-        public GrupoDTO EliminarGrupo(int id)
+        public GrupoDTO EliminarGrupoDAO(int id)
         {                 
             try
             {
@@ -86,7 +86,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
-        public List<GrupoDTO> ConsultarGrupo()
+        public List<GrupoDTO> ConsultarGrupoDAO()
         {
             try
             {

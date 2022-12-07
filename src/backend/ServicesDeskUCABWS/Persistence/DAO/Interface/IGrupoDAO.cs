@@ -14,7 +14,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 
         public GrupoDTO EliminarGrupoDAO(int id);
 
-        public GrupoDTO ConsultaGrupoIdDAO(int id);
+        //public GrupoDTO ConsultaGrupoIdDAO(int id);
 
     }
 }
