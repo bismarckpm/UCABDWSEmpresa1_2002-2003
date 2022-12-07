@@ -19,15 +19,27 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        public bool AgregarTicketDAO(Ticket ticket, int creadopor, int grupoid, int categoriaid)
+        public string AgregarTicketDAO(TickectCreateDTO newTickect)
         {
-        
-            ticket.creadopor = _context.Usuario.Where(c => c.id == creadopor).FirstOrDefault();
-            ticket.categoria = _context.Categorias.Where(c => c.id == categoriaid).FirstOrDefault();
-            ticket.grupo = _context.Grupo.Where(c => c.id == grupoid).FirstOrDefault();
+              try
+            {
+            Ticket ticket = new Ticket();
+            ticket.creadopor = _context.Usuario.Where(c => c.id == newTickect.creadopor).FirstOrDefault();
+            ticket.categoria = _context.Categorias.Where(c => c.id == newTickect.categoriaid).FirstOrDefault();
+            ticket.departamento = _context.Departamentos.Where(c => c.id == newTickect.Departamentoid).FirstOrDefault();
+            ticket.nombre = newTickect.nombre;
+            ticket.descripcion = newTickect.descripcion;
+            ticket.fecha = newTickect.fecha;
             ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
             _context.Tickets.Add(ticket);
-            return Save();
+            _context.DbContext.SaveChanges();
+            return "Ticket Creado";
+            }
+             catch(Exception ex)
+            {
+                throw new TickectExeception("Ha ocurrido un error al intentar guardar el ticket: "
+              + newTickect, ex.Message, ex);
+            }
             
         }
 
@@ -37,16 +49,27 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             ticket.prioridad = _context.Prioridades.Where(c => c.id == prioridadid).FirstOrDefault();
             ticket.Estado = _context.Estados.Where(c => c.id == Estadoid).FirstOrDefault();
             ticket.categoria = _context.Categorias.Where(c => c.id == categoriaid).FirstOrDefault();
+            ticket.Estado = _context.Estados.Where(c => c.nombre == "En proceso").FirstOrDefault();
             _context.Tickets.Update(ticket);
             _context.Tickets.Add(ticket);
             return Save();
         }
-         public bool AsignarTicket(AsignarTicketDTO asignarTicket){
+         public string AsignarTicket(AsignarTicketDTO asignarTicket){
+              try
+            {
             var ticket = _context.Tickets.Where(c => c.id == asignarTicket.ticketid).FirstOrDefault();
             ticket.asginadoa =_context.Usuario.Where(c => c.id == asignarTicket.asginadoa).FirstOrDefault();
             ticket.prioridad =_context.Prioridades.Where(c => c.id == asignarTicket.prioridadid).FirstOrDefault();
+            ticket.Estado = _context.Estados.Where(c => c.nombre == "En proceso").FirstOrDefault();
             _context.Tickets.Update(ticket);
-            return Save();
+             return "Ticket Asignado";
+            }
+             catch(Exception ex)
+            {
+                throw new TickectExeception("Ha ocurrido un error al intentar guardar el ticket: "
+              + asignarTicket, ex.Message, ex);
+            }
+           
          }
 
 

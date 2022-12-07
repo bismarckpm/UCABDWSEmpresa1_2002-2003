@@ -24,118 +24,118 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         }
 
 
-        public async Task<ActionResult<EstadoDTO>> AgregarEstadoDAO(Estado estado)
-        {
-            try
-            {
-                // validar que la etiqueta exista
-                var etiqueta = await _context.Etiquetas.FindAsync(estado.EtiquetaId);
-                if (etiqueta == null)
-                {
-                    _logger.LogError("La etiqueta no existe");
-                    return new NotFoundObjectResult("La etiqueta no existe");
-                }
-                // guardar en la base de datos
-                await _context.Estados.AddAsync(estado);
-                await _context.DbContext.SaveChangesAsync();
-                _logger.LogInformation("Estado agregado exitosamente en la base de datos");
-                return _mapper.Map<EstadoDTO>(estado);
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new EstadoException("Error al agregar el estado", ex, _logger);
-            }
-
-        }
-
-        // public async Task<ActionResult<List<EstadoDTO>>> GetEstadosEtiquetaDAO(int idEtiqueta)
+        // public async Task<ActionResult<EstadoDTO>> AgregarEstadoDAO(Estado estado)
         // {
         //     try
         //     {
-        //         var estados = await _context.Estados
-        //                         .Include(estadoBD => estadoBD.etiqueta)
-        //                         .Where(e => e.EtiquetaId == idEtiqueta).ToListAsync();
+        //         // validar que la etiqueta exista
+        //         var etiqueta = await _context.Etiquetas.FindAsync(estado.EtiquetaId);
+        //         if (etiqueta == null)
+        //         {
+        //             _logger.LogError("La etiqueta no existe");
+        //             return new NotFoundObjectResult("La etiqueta no existe");
+        //         }
+        //         // guardar en la base de datos
+        //         await _context.Estados.AddAsync(estado);
+        //         await _context.DbContext.SaveChangesAsync();
+        //         _logger.LogInformation("Estado agregado exitosamente en la base de datos");
+        //         return _mapper.Map<EstadoDTO>(estado);
+        //     }
+        //     catch (DbUpdateException ex)
+        //     {
+        //         throw new EstadoException("Error al agregar el estado", ex, _logger);
+        //     }
 
-        //         _logger.LogInformation("Estados de la etiqueta consultados exitosamente");
+        // }
+
+        // // public async Task<ActionResult<List<EstadoDTO>>> GetEstadosEtiquetaDAO(int idEtiqueta)
+        // // {
+        // //     try
+        // //     {
+        // //         var estados = await _context.Estados
+        // //                         .Include(estadoBD => estadoBD.etiqueta)
+        // //                         .Where(e => e.EtiquetaId == idEtiqueta).ToListAsync();
+
+        // //         _logger.LogInformation("Estados de la etiqueta consultados exitosamente");
+        // //         return _mapper.Map<List<EstadoDTO>>(estados);
+        // //     }
+        // //     catch (Exception ex)
+        // //     {
+        // //         throw new EstadoException("Error al consultar los estados de la etiqueta", ex, _logger);
+        // //     }
+        // //  }
+
+        // public async Task<ActionResult<EstadoDTO>> GetEstadoDAO(int id)
+        // {
+        //     try
+        //     {
+        //         var estado = await _context.Estados
+        //                      .Include(estadoBD => estadoBD.etiqueta)
+        //                      .FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
+        //         if (estado == null)
+        //         {
+        //             _logger.LogError("El estado no existe");
+        //             return new NotFoundObjectResult("El estado no existe");
+        //         }
+        //         _logger.LogInformation("Estado consultado exitosamente");
+        //         return _mapper.Map<EstadoDTO>(estado);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         throw new EstadoException("Error al consultar el estado", ex, _logger);
+        //     }
+        // }
+
+
+        // public async Task<ActionResult<List<EstadoDTO>>> GetEstadosDAO()
+        // {
+
+        //     try
+        //     {
+        //         var estados = await _context.Estados.ToListAsync();
+        //         _logger.LogInformation("Estados consultados exitosamente");
         //         return _mapper.Map<List<EstadoDTO>>(estados);
         //     }
         //     catch (Exception ex)
         //     {
-        //         throw new EstadoException("Error al consultar los estados de la etiqueta", ex, _logger);
+        //         throw new EstadoException("Error al consultar los estados", ex, _logger);
         //     }
-        //  }
 
-        public async Task<ActionResult<EstadoDTO>> GetEstadoDAO(int id)
-        {
-            try
-            {
-                var estado = await _context.Estados
-                             .Include(estadoBD => estadoBD.etiqueta)
-                             .FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
-                if (estado == null)
-                {
-                    _logger.LogError("El estado no existe");
-                    return new NotFoundObjectResult("El estado no existe");
-                }
-                _logger.LogInformation("Estado consultado exitosamente");
-                return _mapper.Map<EstadoDTO>(estado);
-            }
-            catch (Exception ex)
-            {
-                throw new EstadoException("Error al consultar el estado", ex, _logger);
-            }
-        }
+        // }
 
+        // public async Task<ActionResult> ActualizarEstadoDAO(Estado estado, int id)
+        // {
 
-        public async Task<ActionResult<List<EstadoDTO>>> GetEstadosDAO()
-        {
+        //     try
+        //     {
+        //         var estadoOld = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
+        //         if (estadoOld == null)
+        //         {
+        //             _logger.LogError("El estado no existe");
+        //             return new NotFoundObjectResult("El estado no existe");
+        //         }
+        //         if (estadoOld.EtiquetaId != estado.EtiquetaId)
+        //         {
+        //             //validar que la etiqueta exista
+        //             var etiqueta = await _context.Etiquetas.FindAsync(estado.EtiquetaId);
+        //             if (etiqueta == null)
+        //             {
+        //                 _logger.LogError("La etiqueta no existe");
+        //                 return new NotFoundObjectResult("La etiqueta no existe");
+        //             }
+        //         }
+        //         estadoOld.nombre = estado.nombre;
+        //         estadoOld.EtiquetaId = estado.EtiquetaId;
+        //         await _context.DbContext.SaveChangesAsync();
+        //         _logger.LogInformation("Estado actualizado exitosamente");
+        //         return new OkResult();
+        //     }
+        //     catch (DbUpdateException ex)
+        //     {
+        //         throw new EstadoException("Error al actualizar el estado", ex, _logger);
+        //     }
 
-            try
-            {
-                var estados = await _context.Estados.ToListAsync();
-                _logger.LogInformation("Estados consultados exitosamente");
-                return _mapper.Map<List<EstadoDTO>>(estados);
-            }
-            catch (Exception ex)
-            {
-                throw new EstadoException("Error al consultar los estados", ex, _logger);
-            }
-
-        }
-
-        public async Task<ActionResult> ActualizarEstadoDAO(Estado estado, int id)
-        {
-
-            try
-            {
-                var estadoOld = await _context.Estados.FirstOrDefaultAsync(estadoBD => estadoBD.id == id);
-                if (estadoOld == null)
-                {
-                    _logger.LogError("El estado no existe");
-                    return new NotFoundObjectResult("El estado no existe");
-                }
-                if (estadoOld.EtiquetaId != estado.EtiquetaId)
-                {
-                    //validar que la etiqueta exista
-                    var etiqueta = await _context.Etiquetas.FindAsync(estado.EtiquetaId);
-                    if (etiqueta == null)
-                    {
-                        _logger.LogError("La etiqueta no existe");
-                        return new NotFoundObjectResult("La etiqueta no existe");
-                    }
-                }
-                estadoOld.nombre = estado.nombre;
-                estadoOld.EtiquetaId = estado.EtiquetaId;
-                await _context.DbContext.SaveChangesAsync();
-                _logger.LogInformation("Estado actualizado exitosamente");
-                return new OkResult();
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new EstadoException("Error al actualizar el estado", ex, _logger);
-            }
-
-        }
+        // }
 
         public async Task<ActionResult> EliminarEstadoDAO(int id)
         {
