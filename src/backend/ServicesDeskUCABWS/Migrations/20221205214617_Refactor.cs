@@ -395,8 +395,7 @@ namespace ServicesDeskUCABWS.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_FlujoAprobaciones_ticketid",
                 table: "FlujoAprobaciones",
-                column: "ticketid",
-                unique: true);
+                column: "ticketid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Grupo_departamentoid",
