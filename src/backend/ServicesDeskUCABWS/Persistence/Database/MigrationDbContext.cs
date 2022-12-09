@@ -98,7 +98,7 @@ namespace ServicesDeskUCABWS.Persistence.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
 
-
+modelBuilder.Entity<TickectsRelacionados>().HasKey(i => new { i.Ticketid, i.TicketRelacionadoid });
         modelBuilder.Entity<TickectsRelacionados>()
         .HasOne(pt => pt.TicketRelacion)
         .WithMany(p => p.TickectsRelacionadosHijos)
