@@ -15,7 +15,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         string DelegarTicket(TickectDelegadoDTO tickectDelegado);
         string TikcetsRelacionados(TicketsRelacionadosDTO ticketsRelacionados);
         string EliminarRelacionMerge(TicketsRelacionadosDTO ticketsRelacionados);
-
         ICollection<TicketCDTO> TicketsMergeados(int ticketid);
     }
 }

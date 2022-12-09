@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
 using System;
 using System.Text;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -18,41 +19,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this._context = context;
 
         }
-        public ICollection<Usuario> GetUsuarios()
-        {
-            return _context.Usuario.OrderBy(p => p.id).ToList();
-        }
-          public ICollection<Empleado> GetEmpleados()
-        {
-            return _context.Empleados.OrderBy(p => p.id).ToList();
-        }
-          public ICollection<administrador> GetAdministradores()
-        {
-            return _context.Administradores.OrderBy(p => p.id).ToList();
-        }
-          public ICollection<Cliente> GetClientes()
-        {
-            return _context.clientes.OrderBy(p => p.id).ToList();
-        }
-
-
-
-
-        public Usuario GetUsuarioTrimToUpper(RegistroDTO administratorDTO)
-        {
-            return GetUsuarios().Where(c => c.email.Trim().ToUpper() == administratorDTO.Email.TrimEnd().ToUpper())
-                .FirstOrDefault();
-        }
-
-
-        public Usuario ChangePassword(string email, string newpassword, string confirmationpassword){
-            if (newpassword == confirmationpassword){
-             return _context.Usuario.Where(p=>p.email == email).FirstOrDefault()!;
+         public ICollection<Usuario> GetUsuario(){
+            try
+            {
+               return _context.Usuario.OrderBy(c=>c.id).ToList();
             }
-            return null!;
-        }   
+            catch (Exception ex)
+            {
+                throw new UsuarioExepcion("Ha ocurrido un error al buscar el usuario ", ex.Message, ex);
+            }
+        }
+    
 
          public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
+             try
+            {
             var q = (from usua in _context.Usuario
                      join dep in _context.Departamentos on usua.Grupo.departamento equals dep
                      where dep.id == departamentoid
@@ -62,42 +43,71 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                         Email = usua.email
                       }).ToList();
             return q;
+            }
+            catch (Exception ex)
+            {
+                throw new UsuarioExepcion("Ha ocurrido un error al buscar usuario ", ex.Message, ex);
+            }
         }
 
 
-        public bool CreateUsuario(Usuario usuario, 
-            int cargoid, int Grupoid){
-            usuario.cargo = 
-                _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
+        public string CreateUsuario(Usuario usuario, int cargoid, int Grupoid){
+            try
+            {
+            usuario.cargo = _context.Cargos.Where(c => c.id == cargoid).FirstOrDefault();
             usuario.Grupo = _context.Grupo.Where(c => c.id == Grupoid).FirstOrDefault();
              _context.Usuario.Add(usuario);
-             return Save();
+             _context.DbContext.SaveChanges();
+            return "Usuario Creado";
+            }
+            catch (Exception ex)
+            {
+                throw new UsuarioExepcion("Ha ocurrido un error al crear el usuario ", ex.Message, ex);
+            }
+        }
+        public string UpdateU(Usuario usuario){
+            try
+            {
+             _context.Usuario.Update(usuario);
+             _context.DbContext.SaveChanges();
+            return "Usuario Actualizado";
+            }
+            catch (Exception ex)
+            {
+                throw new UsuarioExepcion("Ha ocurrido un error al Actualizar el usuario ", ex.Message, ex);
+            }
         }
 
         public Usuario CreatePasswordHash(Usuario usuario,string clave )
         {
+             try{
             using (var hash = new HMACSHA512())
             {
                 usuario.passwordSalt = hash.Key;
                 usuario.passwordHash = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(clave));
                 return usuario;
             }
+              }
+             catch (Exception ex)
+            {
+                throw new UsuarioExepcion("Ha ocurrido un error al crear el contrasena ", ex.Message, ex);
+            }
         }
         public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
+            try{
+
+            
             using (var hash = new HMACSHA512(passwordSalt))
             {
                 var ComputedHash = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 return ComputedHash.SequenceEqual(passwordHash);
             }
+            }
+             catch (Exception ex)
+            {
+                throw new UsuarioExepcion("Ha ocurrido un error al verificar contrasena ", ex.Message, ex);
+            }
         }
-
-        public bool Save()
-        {
-            var saved = _context.DbContext.SaveChanges();
-            return saved > 0 ? true : false;
-        }
-
-
     } 
 }
