@@ -12,8 +12,8 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    [Migration("20221126154316_fixdate")]
-    partial class fixdate
+    [Migration("20221205214617_Refactor")]
+    partial class Refactor
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,14 +91,9 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("notificationid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("EtiquetaId");
-
-                    b.HasIndex("notificationid");
 
                     b.ToTable("Estados");
                 });
@@ -130,40 +125,40 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("modeloParaleloparaid")
+                    b.Property<int?>("Clienteid")
                         .HasColumnType("int");
 
-                    b.Property<int>("modelojerarquicoid")
+                    b.Property<int>("ModeloAprobacionid")
                         .HasColumnType("int");
 
-                    b.Property<int>("paraleloid")
+                    b.Property<int?>("administradorid")
                         .HasColumnType("int");
 
-                    b.Property<int>("secuencia")
+                    b.Property<int>("empleadoid")
                         .HasColumnType("int");
 
-                    b.Property<int>("status")
+                    b.Property<int>("estatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("modeloid")
                         .HasColumnType("int");
 
                     b.Property<int>("ticketid")
                         .HasColumnType("int");
 
-                    b.Property<int?>("usuarioid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
-                    b.HasIndex("modeloParaleloparaid");
+                    b.HasIndex("Clienteid");
 
-                    b.HasIndex("modelojerarquicoid")
-                        .IsUnique();
+                    b.HasIndex("ModeloAprobacionid");
 
-                    b.HasIndex("ticketid")
-                        .IsUnique();
+                    b.HasIndex("administradorid");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("empleadoid");
 
-                    b.ToTable("FlujoAprobacion");
+                    b.HasIndex("ticketid");
+
+                    b.ToTable("FlujoAprobaciones");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
@@ -174,7 +169,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("Departamentoid")
+                    b.Property<int?>("departamentoid")
                         .HasColumnType("int");
 
                     b.Property<string>("nombre")
@@ -182,57 +177,12 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Departamentoid");
+                    b.HasIndex("departamentoid");
 
                     b.ToTable("Grupo");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CategoriaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoriaId");
-
-                    b.ToTable("ModeloJerarquicos");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloParalelo", b =>
-                {
-                    b.Property<int>("paraid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("paraid"), 1L, 1);
-
-                    b.Property<int?>("cantidadAprobaciones")
-                        .HasColumnType("int");
-
-                    b.Property<int>("categoriaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("nombre")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("paraid");
-
-                    b.HasIndex("categoriaId");
-
-                    b.ToTable("ModeloParalelos");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloAprobacion", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -240,28 +190,53 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("Plantillaid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("descripcion")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("fecha")
+                    b.Property<string>("nombre")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("titulo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("usuarioid")
-                        .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("Plantillaid");
+                    b.ToTable("ModeloAprobacion");
 
-                    b.HasIndex("usuarioid");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ModeloAprobacion");
+                });
 
-                    b.ToTable("Notifications");
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquicoCargos", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ModeloAprobacionid")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModeloJerarquicoid")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TipoCargoid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("modelojerauicoid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("orden")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModeloAprobacionid");
+
+                    b.HasIndex("ModeloJerarquicoid");
+
+                    b.HasIndex("TipoCargoid");
+
+                    b.ToTable("ModeloJerarquicoCargos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
@@ -302,6 +277,29 @@ namespace ServicesDeskUCABWS.Migrations
                     b.ToTable("Prioridades");
                 });
 
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TickectsRelacionados", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("TicketRelacionadoid")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Ticketid")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketRelacionadoid");
+
+                    b.HasIndex("Ticketid");
+
+                    b.ToTable("TickectsRelacionados");
+                });
+
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
                 {
                     b.Property<int>("id")
@@ -329,6 +327,9 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<DateTime?>("fecha")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("grupoid")
+                        .HasColumnType("int");
+
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
@@ -345,6 +346,8 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("creadoporid");
 
+                    b.HasIndex("grupoid");
+
                     b.HasIndex("prioridadid");
 
                     b.ToTable("Tickets");
@@ -358,15 +361,10 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("ModeloJerarquicoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("nombre")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
-
-                    b.HasIndex("ModeloJerarquicoId");
 
                     b.ToTable("TipoCargos");
                 });
@@ -378,9 +376,6 @@ namespace ServicesDeskUCABWS.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int?>("Departamentoid")
-                        .HasColumnType("int");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -417,8 +412,6 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Departamentoid");
-
                     b.HasIndex("Grupoid");
 
                     b.HasIndex("cargoid");
@@ -449,6 +442,34 @@ namespace ServicesDeskUCABWS.Migrations
                     b.HasDiscriminator().HasValue("Empleado");
                 });
 
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
+                {
+                    b.HasBaseType("ServicesDeskUCABWS.Persistence.Entity.ModeloAprobacion");
+
+                    b.Property<int?>("categoriaid")
+                        .HasColumnType("int");
+
+                    b.HasIndex("categoriaid");
+
+                    b.HasDiscriminator().HasValue("ModeloJerarquico");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloParalelo", b =>
+                {
+                    b.HasBaseType("ServicesDeskUCABWS.Persistence.Entity.ModeloAprobacion");
+
+                    b.Property<int>("cantidaddeaprobacion")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("categoriaid")
+                        .HasColumnType("int")
+                        .HasColumnName("ModeloParalelo_categoriaid");
+
+                    b.HasIndex("categoriaid");
+
+                    b.HasDiscriminator().HasValue("ModeloParalelo");
+                });
+
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
                 {
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", "tipoCargo")
@@ -468,86 +489,87 @@ namespace ServicesDeskUCABWS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Notification", "notification")
-                        .WithMany()
-                        .HasForeignKey("notificationid");
-
                     b.Navigation("etiqueta");
-
-                    b.Navigation("notification");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.FlujoAprobacion", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloParalelo", "modeloParalelo")
-                        .WithMany()
-                        .HasForeignKey("modeloParaleloparaid");
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Cliente", null)
+                        .WithMany("Flujo")
+                        .HasForeignKey("Clienteid");
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", "modeloJerarquico")
-                        .WithOne("flujoAprobacion")
-                        .HasForeignKey("ServicesDeskUCABWS.Persistence.Entity.FlujoAprobacion", "modelojerarquicoid")
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloAprobacion", "ModeloAprobacion")
+                        .WithMany()
+                        .HasForeignKey("ModeloAprobacionid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "ticket")
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.administrador", null)
+                        .WithMany("Flujo")
+                        .HasForeignKey("administradorid");
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Empleado", "Empleado")
+                        .WithMany("Flujo")
+                        .HasForeignKey("empleadoid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "Ticket")
                         .WithOne("FlujoAprobacion")
                         .HasForeignKey("ServicesDeskUCABWS.Persistence.Entity.FlujoAprobacion", "ticketid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "usuario")
-                        .WithMany("Flujo")
-                        .HasForeignKey("usuarioid");
+                    b.Navigation("Empleado");
 
-                    b.Navigation("modeloJerarquico");
+                    b.Navigation("ModeloAprobacion");
 
-                    b.Navigation("modeloParalelo");
-
-                    b.Navigation("ticket");
-
-                    b.Navigation("usuario");
+                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Grupo", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Departamento", null)
-                        .WithMany("grupos")
-                        .HasForeignKey("Departamentoid");
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Departamento", "departamento")
+                        .WithMany("Grupos")
+                        .HasForeignKey("departamentoid");
+
+                    b.Navigation("departamento");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquicoCargos", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Categoria", "categoria")
-                        .WithMany("modelosjerruicos")
-                        .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("categoria");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloParalelo", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Categoria", "categoria")
-                        .WithMany("ModeloParalelos")
-                        .HasForeignKey("categoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("categoria");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Notification", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Plantilla", null)
-                        .WithMany("notifications")
-                        .HasForeignKey("Plantillaid");
-
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Usuario", "usuario")
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloAprobacion", "ModeloAprobacion")
                         .WithMany()
-                        .HasForeignKey("usuarioid");
+                        .HasForeignKey("ModeloAprobacionid");
 
-                    b.Navigation("usuario");
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", null)
+                        .WithMany("Jeraruia")
+                        .HasForeignKey("ModeloJerarquicoid");
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", "TipoCargo")
+                        .WithMany("Jeraruia")
+                        .HasForeignKey("TipoCargoid");
+
+                    b.Navigation("ModeloAprobacion");
+
+                    b.Navigation("TipoCargo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TickectsRelacionados", b =>
+                {
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "TicketRelacion")
+                        .WithMany("TickectsRelacionadosHijos")
+                        .HasForeignKey("TicketRelacionadoid")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "ticket")
+                        .WithMany("TickectsRelacionadosPadre")
+                        .HasForeignKey("Ticketid")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.Navigation("TicketRelacion");
+
+                    b.Navigation("ticket");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
@@ -568,6 +590,10 @@ namespace ServicesDeskUCABWS.Migrations
                         .WithMany("ticketscreados")
                         .HasForeignKey("creadoporid");
 
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Grupo", "grupo")
+                        .WithMany()
+                        .HasForeignKey("grupoid");
+
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Prioridad", "prioridad")
                         .WithMany()
                         .HasForeignKey("prioridadid");
@@ -580,23 +606,14 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.Navigation("creadopor");
 
-                    b.Navigation("prioridad");
-                });
+                    b.Navigation("grupo");
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", null)
-                        .WithMany("orden")
-                        .HasForeignKey("ModeloJerarquicoId");
+                    b.Navigation("prioridad");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
                 {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Departamento", "Departamento")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("Departamentoid");
-
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Grupo", null)
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Grupo", "Grupo")
                         .WithMany("usuarios")
                         .HasForeignKey("Grupoid");
 
@@ -604,9 +621,27 @@ namespace ServicesDeskUCABWS.Migrations
                         .WithMany("Usuarios")
                         .HasForeignKey("cargoid");
 
-                    b.Navigation("Departamento");
+                    b.Navigation("Grupo");
 
                     b.Navigation("cargo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
+                {
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Categoria", "categoria")
+                        .WithMany("modelosjerruicos")
+                        .HasForeignKey("categoriaid");
+
+                    b.Navigation("categoria");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloParalelo", b =>
+                {
+                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Categoria", "categoria")
+                        .WithMany("ModeloParalelos")
+                        .HasForeignKey("categoriaid");
+
+                    b.Navigation("categoria");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cargo", b =>
@@ -623,9 +658,7 @@ namespace ServicesDeskUCABWS.Migrations
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Departamento", b =>
                 {
-                    b.Navigation("Usuarios");
-
-                    b.Navigation("grupos");
+                    b.Navigation("Grupos");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
@@ -643,30 +676,45 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Navigation("usuarios");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
-                {
-                    b.Navigation("flujoAprobacion");
-
-                    b.Navigation("orden");
-                });
-
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
-                {
-                    b.Navigation("notifications");
-                });
-
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Ticket", b =>
                 {
                     b.Navigation("FlujoAprobacion");
+
+                    b.Navigation("TickectsRelacionadosHijos");
+
+                    b.Navigation("TickectsRelacionadosPadre");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TipoCargo", b =>
+                {
+                    b.Navigation("Jeraruia");
                 });
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Usuario", b =>
                 {
-                    b.Navigation("Flujo");
-
                     b.Navigation("ticketsasignados");
 
                     b.Navigation("ticketscreados");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.administrador", b =>
+                {
+                    b.Navigation("Flujo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Cliente", b =>
+                {
+                    b.Navigation("Flujo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Empleado", b =>
+                {
+                    b.Navigation("Flujo");
+                });
+
+            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", b =>
+                {
+                    b.Navigation("Jeraruia");
                 });
 #pragma warning restore 612, 618
         }

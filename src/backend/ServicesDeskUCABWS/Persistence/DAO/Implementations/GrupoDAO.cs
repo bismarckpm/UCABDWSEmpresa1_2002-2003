@@ -59,8 +59,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     .Select(a => new GrupoDTO
                     {
                         nombre = a.nombre,
-                        id = a.id,
-                        departamentoid=a.departamentoid,
+                        id = a.id
+                        
                     });
                 return data.First();
             }catch(Exception ex)
@@ -93,8 +93,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var lista = _dbContext.Grupo.Select(a => new GrupoDTO
                 {
                     id = a.id,
-                    nombre = a.nombre,
-                    departamentoid = a.departamentoid,
+                    nombre = a.nombre
+                   
                 });
                 return lista.ToList();
 

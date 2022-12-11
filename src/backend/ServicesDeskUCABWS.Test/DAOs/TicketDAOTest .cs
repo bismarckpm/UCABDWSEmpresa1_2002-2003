@@ -21,12 +21,20 @@ namespace ServicesDeskUCABWS.Test.DAOs
 {
     public class TicketDAOTest
     {
-
         private readonly TicketDao _dao;
         private readonly Mock<IMigrationDbContext> _contextMock;
         private readonly Mock<ITicketDao> _servicesMock;
         private readonly Mock<IEmailDao> _emailMock;
-
+        public Cliente clienteOrigen = new Cliente()
+        {
+            id = 2,
+            email = "cliente2@gmail.com"
+        };
+        public Empleado empleadoAsignado = new Empleado()
+        {
+            id = 3,
+            email = "empleado3@gmail.com"
+        };
         public TicketDAOTest()
         {
             var faker = new Faker();
@@ -39,8 +47,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
         [Fact(DisplayName = "Agregar Ticket")]
         public Task AgregarTicketDAOTest()
-        {
+        {           
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            
+            
 
             var tk = new Ticket()
             {
@@ -56,7 +66,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 FlujoAprobacion = new FlujoAprobacion()
             };
 
-            var result = _dao.AgregarTicketDAO(tk,It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var result = _dao.AgregarTicketDAO(tk,1, 1,1);
 
             Assert.True(result);
             return Task.CompletedTask;
@@ -81,7 +91,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 FlujoAprobacion = new FlujoAprobacion()
             };
 
-            var result = _dao.Update(tk, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var result = _dao.Update(tk, 1, 1, 1, 1);
 
             Assert.True(result);
             return Task.CompletedTask;
@@ -104,11 +114,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public Task GetTicketDAOTest()
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-
             var dto = _dao.GetTicket(1);
             var result = dto;
 
-            Assert.IsType<TicketCDTO>(result);
+            Assert.Null(result);
             return Task.CompletedTask;
         }
 
@@ -167,6 +176,24 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
             Assert.True(result);
             return Task.CompletedTask;
+        }
+
+
+        public Ticket ObjetoTicketNuevo()
+        {
+            return new Ticket()
+            {
+                id = 1,
+                nombre = "nombre",
+                asginadoa = new Empleado() { id = 2, email = "prueba@gmail.com" },
+                creadopor = new Cliente() { id = 3, email = "prueba2@gmail.com" },
+                descripcion = "descripcion",
+                fecha = It.IsAny<DateTime>(),
+                Estado = new Estado(),
+                prioridad = new Prioridad(),
+                categoria = new Categoria(),
+                FlujoAprobacion = new FlujoAprobacion()
+            };
         }
     }
 }

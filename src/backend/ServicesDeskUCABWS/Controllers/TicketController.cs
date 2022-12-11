@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.BussinessLogic.Mapper;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using System.ComponentModel.DataAnnotations;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -29,113 +31,178 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
-        public IActionResult GetCollection()
+        public ApplicationResponse<ICollection<TicketCDTO>> GetCollection()
         {
-            var tickets =_ticketDao.GetTickets();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tickets);
+            var response = new ApplicationResponse<ICollection<TicketCDTO>>();
+             try{
+             response.Data =_ticketDao.GetTickets();
+           
+             } catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
         
 
         [HttpGet("Tickect/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
-        public IActionResult GetTicket([FromRoute] int id)
+        public ApplicationResponse<TicketCDTO> GetTicket([FromRoute] int id)
         {
-            var tickets =_ticketDao.GetTicket(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tickets);
+            var response = new ApplicationResponse<TicketCDTO>();
+             try{
+             response.Data =_ticketDao.GetTicket(id);
+           
+             } catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
+        [HttpGet("TickectMergeados/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Ticket>))]
+        public ApplicationResponse<ICollection<TicketCDTO>> GetTicketMergeados([FromRoute] int id)
+        {
+            var response = new ApplicationResponse<ICollection<TicketCDTO>>();
+             try{
+             response.Data =_ticketDao.TicketsMergeados(id);
+           
+             } catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+        }
+
+
         [HttpGet("Tickect/asginado/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
-        public IActionResult GetTicketasignados([FromRoute] int id)
+        public ApplicationResponse<ICollection<TicketCDTO>> GetTicketasignados([FromRoute] int id)
         {
-            var tickets =_ticketDao.GetTicketporusuarioasignado(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tickets);
-        }
-         [HttpGet("Tickect/estado/{id}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
-        public IActionResult GetTicketEstados([FromRoute] int id)
-        {
-            var tickets =_ticketDao.GetTicketporestado(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tickets);
-        }
-         [HttpGet("Tickect/Departamento/{id}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
-        public IActionResult GetTicketDepartamento([FromRoute] int id)
-        {
-            var tickets =_ticketDao.GetTicketsPorDepartamento(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tickets);
-        }
-         [HttpGet("Tickect/Categoria/{id}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
-        public IActionResult GetTicketPorCategoria([FromRoute] int id)
-        {
-            var tickets =_ticketDao.GetTicketsPorCategoria(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(tickets);
-        }
-
-
-
-
-        [HttpPut("{ticketid}")]
-        public IActionResult UpdateTickect(int ticketid, 
-            [FromQuery] int asignadoaid, [FromQuery] int prioridadid,
-            [FromBody] TickeUDTO ticketupdate, [FromQuery] int Estadoid,[FromQuery] int categoriaid )
-        {
-            if (ticketupdate == null)
-                return BadRequest(ModelState);
-
-            if (ticketid != ticketupdate.Id)
-                return BadRequest(ModelState);
-
-            if (_ticketDao.GetTicket(ticketid) == null)
-                return NotFound();
-
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var ticketmap = _mapper.Map<Ticket>(ticketupdate);
-
-            if (!_ticketDao.Update(ticketmap,asignadoaid,prioridadid,Estadoid,categoriaid))
+            var response = new ApplicationResponse<ICollection<TicketCDTO>>();
+             try{
+             response.Data =_ticketDao.GetTicketporusuarioasignado(id);
+           
+             } catch (TickectExeception ex)
             {
-                ModelState.AddModelError("", "Hubo un error ");
-                return StatusCode(500, ModelState);
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
             }
-            return Ok("Ticket Actualizado");
+            return response;
+           
+        }
+        
+
+        [HttpPut("Estado/{ticketid}")]
+        public ApplicationResponse<string> UpdateTickect(int ticketid, TickectEstadoDTO tickectEstado)
+        {
+            var response = new ApplicationResponse<string>();
+             try
+            {
+                response.Data= _ticketDao.CambiarEstado(tickectEstado);
+            }
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
 
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TickectCreateDTO>))]
         [Route("CreateTicket")]
-         public IActionResult CreateTicket([FromQuery] int creadopor,[FromQuery] int asignadaa, [FromBody] TicketDTO ticket, [FromQuery] int prioridad,[FromQuery] int estatud,[FromQuery] int categoriaid )
+         public ApplicationResponse<string> CreateTicket( [FromBody] TickectCreateDTO ticket)
         {
-            if (ticket == null)
-                return BadRequest(ModelState);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var Tickectmap = _mapper.Map<Ticket>(ticket);
-            if (!_ticketDao.AgregarTicketDAO(Tickectmap,creadopor,asignadaa,prioridad,estatud,categoriaid))
+            var response = new ApplicationResponse<string>();
+             try
             {
-                ModelState.AddModelError("", "Error al guardar");
-                return StatusCode(500, ModelState);
+                response.Data= _ticketDao.AgregarTicketDAO(ticket);
             }
-            return Ok("Ticket Creado");
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+        }
+        [HttpPost]
+        [Route("MergearTickets")]
+         public ApplicationResponse<string> MergeTicket( [FromBody] TicketsRelacionadosDTO ticket)
+        {
+            var response = new ApplicationResponse<string>();
+             try
+            {
+                response.Data= _ticketDao.TikcetsRelacionados(ticket);
+            }
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+        }
+        [HttpDelete]
+        [Route("EliminarMerge")]
+         public ApplicationResponse<string> EliminarMerge([FromBody] TicketsRelacionadosDTO tickects )
+        {
+            var response = new ApplicationResponse<string>();
+             try
+            {
+                response.Data= _ticketDao.EliminarRelacionMerge(tickects);
+            }
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+        }
+
+        [HttpPut("AsignarTicket/{ticketid}")]
+        public ApplicationResponse<string> AsignarTicket(int ticketid, AsignarTicketDTO asignarTicket)
+        {
+              var response = new ApplicationResponse<string>();
+             try
+            {
+                response.Data= _ticketDao.AsignarTicket(asignarTicket);
+            }
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+          
+        }
+         [HttpPut("DelegarTicket/{ticketid}")]
+        public ApplicationResponse<string> DelegarTIcket(int ticketid, TickectDelegadoDTO delegadoDTO)
+        {
+              var response = new ApplicationResponse<string>();
+             try
+            {
+                response.Data= _ticketDao.DelegarTicket(delegadoDTO);
+            }
+            catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+          
         }
     }
 }

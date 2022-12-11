@@ -6,11 +6,9 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public string? nombre { get; set; }
 
-        public int EtiquetaId { get; set; }
+        public ICollection<Etiqueta> etiquetas {get;set;}
 
-        public Etiqueta? etiqueta { get; set; }
-
-        public Notification? notification { get; set; }
+        //public Notification? notification { get; set; }
 
         public ICollection<Ticket> tickets {get;set;}
     }

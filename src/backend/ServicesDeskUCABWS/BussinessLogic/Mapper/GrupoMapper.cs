@@ -12,7 +12,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             {
                 id = grupo.id,
                 nombre = grupo.nombre,  
-                departamentoid = grupo.departamentoid
+               
             };
         }
         public static Grupo DtoToEntity(GrupoDTO dto)
@@ -21,7 +21,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             {
                 id = dto.id,
                 nombre = dto.nombre,
-                departamentoid = dto.departamentoid
+                
             };
         }
 

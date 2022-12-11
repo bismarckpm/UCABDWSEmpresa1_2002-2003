@@ -18,6 +18,7 @@ namespace ServicesDeskUCABWS.Test.Configuraciones
                 cfg.AddProfile(new EstadoMapper());
                 cfg.AddProfile(new ModeloParaleloMapper());
                 cfg.AddProfile(new ModeloJerarquicoMapper());
+                cfg.AddProfile(new UsuarioMapper());
             });
             return config.CreateMapper();
         }

@@ -21,10 +21,6 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
-        public virtual DbSet<Notification> Notifications
-        {
-            get; set;
-        }
         public virtual DbSet<Prioridad> Prioridades
         {
             get; set;
@@ -91,12 +87,31 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        public virtual DbSet<FlujoAprobacion> FlujoAprobaciones
+        {
+            get; set;
+        }
+         public  DbSet<TickectsRelacionados> TickectsRelacionados
+        {
+            get; set;
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    modelBuilder.Entity<Ticket>()
-        .HasOne(a => a.FlujoAprobacion)
-        .WithOne(b => b.ticket)
-        .HasForeignKey<FlujoAprobacion>(b => b.ticketid);
+
+modelBuilder.Entity<TickectsRelacionados>().HasKey(i => new { i.Ticketid, i.TicketRelacionadoid });
+        modelBuilder.Entity<TickectsRelacionados>()
+        .HasOne(pt => pt.TicketRelacion)
+        .WithMany(p => p.TickectsRelacionadosHijos)
+        .HasForeignKey(pt => pt.TicketRelacionadoid)
+        .OnDelete(DeleteBehavior.ClientNoAction);
+
+    modelBuilder.Entity<TickectsRelacionados>()
+        .HasOne(pt => pt.ticket)
+        .WithMany(t => t.TickectsRelacionadosPadre)
+        .HasForeignKey(pt => pt.Ticketid)
+         .OnDelete(DeleteBehavior.ClientNoAction);     
 }
+
+
     }
 }
