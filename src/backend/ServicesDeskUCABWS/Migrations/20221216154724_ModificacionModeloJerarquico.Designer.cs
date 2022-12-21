@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicesDeskUCABWS.Persistence.Database;
 
@@ -11,9 +12,10 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221216154724_ModificacionModeloJerarquico")]
+    partial class ModificacionModeloJerarquico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,7 +229,10 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Property<int?>("TipoCargoid")
                         .HasColumnType("int");
 
-                    b.Property<int>("modelojerarquicoid")
+                    b.Property<int?>("jerarquicoid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("modelojerauicoid")
                         .HasColumnType("int");
 
                     b.Property<int>("orden")
@@ -237,7 +242,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasIndex("TipoCargoid");
 
-                    b.HasIndex("modelojerarquicoid");
+                    b.HasIndex("jerarquicoid");
 
                     b.ToTable("ModeloJerarquicoCargos");
                 });
@@ -543,9 +548,7 @@ namespace ServicesDeskUCABWS.Migrations
 
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.ModeloJerarquico", "jerarquico")
                         .WithMany("Jeraruia")
-                        .HasForeignKey("modelojerarquicoid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("jerarquicoid");
 
                     b.Navigation("TipoCargo");
 

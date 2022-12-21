@@ -86,6 +86,14 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        public DbSet<ModeloAprobacion> ModeloAprobacion
+        {
+            get; set;
+        }
+        public DbSet<ModeloJerarquicoCargos> ModeloJerarquicoCargos
+        {
+            get; set;
+        }
 
     }
 }

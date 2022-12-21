@@ -1,0 +1,99 @@
+@model List<ServicesDeskUCAB.DTO.ModeloJerarquicoDTO>
+
+@section scripts{
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderMJerarquico');
+            $('#btnAgregarTc').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+@* Js para traer la ventana emergente de confirmacion de eliminacion *@
+    <script>
+       $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEliminar');
+            $("#btnEliminarTc, .btn-danger").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idModeloJerarquico", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+
+        @* Js para traer la ventana emergente de edicion de Tipo Cargo *@
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEditar');
+            $("#btnEditarTc, .btn-primary").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idModeloJerarquico", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+}  
+@{
+        ViewData["Title"] = "Gestion Modelo Jerarquico";
+}  
+    <div id="PlaceHolderMJerarquico"></div>
+    <div id="PlaceHolderEliminar"></div>
+    <div id="PlaceHolderEditar"></div>
+
+    @* Boton para abrir el modal*@
+    <button id=btnAgregarTc type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarModeloJerarquico")">
+        Crear Modelo Jerarquico
+    </button>
+    <br />
+    <br/>
+
+<table class="table">
+    <tr>
+        <th>
+            Modelo Jerarquico
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                <button id=btnEditarTc type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarTipoCargo","ModeloJerarquico",new {id = "idModeloJerarquico"})">
+                    Editar
+                </button>
+                <button id=btnEliminarTc type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarTipoCargo","ModeloJerarquico",new {id = "idModeloJerarquico"})">
+                        Eliminar
+                </button>
+            </td>
+        </tr>
+    }
+
+</table>    

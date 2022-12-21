@@ -297,8 +297,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 {
                     id=1,
                     nombre="Estado1",
-                    EtiquetaId=1,
-                    etiqueta= new Etiqueta(),
+                    //EtiquetaId=1,
+                   // etiqueta= new Etiqueta(),
                     //notification = new Notification(),
                     tickets = new List<Ticket>()
                 },
@@ -306,8 +306,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 {
                     id=2,
                     nombre="Estado2",
-                    EtiquetaId=2,
-                    etiqueta= new Etiqueta(),
+                  //  EtiquetaId=2,
+                  //  etiqueta= new Etiqueta(),
                     //notification = new Notification(),
                     tickets = new List<Ticket>()
                 }

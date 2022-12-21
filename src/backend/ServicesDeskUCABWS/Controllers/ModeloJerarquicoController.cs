@@ -7,12 +7,13 @@ using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using ServicesDeskUCABWS.Exceptions;
 
 
 namespace ServicesDeskUCABWS.Controllers
 {
     [ApiController]
-    [Route("api/ModeloAprobacion")]
+    [Route("ModeloAprobacion/")]
     public class ModeloJerarquicoController : Controller
     {
         private readonly IModeloJerarquicoDAO _dao;
@@ -28,77 +29,84 @@ namespace ServicesDeskUCABWS.Controllers
             _mapper = mapper;
         }
 
-        // [HttpPost("Jerarquico")]
+        [HttpPost]
+        [Route("Jerarquico/")]
+        public ModeloJerarquicoDTO Post([FromBody] ModeloJerarquicoDTO dto)
+        {
+            try
+            {
+                var p = ModeloJerarquicoMapper.DtoToEntity(dto);
 
-        // public async Task<ActionResult> Post([FromBody] ModeloJerarquicoCreateDTO dto)
-        // {
+                _log.LogInformation("ModeloJerarquico agregada con exito");
+                return _dao.AgregarModeloJerarquicoDAO(p);
 
-        //     var ModeloJerarquico = _mapper.Map<ModeloJerarquico>(dto);
-        //     var result = await _dao.AgregarModeloJerarquicoDAO(ModeloJerarquico);
-        //     _log.LogInformation("ModeloJerarquico agregada con exito");
-        //     return Ok(result);
-        // }
+            }catch(ServicesDeskUcabWsException ex)
+            {
+                _log.LogError("Error al crear" + ex.Mensaje, ex.Excepcion);
+                throw new ServicesDeskUcabWsException(ex.Mensaje,ex.Excepcion);
+            }
+        }
 
-        // [HttpGet]
-        // public async Task<ActionResult<List<ModeloJerarquicoDTO>>> Get()
-        // {
-        //   var result = await _dao.ConsultarModeloJerarquicosDAO();
-        //   if (result == null)
-        //   {
-        //     return BadRequest("No se encontraron los modelos paralelos");
-        //   }
-        //     _log.LogInformation("ModeloJerarquicos consultadas con exito");
-        //     return Ok(_mapper.Map<List<ModeloJerarquicoDTO>>(result));
-        // }        
+        [HttpGet]
+        [Route("GetModeloJerarquico/")]
+        public List<ModeloJerarquicoDTO> GetModeloJerarquico()
+        {
+            try
+            {
+                return _dao.ConsultarModeloJerarquicosDAO();
+            }catch(ServicesDeskUcabWsException ex)
+            {
+                _log.LogError("Error al consultar " + ex.Mensaje, ex.StackTrace);
+                throw new ServicesDeskUcabWsException("Error al Consultar" + ex.Mensaje, ex);
+            }
+        }        
 
-        // [HttpGet("Jerarquico/{id:int}", Name = "obtenerModeloJerarquico")]
-        // public async Task<ActionResult<ModeloJerarquicoDTO>> Get(int id)
-        // {
+        [HttpGet]
+        [Route("Jerarquico/{id}")]
+        public ModeloJerarquicoDTO ConsultaMJerarquicoPorId(int id)
+        {
+            try
+            {
+                return _dao.ObtenerModeloJerarquicoDAO(id);
 
-        //     if (id <= 0)
-        //     {
-        //         return BadRequest("El id debe ser mayor a 0");
-        //     }
-        //     var result = await _dao.ObtenerModeloJerarquicoDAO(id);
-        //     if (result.Value?.Id == id)
-        //     {
-        //         return Ok(_mapper.Map<ModeloJerarquicoDTO>(result.Value));  
-        //     }
-        //     return NotFound("No se encontro el ModeloJerarquico");
-        // }
+            }catch(ServicesDeskUcabWsException ex)
+            {
+                _log.LogError("[Error]: "+ ex.Mensaje + " || " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException("[Error] : "+ ex.Mensaje, ex);
+            }
+        }
 
+         [HttpPut]
+         [Route("ActualizaModeloJerarquico/")]
+         public ModeloJerarquicoDTO ActualizarModeloJerarquico([FromBody] ModeloJerarquicoDTO dto)
+         {
+            try
+            {
+                   var data = _dao.ActualizarModeloJerarquicoDAO(ModeloJerarquicoMapper.DtoToEntity(dto));
+                    _log.LogInformation("[Objeto Actualizado]: " + data.Nombre + ", " + data.CategoriaId + ", " + data.orden);
+                    return data;
 
-        //  [HttpPut("{id:int}")]
-        //  public async Task<ActionResult> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoCreateDTO dto, int id)
-        //  {
-        //      if (id <= 0)
-        //      {
-        //          return BadRequest("El id debe ser mayor a 0");
-        //      }
-        //      var ModeloJerarquico = _mapper.Map<ModeloJerarquicoCreateDTO>(dto);
-        //      var result = await _dao.ActualizarModeloJerarquicoDAO(ModeloJerarquico, id);
-        //      if (result.Value!.Id == id)
-        //      {
-        //          _log.LogInformation("ModeloJerarquico actualizada con exito");
-        //          return result.Result;
-        //      }
-        //      else
-        //      {
-        //          return NotFound("No se encontro la ModeloJerarquico");
-        //      }
+            }catch(ServicesDeskUcabWsException ex)
+            {
+                _log.LogError(ex.Mensaje + " || " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException(ex.Mensaje, ex.Excepcion);
+            }
              
-        //  }
+         }
 
-        // [HttpDelete("Jerarquico/{id:int}")]
-        // public async Task<ActionResult> EliminarModeloJerarquico([Required] int id)
-        // {
-
-        //     if (id <= 0)
-        //     {
-        //         return BadRequest("El id debe ser mayor a 0");
-        //     }
-        //     var result = await _dao.EliminarModeloJerarquicoDAO(id);
-        //     return result;
-        // }
+        [HttpDelete]
+        [Route("DeleteModeloJerarquico/{id}")]
+        public ModeloJerarquicoDTO EliminarModeloJerarquico([Required] int id)
+        {
+                try
+                {
+                    return  _dao.EliminarModeloJerarquicoDAO(id);
+                    
+                }catch(Exception ex)
+                {
+                    _log.LogError("("+DateTime.Now +") "+"- [ "+ex.Message +" ] :"+ex.StackTrace);
+                    throw new ServicesDeskUcabWsException("Error al eliminar el Objeto: " + id, ex.Message, ex);
+                }
+        }
     }
 }
