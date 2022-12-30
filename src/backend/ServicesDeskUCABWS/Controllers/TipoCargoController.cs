@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
-
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -33,8 +33,8 @@ namespace ServicesDeskUCABWS.Controllers
                     
             }catch(Exception ex)
             {
-           
-                throw ex.InnerException!;
+                _log.LogError("[Error al crear]: " + ex.Message + ", [Ubicado]: " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException("Error al crear: " + ex.Message, ex.InnerException!);
             }
         }
 
@@ -47,7 +47,8 @@ namespace ServicesDeskUCABWS.Controllers
                 return _dao.ConsultarTipoCargoDAO();
             }catch(Exception ex)
             {
-                throw ex.InnerException!;
+                _log.LogError("[Error al Consultar]: " + ex.Message +", [Ubicado]: "+ ex.StackTrace);
+                throw new ServicesDeskUcabWsException("[Error al Consultar]: " + ex.Message, ex.InnerException!);
             }
         }
 
@@ -61,8 +62,8 @@ namespace ServicesDeskUCABWS.Controllers
 
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                _log.LogError("[Error al crear]: " + ex.Message + ", [Ubicado]: " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException("Error al crear: " + ex.Message, ex.InnerException!);
             }
         }
 
@@ -75,8 +76,8 @@ namespace ServicesDeskUCABWS.Controllers
                 return _dao.EliminarTipoCargoDAO(id);
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
+                _log.LogError("[Error al crear]: " + ex.Message + ", [Ubicado]: " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException("Error al crear: " + ex.Message, ex.InnerException!);
             }
         }        
     }

@@ -96,7 +96,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpDelete]
         [Route("DeleteModeloJerarquico/{id}")]
-        public ModeloJerarquicoDTO EliminarModeloJerarquico([Required] int id)
+        public ModeloJerarquicoDTO EliminarModeloJerarquico([FromRoute] int id)
         {
                 try
                 {
@@ -104,7 +104,7 @@ namespace ServicesDeskUCABWS.Controllers
                     
                 }catch(Exception ex)
                 {
-                    _log.LogError("("+DateTime.Now +") "+"- [ "+ex.Message +" ] :"+ex.StackTrace);
+                    _log.LogError("("+DateTime.Now +") "+"- [ "+ex.Message +" ]");
                     throw new ServicesDeskUcabWsException("Error al eliminar el Objeto: " + id, ex.Message, ex);
                 }
         }
