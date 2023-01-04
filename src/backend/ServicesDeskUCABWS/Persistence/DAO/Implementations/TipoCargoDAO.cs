@@ -5,6 +5,7 @@ using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
 using System;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -35,7 +36,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Error al Crear, detalles:", ex);
+                throw new ServicesDeskUcabWsException("Error al Crear, detalles: " + ex.Message, ex);
             }
         }
 
@@ -56,7 +57,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Error al Consultar: "+ex.Message,ex);
+                throw new ServicesDeskUcabWsException("Error al Consultar: "+ex.Message, ex);
             }
         }
 
@@ -78,7 +79,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
-                throw new Exception("Fallo al actualizar: " + tipoCargo.nombre, ex);
+                throw new ServicesDeskUcabWsException("Fallo al actualizar: " + tipoCargo.nombre + ", " + ex.Message, ex);
             } 
         } 
 
@@ -97,7 +98,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                     Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
-                    throw new Exception("Fallo al Eliminar por id: " + id, ex);
+                    throw new ServicesDeskUcabWsException("Fallo al Eliminar por id: " + id +", "+ex.Message, ex);
             }
         }               
     }

@@ -95,22 +95,30 @@ namespace ServicesDeskUCABWS.Persistence.Database
         {
             get; set;
         }
+        public DbSet<ModeloAprobacion> ModeloAprobacion
+        {
+            get; set;
+        }
+        public DbSet<ModeloJerarquicoCargos> ModeloJerarquicoCargos
+        {
+            get; set;
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
+        {
 
-modelBuilder.Entity<TickectsRelacionados>().HasKey(i => new { i.Ticketid, i.TicketRelacionadoid });
-        modelBuilder.Entity<TickectsRelacionados>()
-        .HasOne(pt => pt.TicketRelacion)
-        .WithMany(p => p.TickectsRelacionadosHijos)
-        .HasForeignKey(pt => pt.TicketRelacionadoid)
-        .OnDelete(DeleteBehavior.ClientNoAction);
+        modelBuilder.Entity<TickectsRelacionados>().HasKey(i => new { i.Ticketid, i.TicketRelacionadoid });
+                modelBuilder.Entity<TickectsRelacionados>()
+                .HasOne(pt => pt.TicketRelacion)
+                .WithMany(p => p.TickectsRelacionadosHijos)
+                .HasForeignKey(pt => pt.TicketRelacionadoid)
+                .OnDelete(DeleteBehavior.ClientNoAction);
 
-    modelBuilder.Entity<TickectsRelacionados>()
-        .HasOne(pt => pt.ticket)
-        .WithMany(t => t.TickectsRelacionadosPadre)
-        .HasForeignKey(pt => pt.Ticketid)
-         .OnDelete(DeleteBehavior.ClientNoAction);     
-}
+            modelBuilder.Entity<TickectsRelacionados>()
+                .HasOne(pt => pt.ticket)
+                .WithMany(t => t.TickectsRelacionadosPadre)
+                .HasForeignKey(pt => pt.Ticketid)
+                .OnDelete(DeleteBehavior.ClientNoAction);     
+        }
 
 
     }

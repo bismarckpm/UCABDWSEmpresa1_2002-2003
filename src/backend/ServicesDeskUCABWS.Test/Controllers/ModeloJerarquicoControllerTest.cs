@@ -18,7 +18,7 @@ public class ModeloJerarquicoControllerTest : BasePrueba
     private readonly ModeloJerarquicoController _controller;
     private readonly Mock<IModeloJerarquicoDAO> _servicesMock;
     public ModeloJerarquicoDTO modeloJerarquicoDTO = It.IsAny<ModeloJerarquicoDTO>();
-    public ModeloJerarquicoCreateDTO modeloJerarquicoCreateDTO = It.IsAny<ModeloJerarquicoCreateDTO>();
+    // public ModeloJerarquicoCreateDTO modeloJerarquicoCreateDTO = It.IsAny<ModeloJerarquicoCreateDTO>();
     public ModeloJerarquico modeloJerarquico = It.IsAny<ModeloJerarquico>();
     private readonly Mock<IMigrationDbContext> _contextMock;
     public ModeloJerarquicoControllerTest()
