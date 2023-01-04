@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServicesDeskUCAB.DTO;
+using ServicesDeskUCAB.ResponseHandler;
 using ServicesDeskUCAB.Services.Login;
 using System.Dynamic;
 using System.Text;
@@ -11,33 +12,38 @@ namespace ServicesDeskUCAB.Controllers
     public class loginController : Controller
     {
         public ViewResult Index() => View();
+
         [HttpPost]
         public async Task<IActionResult> Index(UserLoginDTO usuario)
         {
-          LoginDTO user = new LoginDTO();
+            AplicationResponseHandler<UsuarioDTO> userResponse = new AplicationResponseHandler<UsuarioDTO>();
+            UsuarioDTO user = new UsuarioDTO();
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
  
                 using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Login", content))
                 {
-                    if (response.IsSuccessStatusCode)
+                    string response2 = await response.Content.ReadAsStringAsync();
+                    userResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<UsuarioDTO>>(response2)!;
+                    if (userResponse.Success)
                     {
-                         string response2 = await response.Content.ReadAsStringAsync();
-                         user = JsonConvert.DeserializeObject<LoginDTO>(response2);
-                        HttpContext.Session.SetString("userid",user.id.ToString());
-                        HttpContext.Session.SetString("email", user.email);
+                        user = userResponse.Data;
+                        HttpContext.Session.SetString("id", user.id);
+                        HttpContext.Session.SetString("email", user.Email);
+                        HttpContext.Session.SetString("rol", user.Discriminator);
                         return RedirectToAction("Index", "Home");
                     }
                     
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
+                    dynamic json  = JsonConvert.DeserializeObject(apiResponse)!;
                     ViewBag.Result = apiResponse;
-
+                    
                 }
             }
             return View();
         }
+
         public ViewResult Registrarse() => View();
         [HttpPost]
         public async Task<IActionResult> Registrarse(RegistroDTO usuario)

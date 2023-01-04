@@ -20,48 +20,51 @@
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
 
-
-
                 </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
+                        <ul class="navbar-nav flex-grow-1 ml-auto">
+
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="GestionTickets">Tickets</a>
                         </li>
-                        <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" asp-area="" asp-controller="" asp-action="">Configuracion de Tickets</a>
-                            <div class="dropdown-menu">
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Prioridad" asp-action="GestionPrioridades">Prioridades</a>
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Categoria" asp-action="GestionCategorias">Categorias</a>
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Estado" asp-action="GestionEstados">Estados</a>
-                            </div>
-                        </li>
 
-                        <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Configuracion de Empleados</a>
-                            <div class="dropdown-menu">
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Cargo" asp-action="GestionCargos">Cargos</a>
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="TipoCargo" asp-action="GestionTipoCargo">Tipo de Cargo</a>
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Departamento" asp-action="GestionDepartamentos">Departamentos</a>
-                            </div>
-                        </li>
+                         @if (Context.Session.GetString("rol").ToUpper() == "ADMINISTRADOR")
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" asp-area="" asp-controller="" asp-action="">Configuracion de Tickets</a>
+                                    <div class="dropdown-menu">
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Prioridad" asp-action="GestionPrioridades">Prioridades</a>
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Categoria" asp-action="GestionCategorias">Categorias</a>
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Estado" asp-action="GestionEstados">Estados</a>
+                                    </div>
+                                </li>
 
-                        <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Configuracion de Notificaciones</a>
-                            <div class="dropdown-menu">
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Etiqueta" asp-action="GestionEtiquetas">Etiquetas</a>
-                                <a class="nav-link dropdown-item" asp-area="" asp-controller="Plantilla" asp-action="GestionPlantillas">Plantillas</a>
-                            </div>
-                        </li>
+                                <li class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Configuracion de Empleados</a>
+                                    <div class="dropdown-menu">
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Cargo" asp-action="GestionCargos">Cargos</a>
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="TipoCargo" asp-action="GestionTipoCargo">Tipo de Cargo</a>
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Departamento" asp-action="GestionDepartamentos">Departamentos</a>
+                                    </div>
+                                </li>
 
-                         <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Login"
-                                asp-action="Cerrar">Cerrar sesion</a>
-                        </li>
+                                <li class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Configuracion de Notificaciones</a>
+                                    <div class="dropdown-menu">
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Etiqueta" asp-action="GestionEtiquetas">Etiquetas</a>
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="Plantilla" asp-action="GestionPlantillas">Plantillas</a>
+                                    </div>
+                                </li>
+                            }
                     </ul>
+                        <div class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Login"
+                           asp-action="Cerrar">Cerrar sesion</a>
+                        </div>
                 </div>
             </div>
         </nav>

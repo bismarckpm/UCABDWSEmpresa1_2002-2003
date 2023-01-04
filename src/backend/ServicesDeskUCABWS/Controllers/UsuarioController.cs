@@ -94,9 +94,9 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
         [HttpPost("Login")]
-        public ApplicationResponse<string> Login([FromBody] UserLoginDTO usuario)
+        public ApplicationResponse<UsuarioDTO> Login([FromBody] UserLoginDTO usuario)
         {
-            var response = new ApplicationResponse<string>();
+            var response = new ApplicationResponse<UsuarioDTO>();
            try{
            
             var usuariocreated =_UsuarioRepository.GetUsuario().Where(c => c.email == usuario.Email).FirstOrDefault();
@@ -113,8 +113,8 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 throw new UsuarioExepcion("Ha ocurrido un error Contrasena incorrecta ");
             }
-            response.Data = "Exitoso";
-           }
+                response.Data = _UsuarioRepository.GetUsuarioPorEmail(usuario.Email);
+            }
            catch(UsuarioExepcion ex){
                 response.Success = false;
                 response.Message = ex.Mensaje;
@@ -122,6 +122,7 @@ namespace ServicesDeskUCABWS.Controllers
            }
            return response;
         }
+
         [HttpGet("Verificar")]
         public ApplicationResponse<string> Verificar([FromQuery] string token)
         {

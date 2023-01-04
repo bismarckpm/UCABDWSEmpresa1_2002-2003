@@ -12,5 +12,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid);
         Usuario CreatePasswordHash(Usuario usuario, string clave);
         bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
+        UsuarioDTO GetUsuarioPorEmail(string email);
     }
 }

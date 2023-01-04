@@ -107,7 +107,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                 var prioridad = _context.Prioridades.Where(
                 p => p.id == id).First();
-                return PrioridadMapper.EntityToDto(prioridad); ;
+                return PrioridadMapper.EntityToDto(prioridad);
 
             }
             catch (Exception ex)
