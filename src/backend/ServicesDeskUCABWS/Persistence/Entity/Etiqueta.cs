@@ -7,7 +7,7 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public string? descripcion { get; set; }
 
-        public ICollection<Estado> estados {get;set;}
+        public ICollection<Estado>? estados { get; set; }
 
     }
 }
