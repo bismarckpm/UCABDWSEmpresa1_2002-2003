@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ServicesDeskUCAB.DTO;
 using ServicesDeskUCAB.Services.Login;
 using System.Dynamic;
@@ -21,18 +22,18 @@ namespace ServicesDeskUCAB.Controllers
  
                 using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Login", content))
                 {
-                    if (response.IsSuccessStatusCode)
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
                     {
-                         string response2 = await response.Content.ReadAsStringAsync();
-                         user = JsonConvert.DeserializeObject<LoginDTO>(response2);
-                        HttpContext.Session.SetString("userid",user.id.ToString());
+                        string stringDataRespuesta = json_respuesta["data"].ToString();
+                        user = JsonConvert.DeserializeObject<LoginDTO>(stringDataRespuesta);
+                        HttpContext.Session.SetInt32("userid",user.id);
                         HttpContext.Session.SetString("email", user.email);
                         return RedirectToAction("Index", "Home");
                     }
-                    
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = apiResponse;
+                     ViewBag.Error = json_respuesta["message"].ToString();
 
                 }
             }
@@ -42,21 +43,25 @@ namespace ServicesDeskUCAB.Controllers
         [HttpPost]
         public async Task<IActionResult> Registrarse(RegistroDTO usuario)
         {
-             ErrotsDTO errors = new ErrotsDTO();
             using (var httpClient = new HttpClient())
             {
+                 if (!ModelState.IsValid)
+                 {
+                    return View();
+                }       
                 StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
  
-                using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Registrar?cargoid=0&tipousuario=3&Departamentoid=0", content))
+                using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Registrar", content))
                 {
-                    if (response.IsSuccessStatusCode)
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
                     {
                          return RedirectToAction("VerificarUsuario");
                     }
                     
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = json;
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
 
                 }
             }
@@ -72,14 +77,16 @@ namespace ServicesDeskUCAB.Controllers
             {
                 using (var response = await httpClient.GetAsync("https://localhost:7198/Usuario/Verificar?token="+token))
                 {
-                    if (response.IsSuccessStatusCode)
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
                     {
-                         return RedirectToAction("Index");
+                       return RedirectToAction("Index");
                     }
                     
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = json;
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
 
                 }
             }
@@ -92,16 +99,20 @@ namespace ServicesDeskUCAB.Controllers
         {
             using (var httpClient = new HttpClient())
             {
+                    
+                
                 using (var response = await httpClient.GetAsync("https://localhost:7198/Usuario/olvido-contrasena?email="+email))
                 {
-                    if (response.IsSuccessStatusCode)
+                     var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
                     {
                          return RedirectToAction("ResetPassword");
                     }
                     
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = json;
+                 ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+
 
                 }
             }
@@ -112,21 +123,26 @@ namespace ServicesDeskUCAB.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO usuario)
         {
-             ErrotsDTO errors = new ErrotsDTO();
+              if (!ModelState.IsValid)
+                 {
+                    return View();
+                }  
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
  
                 using (var response = await httpClient.PostAsync("https://localhost:7198/Usuario/Reset-Password", content))
                 {
-                    if (response.IsSuccessStatusCode)
+                   var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
                     {
                          return RedirectToAction("Index");
                     }
                     
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = json;
+                ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+
 
                 }
             }

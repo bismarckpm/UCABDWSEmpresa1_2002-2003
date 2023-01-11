@@ -29,6 +29,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new UsuarioExepcion("Ha ocurrido un error al buscar el usuario ", ex.Message, ex);
             }
         }
+
+        
     
 
          public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
