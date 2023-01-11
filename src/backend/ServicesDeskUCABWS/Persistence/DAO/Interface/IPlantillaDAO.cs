@@ -6,14 +6,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IPlantillaDAO
     {
-        public Task<List<Plantilla>> ObtenerPlantillasDAO();
+        public Task<List<PlantillaDTO>> ObtenerPlantillasDAO();
 
-        public Task<ActionResult<Plantilla>> ObtenerPlantillaDAO(int id);
+        public Task<PlantillaDTO> ObtenerPlantillaDAO(int id);
 
-        public Task<ActionResult<PlantillaDTO>> AgregarPlantillaDAO(Plantilla plantilla);
+        public Task<PlantillaDTO> AgregarPlantillaDAO(Plantilla plantilla);
 
-        public Task<ActionResult> ActualizarPlantillaDAO(Plantilla plantilla, int id);
+        public Task<PlantillaDTO> ActualizarPlantillaDAO(Plantilla plantilla, int id);
 
-        public Task<ActionResult> EliminarPlantillaDAO(int id);
+        public Task<Boolean> EliminarPlantillaDAO(int id);
     }
 }

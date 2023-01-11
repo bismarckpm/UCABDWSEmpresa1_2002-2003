@@ -17,13 +17,15 @@ namespace ServicesDeskUCABWS.Persistence.Entity
         public string? nombre {get; set;}
 
         [InverseProperty("asginadoa")]
-    public ICollection<Ticket> ticketsasignados { get; set; }
-    [InverseProperty("creadopor")]
-    public ICollection<Ticket> ticketscreados { get; set; }
+        public ICollection<Ticket> ticketsasignados { get; set; }
+        [InverseProperty("creadopor")]
+        public ICollection<Ticket> ticketscreados { get; set; }
    
         public virtual ICollection<FlujoAprobacion> Flujo { get; set; }
         public virtual Cargo? cargo { get; set; }
         public virtual Grupo? Grupo {get;set;}
+
+        public string? Discriminator;
         
     }   
 }

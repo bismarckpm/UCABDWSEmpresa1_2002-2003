@@ -52,6 +52,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        public Usuario GetTipoUsuario(int id)
+        {
+            var usuario = _context.Usuario.Where(u => u.id == id).First();
+            return usuario;
+        }
 
         public string CreateUsuario(Usuario usuario, int cargoid, int Grupoid){
             try
@@ -110,6 +115,19 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                 throw new UsuarioExepcion("Ha ocurrido un error al verificar contrasena ", ex.Message, ex);
             }
+        }
+
+        public UsuarioDTO GetUsuarioPorEmail(string email)
+        {
+            var usuario = _context.Usuario.Where(u => u.email == email)
+                .Select(a => new UsuarioDTO
+                        {
+                            id = a.id,
+                            Email = a.email,
+                            Discriminator = a.Discriminator
+                        }
+                    );;
+            return usuario.First();
         }
     } 
 }

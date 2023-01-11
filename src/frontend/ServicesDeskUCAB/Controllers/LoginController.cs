@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ServicesDeskUCAB.DTO;
+using ServicesDeskUCAB.ResponseHandler;
 using ServicesDeskUCAB.Services.Login;
 using System.Dynamic;
 using System.Text;
@@ -12,10 +13,12 @@ namespace ServicesDeskUCAB.Controllers
     public class loginController : Controller
     {
         public ViewResult Index() => View();
+
         [HttpPost]
         public async Task<IActionResult> Index(UserLoginDTO usuario)
         {
-          LoginDTO user = new LoginDTO();
+            AplicationResponseHandler<UsuarioDTO> userResponse = new AplicationResponseHandler<UsuarioDTO>();
+            LoginDTO user = new LoginDTO();
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(usuario), Encoding.UTF8, "application/json");
@@ -30,7 +33,8 @@ namespace ServicesDeskUCAB.Controllers
                         string stringDataRespuesta = json_respuesta["data"].ToString();
                         user = JsonConvert.DeserializeObject<LoginDTO>(stringDataRespuesta);
                         HttpContext.Session.SetInt32("userid",user.id);
-                        HttpContext.Session.SetString("email", user.email);
+                        HttpContext.Session.SetString("email", user.Email);
+                        HttpContext.Session.SetString("rol", user.Discriminator);
                         return RedirectToAction("Index", "Home");
                     }
                      ViewBag.Error = json_respuesta["message"].ToString();
@@ -39,6 +43,7 @@ namespace ServicesDeskUCAB.Controllers
             }
             return View();
         }
+
         public ViewResult Registrarse() => View();
         [HttpPost]
         public async Task<IActionResult> Registrarse(RegistroDTO usuario)
