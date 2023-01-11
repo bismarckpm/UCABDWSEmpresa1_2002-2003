@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicesDeskUCABWS.Persistence.Database;
 
@@ -11,9 +12,10 @@ using ServicesDeskUCABWS.Persistence.Database;
 namespace ServicesDeskUCABWS.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230106193055_cambio_tabla_estado")]
+    partial class cambio_tabla_estado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,18 +242,16 @@ namespace ServicesDeskUCABWS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("cuerpo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("tipo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("titulo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
-
-                    b.HasIndex("EstadoId");
 
                     b.ToTable("Plantillas");
                 });
@@ -542,17 +542,6 @@ namespace ServicesDeskUCABWS.Migrations
                     b.Navigation("jerarquico");
                 });
 
-            modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Plantilla", b =>
-                {
-                    b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Estado", "estado")
-                        .WithMany("plantillas")
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("estado");
-                });
-
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.TickectsRelacionados", b =>
                 {
                     b.HasOne("ServicesDeskUCABWS.Persistence.Entity.Ticket", "TicketRelacion")
@@ -669,8 +658,6 @@ namespace ServicesDeskUCABWS.Migrations
 
             modelBuilder.Entity("ServicesDeskUCABWS.Persistence.Entity.Estado", b =>
                 {
-                    b.Navigation("plantillas");
-
                     b.Navigation("tickets");
                 });
 

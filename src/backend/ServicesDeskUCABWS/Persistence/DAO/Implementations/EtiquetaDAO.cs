@@ -27,7 +27,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
 
 
-        public async Task<ActionResult<EtiquetaDTO>> AgregarEtiquetaDAO(Etiqueta etiqueta)
+        public async Task<EtiquetaDTO> AgregarEtiquetaDAO(Etiqueta etiqueta)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 _logger.LogInformation("Etiqueta agregada exitosamente en la base de datos");
                 return _mapper.Map<EtiquetaDTO>(etiqueta);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new EtiquetaException("Error al agregar la etiqueta", ex, _logger);
             }
@@ -55,7 +55,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        public async Task<ActionResult<Etiqueta>> ObtenerEtiquetaDAO(int id)
+        public async Task<Etiqueta> ObtenerEtiquetaDAO(int id)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        public async Task<ActionResult<Etiqueta>> ActualizarEtiquetaDAO(Etiqueta etiqueta, int id)
+        public async Task<Etiqueta> ActualizarEtiquetaDAO(Etiqueta etiqueta, int id)
         {
 
             try
@@ -101,7 +101,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        public async Task<ActionResult> EliminarEtiquetaDAO(int id)
+        public async Task<Boolean> EliminarEtiquetaDAO(int id)
         {
             try
             {
@@ -109,14 +109,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (existe == null)
                 {
                     _logger.LogWarning("No se encontró la etiqueta con id: " + id);
-                    return new NotFoundResult();
+                    return false;
                 }
 
 
                 _context.Etiquetas.Remove(existe);
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Etiqueta eliminada exitosamente");
-                return new OkResult();
+                return true;
             }
             catch (Exception ex)
             {

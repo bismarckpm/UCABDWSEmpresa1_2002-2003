@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCABWS", "Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCAB", "..\..\frontend\ServicesDeskUCAB\ServicesDeskUCAB.csproj", "{B24BD05A-95FD-464F-A8DB-D4EEB91A3FAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCABWS.Test", "..\ServicesDeskUCABWS.Test\ServicesDeskUCABWS.Test.csproj", "{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}"
-EndProject
 Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Reportes", "..\Reportes\Reportes.rptproj", "{86B6FB60-2744-45CF-9108-2048919173F5}"
 EndProject
 Global
@@ -30,12 +28,6 @@ Global
 		{B24BD05A-95FD-464F-A8DB-D4EEB91A3FAB}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{B24BD05A-95FD-464F-A8DB-D4EEB91A3FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B24BD05A-95FD-464F-A8DB-D4EEB91A3FAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
-		{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
-		{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05BFCEA2-6E4A-4248-8EF6-3FB0370CE4B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86B6FB60-2744-45CF-9108-2048919173F5}.Debug|Any CPU.ActiveCfg = Debug
 		{86B6FB60-2744-45CF-9108-2048919173F5}.Debug|Any CPU.Build.0 = Debug
 		{86B6FB60-2744-45CF-9108-2048919173F5}.Debug|Any CPU.Deploy.0 = Debug

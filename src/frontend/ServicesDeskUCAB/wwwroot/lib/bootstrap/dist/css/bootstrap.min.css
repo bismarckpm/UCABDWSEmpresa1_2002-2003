@@ -4117,10 +4117,10 @@ textarea.form-control-lg {
         position: static
     }
 
-.navbar-text {
-    padding-top: .5rem;
-    padding-bottom: .5rem
-}
+    .navbar-text {
+        padding-top: .5rem;
+        padding-bottom: .5rem
+    }
 
 .navbar-collapse {
     flex-basis: 100%;
