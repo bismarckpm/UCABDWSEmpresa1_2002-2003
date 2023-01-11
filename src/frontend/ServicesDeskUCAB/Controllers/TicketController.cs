@@ -25,7 +25,7 @@ namespace ServicesDeskUCAB.Controllers
                         listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
                         return View(listaTickets);
                     }
-                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                    ViewBag.Error = json_respuesta["message"].ToString();
 
                 }
             }

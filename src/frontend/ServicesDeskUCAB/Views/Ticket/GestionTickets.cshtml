@@ -4,7 +4,9 @@
    
 }
  @Html.Partial("_MenuTicket");
+ @if (Context.Session.GetString("rol").ToUpper() != "CLIENTE"){
 <div class="table-responsive">
+
 <table class="table">
     <tr>
         <th>
@@ -79,8 +81,11 @@
         </tr>
     }
 
+
 </table>
 </div>
- <p>@ViewBag.Error</p>  
+<p>@ViewBag.Error</p>  
+}
+ 
 
 
