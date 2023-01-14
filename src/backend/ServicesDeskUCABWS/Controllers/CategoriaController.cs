@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
-
+using ServicesDeskUCABWS.Exceptions;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using ServicesDeskUCABWS.Reponses;
+using System.Net;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -13,93 +16,133 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("Categoria")]
     public class CategoriaController : Controller
     {
+        //DECLARACION DE VARIABLES
         private readonly ICategoriaDAO _dao;
         private readonly ILogger<CategoriaController> _log;
 
+        //CONSTANTE DE MENSAJE SOLITUD EXITOSA
+        static string MSG_SOL_EXITOSA = "Solicitud exitosa";
+
+        //CONSTRUCTOR
         public CategoriaController(ICategoriaDAO dao, ILogger<CategoriaController> logger)
         {
             _log = logger;
             _dao = dao;
         }
 
+
+        //ENDPOINT PARA CREAR UNA CATEGORIA
         [HttpPost]
         [Route("CreateCategoria/")]
-        public ActionResult<CategoriaDTO> CreateCategoria([FromBody] CategoriaDTO dto1)
+        public ApplicationResponse<CategoriaDTO> CreateCategoria([FromBody] CategoriaDTO dto1)
         {
+            var response = new ApplicationResponse<CategoriaDTO>();
             try
             {               
-                var data =  _dao.AgregarCategoriaDAO(CategoriaMapper.DtoToEntity(dto1));
-                 return data;   
+                response.Data =  _dao.AgregarCategoriaDAO(CategoriaMapper.DtoToEntity(dto1));
+                response.Message = MSG_SOL_EXITOSA;
+                response.StatusCode = HttpStatusCode.OK;
 
-            }catch(Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
             }
+            catch(ServicesDeskUcabWsException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
 
+
+        //ENDPOINT PARA CONSULTAR TODAS LAS CATEGORIAS
         [HttpGet]
         [Route("ConsultaCategorias/")]
-        public ActionResult<List<CategoriaDTO>> ConsultaCategorias()
+        public ApplicationResponse<List<CategoriaDTO>> ConsultaCategorias()
         {
+            var response = new ApplicationResponse<List<CategoriaDTO>>();
             try
             {
-                var data = _dao.ConsultarTodosCategoriasDAO();
-                return data;
+                response.Data = _dao.ConsultarTodosCategoriasDAO();
+                response.Message = MSG_SOL_EXITOSA;
+                response.StatusCode = HttpStatusCode.OK;
 
-            }catch(Exception ex)
-            {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
             }
+            catch(ServicesDeskUcabWsException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
 
+
+        //ENDPOINT PARA CONSULTAR CATEGORIA ESPECIFICA
         [HttpGet]
         [Route("ConsultaCategoria/{id}")]
-        public ActionResult<CategoriaDTO> ConsultaCategoria([Required][FromRoute] int id)
+        public ApplicationResponse<CategoriaDTO> ConsultaCategoria([Required][FromRoute] int id)
         {
+            var response = new ApplicationResponse<CategoriaDTO>();
             try
             {
-                var data = _dao.ConsultaCategoriaDAO(id);
-                return data;
-
+                response.Data = _dao.ConsultaCategoriaDAO(id);
+                response.Message = MSG_SOL_EXITOSA;
+                response.StatusCode = HttpStatusCode.OK;
             }
-            catch (Exception ex)
+            catch (ServicesDeskUcabWsException ex)
             {
-                _log.LogError(ex.ToString());
-                throw ex.InnerException!;
-            }
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            } 
+            return response;
         }
 
+
+        //ENDPOINT PARA ACTUALIZAR CATEGORIA
         [HttpPut]
         [Route("Actualizar/")]
-        public ActionResult<CategoriaDTO> ActualizarCategoria([Required][FromBody] CategoriaDTO dto)
+        public ApplicationResponse<CategoriaDTO> ActualizarCategoria([Required][FromBody] CategoriaDTO dto)
         {
+            var response = new ApplicationResponse<CategoriaDTO>();
             try
             {
-                return _dao.ActualizarCategoriaDAO(CategoriaMapper.DtoToEntity(dto));
+                response.Data = _dao.ActualizarCategoriaDAO(CategoriaMapper.DtoToEntity(dto));
+                response.Message = MSG_SOL_EXITOSA;
+                response.StatusCode = HttpStatusCode.OK;
 
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;
             }
+            catch(ServicesDeskUcabWsException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
 
+
+        //ENDPOINT PARA ELIMINAR CATEGORIA
         [HttpDelete]
         [Route("Eliminar/{id}")]
-        public ActionResult<CategoriaDTO> EliminarCategoria([Required][FromRoute] int id)
+        public ApplicationResponse<CategoriaDTO> EliminarCategoria([Required][FromRoute] int id)
         {
+            var response = new ApplicationResponse<CategoriaDTO>();
             try
             {
 
-                return _dao.EliminarCategoriaDAO(id);
+                response.Data = _dao.EliminarCategoriaDAO(id);
+                response.Message = MSG_SOL_EXITOSA;
+                response.StatusCode = HttpStatusCode.OK;
 
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw ex.InnerException!;    
             }
+            catch(ServicesDeskUcabWsException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
         }
     }
 
