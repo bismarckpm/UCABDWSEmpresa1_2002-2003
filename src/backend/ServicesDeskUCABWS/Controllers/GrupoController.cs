@@ -1,85 +1,153 @@
-﻿using ServicesDeskUCABWS.BussinessLogic.Mapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
-using ServicesDeskUCABWS.BussinessLogic.DTO;
-using ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
 namespace ServicesDeskUCABWS.Controllers
 {
+    [Route("/Grupo")]
     [ApiController]
-    [Route("Grupo")]
-    public class GrupoController : ControllerBase 
+    public class GrupoController : ControllerBase
     {
-        private readonly ILogger<GrupoController> _logger;
-        private readonly IGrupoDAO _dao; 
+        private readonly IGrupoDAO _GrupoRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<GrupoController> _log;
 
-        public GrupoController(IGrupoDAO dao, ILogger<GrupoController> log)
+
+        public GrupoController(IGrupoDAO grupoRepository, IMapper mapper, ILogger<GrupoController> logger)
         {
-            this._dao = dao;
-            this._logger= log;
+            _GrupoRepository = grupoRepository;
+            _mapper = mapper;
+            _log = logger;
         }
+
+
+        //Agregar Grupo
         [HttpPost]
-        [Route("CrearGrupos")]
-
-        public ActionResult<GrupoDTO> AgregarGrupo([FromBody] GrupoDTO dTo)
+        [Route("CreateGrupo/")]
+        public async Task<ActionResult> Post([FromBody] GrupoDTO dto)
         {
             try
             {
-                var dao = _dao.AgregarGrupo(GrupoMapper.DtoToEntity(dTo));
-                return dao;
+                var grupo = _mapper.Map<Grupo>(dto);
+                var result = await _GrupoRepository.AgregarGrupoDAO(grupo);
+                _log.LogInformation("Grupo agregado con exito");
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + "ex start trace ===" + ex.StackTrace);
-                throw ex.InnerException!;
-            }
-        }
-        [HttpDelete]
-        [Route("EliminarGrupo")]
-        public ActionResult<GrupoDTO> EliminarGrupo([FromRoute]int id)
-        {
-            try
-            {
-                return _dao.EliminarGrupo(id);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw ex.InnerException!;
-            }
-        }
-        [HttpPut]
-        [Route("ActualizarGrupo")]
-        public ActionResult<GrupoDTO> ActualizarGrupo([FromBody]GrupoDTO grupo)
-        {
-            try
-            {
-                return _dao.ActualizarGrupo(GrupoMapper.DtoToEntity(grupo));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                _log.LogError(ex.ToString());
                 throw ex.InnerException!;
             }
         }
 
+ 
+        //Consultar todos los Grupos
         [HttpGet]
-        [Route("ConsultarGrupo")]
-
-        public ActionResult<List<GrupoDTO>> ConsultarGrupo()
+        [Route("ConsultaGrupo/")]
+        public async Task<ActionResult<List<GrupoDTO>>> Get()
         {
             try
             {
-                return _dao.ConsultarGrupo();
+                var result = await _GrupoRepository.ConsultarGrupoDAO();
+                _log.LogInformation("Grupos consultados con exito");
+                return Ok(_mapper.Map<List<GrupoDTO>>(result));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                _log.LogError(ex.ToString());
                 throw ex.InnerException!;
             }
+        }
+
+
+        //Consultar Grupo por Id
+        [HttpGet]
+        [Route("ConsultaGrupo/{id}")]
+        public async Task<ActionResult<GrupoDTO>> Get(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("El id debe ser mayor a 0");
+                }
+                var result = await _GrupoRepository.ConsultarGrupoByIdDAO(id);
+                if (result.Value!.id == id)
+                {
+                    _log.LogInformation("Grupo consultado con exito");
+                    return Ok(_mapper.Map<GrupoDTO>(result.Value));
+                }
+                else
+                {
+                    return NotFound("No se encontro el Grupo");
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.ToString());
+                throw ex.InnerException!;
+            }
+        }
+
+
+        //Actualizar Grupo
+        [HttpPut]
+        [Route("Actualizar/")]
+        public async Task<ActionResult> ActualizarGrupo([FromBody] GrupoDTO dto, int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("El id debe ser mayor a 0");
+                }
+                var grupo = _mapper.Map<Grupo>(dto);
+                var result = await _GrupoRepository.ActualizarGrupoDAO(grupo, id);
+                if (result.Value!.id == id)
+                {
+                    _log.LogInformation("Grupo actualizado con exito");
+                    return Ok(result.Value);
+                }
+                else
+                {
+                    return NotFound("No se encontro el Grupo");
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.ToString());
+                throw ex.InnerException!;
+            }
+
+        }
+
+        //Eliminar Grupo
+        [HttpDelete]
+        [Route("Eliminar/{id}")]
+        public async Task<ActionResult> EliminarGrupo([Required] int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("El id debe ser mayor a 0");
+                }
+
+                var result = await _GrupoRepository.EliminarGrupoDAO(id);
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw ex.InnerException!;
+            }
+
         }
 
     }
+
 }

@@ -15,6 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
 
 
+
 <!-- VENTANA EMERGENTE "MODAL" -->
 <div class="modal fade" id="popUpEditar" tabindex="-1" role="dialog" aria-labelledby="popUpEditarTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -40,12 +41,12 @@
             }
             <!--<div class="modal-body">
                 <span>Departamento: </span> @Html.TextBoxFor(m => m.nombre, new { @Value = Model.nombre})
-                @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
                 <br />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EditarDepartamento", "Departamento",new { departamento = Model })'">Editar</button>
+                <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EditarDepartamento", "Departamento",new { Departamento = Model })'">Editar</button>
             </div>-->
         </div>
     </div>
