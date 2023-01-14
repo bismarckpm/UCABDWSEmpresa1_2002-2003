@@ -47,7 +47,7 @@ namespace ServicesDeskUCABWS.Controllers
             catch(ServicesDeskUcabWsException ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = ex.Mensaje;
                 response.Exception = ex.Excepcion.ToString();
             }
             return response;
@@ -70,7 +70,7 @@ namespace ServicesDeskUCABWS.Controllers
             catch(ServicesDeskUcabWsException ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = ex.Mensaje;
                 response.Exception = ex.Excepcion.ToString();
             }
             return response;
@@ -92,7 +92,7 @@ namespace ServicesDeskUCABWS.Controllers
             catch (ServicesDeskUcabWsException ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = ex.Mensaje;
                 response.Exception = ex.Excepcion.ToString();
             } 
             return response;
@@ -115,7 +115,7 @@ namespace ServicesDeskUCABWS.Controllers
             catch(ServicesDeskUcabWsException ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = ex.Mensaje;
                 response.Exception = ex.Excepcion.ToString();
             }
             return response;
@@ -139,7 +139,7 @@ namespace ServicesDeskUCABWS.Controllers
             catch(ServicesDeskUcabWsException ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = ex.Mensaje;
                 response.Exception = ex.Excepcion.ToString();
             }
             return response;

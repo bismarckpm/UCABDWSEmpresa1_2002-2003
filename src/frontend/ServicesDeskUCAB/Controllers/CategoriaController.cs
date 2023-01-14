@@ -100,7 +100,7 @@ namespace ServicesDeskUCAB.Controllers
                     var responseString = await response.Content.ReadAsStringAsync();
                     apiResponse = JsonConvert.DeserializeObject <AplicationResponseHandler<CategoriaDTO>>(responseString);
                 }
-                return View(apiResponse);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
