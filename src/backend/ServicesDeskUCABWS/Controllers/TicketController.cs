@@ -45,6 +45,23 @@ namespace ServicesDeskUCABWS.Controllers
             }
             return response;
         }
+
+        [HttpGet("Tickects/{idusuario}")]
+        public ApplicationResponse<ICollection<TicketCDTO>> GetTicketsPorDept([FromRoute] int idusuario)
+        {
+            var response = new ApplicationResponse<ICollection<TicketCDTO>>();
+             try{
+             response.Data =_ticketDao.GetTicketsDept(idusuario);
+           
+             } catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+        }
+        
         
 
         [HttpGet("Tickect/{id}")]
@@ -170,8 +187,8 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
-        [HttpPut("AsignarTicket/{ticketid}")]
-        public ApplicationResponse<string> AsignarTicket(int ticketid, AsignarTicketDTO asignarTicket)
+        [HttpPut("AsignarTicket")]
+        public ApplicationResponse<string> AsignarTicket(AsignarTicketDTO asignarTicket)
         {
               var response = new ApplicationResponse<string>();
              try

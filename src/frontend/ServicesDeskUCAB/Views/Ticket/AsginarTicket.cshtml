@@ -1,0 +1,36 @@
+@model dynamic
+@using ServicesDeskUCAB.DTO
+@section scripts{
+}
+@{
+    ViewData["Title"] = "Gestion Tickets";
+}
+
+            <form asp-action="CrearTicket"  method="post">
+            <div class="form-group">
+                <label for="Prioridad">Prioridad</label>
+                <select class="form-control" id="prioridadid" name="prioridadid">
+                    @foreach (PrioridadDTO categoria in Model.categoria)
+
+                    {
+                        <option value="@categoria.id">@categoria.nombre</option>
+
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria">Asignar a:</label>
+                <select class="form-control" id="asginadoa" name="asginadoa">
+                    @foreach (EmpleadosDTO dep in Model.Departamentos)
+
+                    {
+                        <option value="@dep.id">@dep.nombre</option>
+
+                    }
+                </select>
+
+            </div>
+         
+        </form>
+       

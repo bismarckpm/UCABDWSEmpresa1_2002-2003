@@ -16,5 +16,6 @@ namespace ServicesDeskUCABWS.BussinessLogic.DTO
 
         public string? estado {get;set;}
         public string? categoria {get;set;}
+        public string? departamento {get;set;}
     }
 }
