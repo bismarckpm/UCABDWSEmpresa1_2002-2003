@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System;
 using ServicesDeskUCAB.DTO;
-using ServicesDeskUCAB.Models;
-using System.Reflection;
+using ServicesDeskUCAB.ResponseHandler;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -16,16 +12,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                List<DepartamentoDTO> listDepartamentos = new List<DepartamentoDTO>();
+                AplicationResponseHandler<List<DepartamentoDTO>> apiResponse = new AplicationResponseHandler<List<DepartamentoDTO>>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Departamento/ConsultaDepartamentos");
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/Departamento/ConsultaDepartamentos");
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    listDepartamentos = await JsonSerializer.DeserializeAsync<List<DepartamentoDTO>>(responseStream);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<DepartamentoDTO>>>(responseString);
                 }
-                return View(listDepartamentos);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
@@ -49,9 +44,9 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                departamento.id = 0;
                 HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<DepartamentoDTO>("https://localhost:7198/Departamento/CreateDepartamento", departamento);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(departamento), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("https://localhost:7198/Departamento/CreateDepartamento", content);
                 return RedirectToAction("GestionDepartamentos");
             }
             catch (Exception ex)
@@ -90,16 +85,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                DepartamentoDTO departamento = new DepartamentoDTO();
+                AplicationResponseHandler<DepartamentoDTO> apiResponse = new AplicationResponseHandler<DepartamentoDTO>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Departamento/ConsultaDepartamento/" + id.ToString());
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/Departamento/ConsultaDepartamento/" + id.ToString());
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    departamento = await JsonSerializer.DeserializeAsync<DepartamentoDTO>(responseStream);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<DepartamentoDTO>>(responseString);
                 }
-                return View(departamento);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {

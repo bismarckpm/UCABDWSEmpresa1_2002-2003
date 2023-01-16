@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
 using System;
 using ServicesDeskUCAB.DTO;
 using ServicesDeskUCAB.Models;
 using System.Reflection;
+using ServicesDeskUCAB.ResponseHandler;
+using Newtonsoft.Json;
+
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -16,16 +19,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                List<CategoriaDTO> listCategorias = new List<CategoriaDTO>();
+                AplicationResponseHandler<List<CategoriaDTO>> apiResponse = new AplicationResponseHandler<List<CategoriaDTO>>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Categoria/ConsultaCategorias");
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    listCategorias = await JsonSerializer.DeserializeAsync<List<CategoriaDTO>>(responseStream);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(responseString);
                 }
-                return View(listCategorias);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
@@ -49,9 +51,9 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                categoria.id = 0;
                 HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<CategoriaDTO>("https://localhost:7198/Categoria/CreateCategoria", categoria);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(categoria), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("https://localhost:7198/Categoria/CreateCategoria", content);
                 return RedirectToAction("GestionCategorias");
             }
             catch (Exception ex)
@@ -90,16 +92,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                CategoriaDTO categoria = new CategoriaDTO();
+                AplicationResponseHandler<CategoriaDTO> apiResponse = new AplicationResponseHandler<CategoriaDTO>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Categoria/ConsultaCategoria/" + id.ToString());
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategoria/" + id.ToString());
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    categoria = await JsonSerializer.DeserializeAsync<CategoriaDTO>(responseStream);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse = JsonConvert.DeserializeObject <AplicationResponseHandler<CategoriaDTO>>(responseString);
                 }
-                return View(categoria);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
