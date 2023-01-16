@@ -74,6 +74,13 @@
             <td>
                 @Html.DisplayFor(i => item.departamento)
             </td>
+            <td>
+                <button id=btnEditar type="button" class="btn btn-primary btn-sm" 
+                  onclick="location.href='<%: Url.Action("AsginarTicket","Tickect",new { iddept =   @Html.DisplayFor(i => item.departamentoid)) } %>'" />
+            
+                    Editar
+                </button>
+            </td>
           
         </tr>
     }

@@ -1,0 +1,28 @@
+@model dynamic
+@using ServicesDeskUCAB.DTO
+@section scripts{
+}
+@{
+    ViewData["Title"] = "Cambiar Estado";
+}
+
+            <form asp-action="CambiarEstado"  method="post">
+            <input type="hidden" name="idticket" value="@Model.id" />
+            <div class="form-group">
+                <h1>Cambiar Estado Ticket</h1>
+                <label for="Usuario">Delegar Ticket a</label>
+                <select class="form-control" id="idestado" name="idestado">
+                    @foreach (EstadoDTO estado in Model.Estados)
+
+                    {
+                        <option value="@estado.id">@estado.nombre</option>
+
+                    }
+                </select>
+            </div>
+             <div class="botones">
+                <button type="submit" class="btn btn-success">Cambiar estado</button>
+            </div>
+         
+        </form>
+       

@@ -18,6 +18,7 @@ namespace ServicesDeskUCAB.DTO
         public string? estado {get;set;}
         public string? categoria {get;set;}
         public string? departamento {get;set;}
+        public int? departamentoid {get;set;}
 
     }
 }

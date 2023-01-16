@@ -49,7 +49,7 @@ namespace ServicesDeskUCAB.Controllers
                         listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
                         return View(listaTickets);
                     }
-                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
 
                 }
             }
@@ -72,7 +72,7 @@ namespace ServicesDeskUCAB.Controllers
                         listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
                         return View(listaTickets);
                     }
-                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
 
                 }
             }
@@ -124,7 +124,7 @@ namespace ServicesDeskUCAB.Controllers
                         return RedirectToAction("GestionTickets");
                     }
 
-                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
 
                 }
             }
@@ -133,7 +133,7 @@ namespace ServicesDeskUCAB.Controllers
         }
 
 
- public async Task<IActionResult> AsignarTicket(int iddept)
+ public async Task<IActionResult> AsignarTicket(int iddept, int Tickectid)
         {
             List<EmpleadosDTO> listemp = new List<EmpleadosDTO>();
             List<PrioridadDTO> listPri = new List<PrioridadDTO>();
@@ -141,18 +141,220 @@ namespace ServicesDeskUCAB.Controllers
             {
                 var prioridades = await httpClient.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridades");
                 var usuarios = await httpClient.GetAsync("https://localhost:7198/Usuario/Empleados/Departamento/" + iddept );
-                listPri = JsonConvert.DeserializeObject<List<PrioridadDTO>>(await prioridades.Content.ReadAsStringAsync());
-                listemp = JsonConvert.DeserializeObject<List<EmpleadosDTO>>(await usuarios.Content.ReadAsStringAsync());
-                dynamic mymodel = new ExpandoObject();
-                mymodel.Prioridades = listPri;
-                mymodel.Usuarios = listemp;
-                return View(mymodel);
+                var response = await usuarios.Content.ReadAsStringAsync();
+                var response2 = await prioridades.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    JObject json_Usuarios = JObject.Parse(response);
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        listPri = JsonConvert.DeserializeObject<List<PrioridadDTO>>(json_respuesta["data"].ToString());
+                        listemp = JsonConvert.DeserializeObject<List<EmpleadosDTO>>(json_Usuarios["data"].ToString());
+                        dynamic mymodel = new ExpandoObject();
+                        mymodel.Prioridades = listPri;
+                        mymodel.Usuarios = listemp;
+                        mymodel.id= Tickectid;
+                        return View(mymodel);
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
             }
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AsignarTicket(AsginarDTO ticket)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View();
+                }
+               
+                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
+
+                using (var response = await httpClient.PutAsync("https://localhost:7198/Tickets/AsignarTicket", content))
+                {
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        return RedirectToAction("GestionTickets");
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+
+            return View();
+        }
+
+         public async Task<IActionResult> Delegar(int Tickectid)
+        {
+            List<EmpleadosDTO> listemp = new List<EmpleadosDTO>();
+            using (var httpClient = new HttpClient())
+            {
+                var usuarios = await httpClient.GetAsync("https://localhost:7198/Usuario/Empleados/Departamento/" + 0 );
+                var response = await usuarios.Content.ReadAsStringAsync();
+                    JObject json_Usuarios = JObject.Parse(response);
+                    if (json_Usuarios["success"].ToString() == "True")
+                    {
+                        listemp = JsonConvert.DeserializeObject<List<EmpleadosDTO>>(json_Usuarios["data"].ToString());
+                        dynamic mymodel = new ExpandoObject();
+                        mymodel.Usuarios = listemp;
+                        mymodel.id= Tickectid;
+                        return View(mymodel);
+                    }
+                    ViewBag.Error = json_Usuarios["message"].ToString();
+            }
+            return View();
+        }
+
+         [HttpPost]
+        public async Task<IActionResult> Delegar(DelegarDTO ticket)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View();
+                }
+               
+                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
+
+                using (var response = await httpClient.PutAsync("https://localhost:7198/Tickets/DelegarTicket/" + ticket.idticket, content))
+                {
+                    
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                   
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        return RedirectToAction("GestionTickets");
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+
+            return View();
+        }
+
+        public async Task<IActionResult> Mergear(int Tickectid)
+        {
+            List<TicketCDTO> listaTickets = new List<TicketCDTO>();
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7198/Tickets/"))
+                {
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
+                        dynamic mymodel = new ExpandoObject();
+                        mymodel.Tickects = listaTickets;
+                        mymodel.id= Tickectid;
+                        return View(mymodel);
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Mergear(MergearTicketDTO ticket)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View();
+                }
+               
+                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
+
+                using (var response = await httpClient.PostAsync("https://localhost:7198/Tickets/MergearTickets/" , content))
+                {
+                     
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                   
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        return RedirectToAction("GestionTickets");
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+
+            return View();
+        }
+
+
+
+        public async Task<IActionResult> CambiarEstado(int Tickectid)
+        {
+            List<EstadoDTO> listaTickets = new List<EstadoDTO>();
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7198/api/estados"))
+                {
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        listaTickets  = JsonConvert.DeserializeObject<List<EstadoDTO>>(json_respuesta["data"].ToString());
+                        dynamic mymodel = new ExpandoObject();
+                        mymodel.Estados = listaTickets;
+                        mymodel.id= Tickectid;
+                        return View(mymodel);
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CambiarEstado(TicketEstadoDTO ticket)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View();
+                }
+               
+                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
+
+                using (var response = await httpClient.PutAsync("https://localhost:7198/Tickets/Estado/" + ticket.idticket, content))
+                {
+                    
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                   
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        return RedirectToAction("GestionTickets");
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+
+            return View();
+        }
 
     }
+
+
 }
 
 
