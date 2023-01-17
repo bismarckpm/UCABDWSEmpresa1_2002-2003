@@ -5,6 +5,7 @@ using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
 using System;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -39,8 +40,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw new Exception("Transaccion Fallida", ex);
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al agregar una categoria.", ex);
             }
         }
 
@@ -62,8 +62,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al consultar la lista de categorias.", ex);
             }
         }
 
@@ -79,8 +78,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (NullReferenceException ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new NullReferenceException("Transaccion Fallo", ex)!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al actualizar una categoria.", ex);
             }
         }
 
@@ -98,8 +96,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-                throw new Exception("Transaccion Fallo", ex)!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al eliminar la categoria.", ex);
             }
         }
 
@@ -114,8 +111,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al consultar la categoria.", ex);
             }
         }
     }

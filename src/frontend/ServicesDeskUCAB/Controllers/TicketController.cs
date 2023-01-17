@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ServicesDeskUCAB.DTO;
 using System.Dynamic;
 using System.Text;
@@ -10,173 +11,150 @@ namespace ServicesDeskUCAB.Controllers
     {
         public async Task<IActionResult> GestionTickets()
         {
-            try
-            {
-                List<TicketCDTO> listaTickets = new List<TicketCDTO>();
-                HttpClient httpClient = new HttpClient();
-               var _client = await httpClient.GetAsync("https://localhost:7198/Tickets");
-                if (_client.IsSuccessStatusCode)
-                {
-                    var responseStream = await _client.Content.ReadAsStringAsync();
-                    listaTickets =  JsonConvert.DeserializeObject<List<TicketCDTO>>(responseStream);
-                }
-                return View(listaTickets);
-            }
-            catch (Exception ex)
-            {
-                throw ex.InnerException!;
-            }
-        }
 
-        public async Task<IActionResult> VentanaAgregarTicket()
-        {
-            try
-            {
-                List<PrioridadDTO> listPri = new List<PrioridadDTO>();
-                List<EmpleadosDTO> ListEmpl = new List<EmpleadosDTO>();
-                 List<CategoriaDTO> listCate = new List<CategoriaDTO>();
-                 List<EstadoDTO> listEst = new List<EstadoDTO>();
-                
-         using (var httpClient = new HttpClient())
-            {
-                using (var prioridad = await httpClient.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridades"))
-                {
-                    if (prioridad.IsSuccessStatusCode)
-                    {
-                    var empleados = await httpClient.GetAsync("https://localhost:7198/Usuario/Empleados");
-                    var categorias = await httpClient.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
-                    var estados = await httpClient.GetAsync("https://localhost:7198/api/estados");
-                    string apiResponse = await prioridad.Content.ReadAsStringAsync();
-                    string apiResponse2 = await empleados.Content.ReadAsStringAsync();
-                    string apiResponse3 = await categorias.Content.ReadAsStringAsync();
-                    string apiResponse4 = await estados.Content.ReadAsStringAsync();
-                      listPri = JsonConvert.DeserializeObject<List<PrioridadDTO>>(apiResponse);
-                      ListEmpl = JsonConvert.DeserializeObject<List<EmpleadosDTO>>(apiResponse2);
-                      listCate = JsonConvert.DeserializeObject<List<CategoriaDTO>>(apiResponse3);
-                        listEst = JsonConvert.DeserializeObject<List<EstadoDTO>>(apiResponse4);
-
-                      dynamic mymodel = new ExpandoObject();
-                      mymodel.Empleados = ListEmpl;
-                      mymodel.Prioridades = listPri;
-                      mymodel.Categorias = listCate;
-                      mymodel.Estados = listEst;
-                     return View(mymodel);
-                    }
-                    
-                   
-
-                }
-          return View();}}
-            
-            catch (Exception ex)
-            {
-                throw ex.InnerException!;
-            }
-        }
-
- [HttpPost]
-        public async Task<IActionResult> VentanaAgregarTicket(int prioridad, int categoria, int estatus, int asignadoa , string nombre, string descripcion)
-        {
-            try
-            {               
-             TicketDTO ticket = new TicketDTO();
-             ticket.fecha = DateTime.Now;
-             ticket.descripcion= descripcion;
-             ticket.nombre = nombre;
+            List<TicketCDTO> listaTickets = new List<TicketCDTO>();
             using (var httpClient = new HttpClient())
             {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
- 
-                using (var response = await httpClient.PostAsync("https://localhost:7198/Tickets/CreateTicket?creadopor="+1+"&asignadaa="+asignadoa+"&prioridad="+prioridad+"&estatud="+estatus+"&categoriaid="+categoria, content))
+                using (var response = await httpClient.GetAsync("https://localhost:7198/Tickets/Tickects/" + HttpContext.Session.GetInt32("userid")))
                 {
-                    if (response.IsSuccessStatusCode)
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    if (json_respuesta["success"].ToString() == "True")
                     {
-                           return RedirectToAction("GestionTickets");
+                        listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
+                        return View(listaTickets);
                     }
-                    
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic json  = JsonConvert.DeserializeObject(apiResponse);
-                    ViewBag.Result = json.errors;
-                    return View();
+                    ViewBag.Error = json_respuesta["message"].ToString();
+
                 }
             }
-         
-            }
-            catch (Exception ex)
-            {
-                throw ex.InnerException!;
-            }
+            return View();
+
         }
 
-        public async Task<IActionResult> VentanaEditarTicket(int id)
+        public async Task<IActionResult> VerTodos()
         {
-            try
+
+            List<TicketCDTO> listaTickets = new List<TicketCDTO>();
+            using (var httpClient = new HttpClient())
             {
-                List<PrioridadDTO> listPri = new List<PrioridadDTO>();
-                TicketCDTO ticket1 = new TicketCDTO();
-                List<CategoriaDTO> listCate = new List<CategoriaDTO>();
-         using (var httpClient = new HttpClient())
-            {
-                using (var prioridad = await httpClient.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridades"))
+                using (var response = await httpClient.GetAsync("https://localhost:7198/Tickets/"))
                 {
-                    if (prioridad.IsSuccessStatusCode)
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    if (json_respuesta["success"].ToString() == "True")
                     {
-                   
-                    var categorias = await httpClient.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
-                    var ticket = await httpClient.GetAsync("https://localhost:7198/Tickets/Tickect/"+ id);
-                    string apiResponse = await prioridad.Content.ReadAsStringAsync();
-                    string apiResponse2 = await ticket.Content.ReadAsStringAsync();
-                    string apiResponse3 = await categorias.Content.ReadAsStringAsync();
-                    listPri = JsonConvert.DeserializeObject<List<PrioridadDTO>>(apiResponse);
-                    listCate = JsonConvert.DeserializeObject<List<CategoriaDTO>>(apiResponse3);
-                    ticket1 = JsonConvert.DeserializeObject<TicketCDTO>(apiResponse2);
-                    dynamic mymodel = new ExpandoObject();
-                     var tupleModel = new Tuple<List<PrioridadDTO>, List<CategoriaDTO>,TicketCDTO >(listPri, listCate,ticket1);
-                      mymodel.Prioridades = listPri;
-                      mymodel.Categorias = listCate;
-                      mymodel.Ticket = ticket1;
-                      Console.WriteLine(mymodel.Ticket);
-                     return View(tupleModel);
+                        listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
+                        return View(listaTickets);
                     }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+
                 }
             }
-             return View();
-            }
-            catch (Exception ex)
+            return View();
+
+        }
+        public async Task<IActionResult> TicketsAsignados()
+        {
+
+            List<TicketCDTO> listaTickets = new List<TicketCDTO>();
+            using (var httpClient = new HttpClient())
             {
-                throw ex.InnerException!;
+                using (var response = await httpClient.GetAsync("https://localhost:7198/Tickets/Tickect/asginado/" + HttpContext.Session.GetInt32("userid")))
+                {
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
+                        return View(listaTickets);
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+
+                }
             }
+            return View();
+
         }
 
-        
+        public async Task<IActionResult> CrearTicket()
+        {
+            List<DepartamentoDTO> listDep = new List<DepartamentoDTO>();
+            List<CategoriaDTO> ListCategoria = new List<CategoriaDTO>();
+            using (var httpClient = new HttpClient())
+            {
+                var departamento = await httpClient.GetAsync("https://localhost:7198/Departamento/ConsultaDepartamentos");
+                var categoria = await httpClient.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
+                string apiResponse = await departamento.Content.ReadAsStringAsync();
+                string apiResponse2 = await categoria.Content.ReadAsStringAsync();
+                listDep = JsonConvert.DeserializeObject<List<DepartamentoDTO>>(apiResponse);
+                ListCategoria = JsonConvert.DeserializeObject<List<CategoriaDTO>>(apiResponse2);
+                dynamic mymodel = new ExpandoObject();
+                mymodel.Departamentos = listDep;
+                mymodel.categoria = ListCategoria;
+                ViewBag.id = HttpContext.Session.GetInt32("userid");
+                return View(mymodel);
+            }
+            return View();
+        }
         [HttpPost]
-        public async Task<IActionResult> VentanaEditarTicket( int id2, int idasignad, int estatus, int idestado , int prioridad, int categoria, string nombre, string descripcion)
+        public async Task<IActionResult> CrearTicket(TicketDTO ticket)
         {
-                       
-             TicketDTO ticket = new TicketDTO();
-             ticket.fecha = DateTime.Now;
-             ticket.descripcion= descripcion;
-             ticket.nombre = nombre;
             using (var httpClient = new HttpClient())
             {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
- 
-                using (var response = await httpClient.PutAsync("https://localhost:7198/Tickets/"+id2+"?creadopor="+1+"&asignadaa="+idasignad+"&prioridad="+prioridad+"&estatud="+estatus+"&categoriaid="+categoria, content))
+                ticket.creadopor = HttpContext.Session.GetInt32("userid");
+                ticket.fecha = DateTime.Now;
+                if (!ModelState.IsValid)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                           return RedirectToAction("GestionTickets");
-                    }
-                    
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    ViewBag.Result = apiResponse;
                     return View();
                 }
-           
-        }
+               
+                StringContent content = new StringContent(JsonConvert.SerializeObject(ticket), Encoding.UTF8, "application/json");
+
+                using (var response = await httpClient.PostAsync("https://localhost:7198/Tickets/CreateTicket", content))
+                {
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    Console.WriteLine(json_respuesta["success"].ToString());
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        return RedirectToAction("GestionTickets");
+                    }
+
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+
+                }
+            }
+
+            return View();
         }
 
-    
+
+ public async Task<IActionResult> AsignarTicket(int iddept)
+        {
+            List<EmpleadosDTO> listemp = new List<EmpleadosDTO>();
+            List<PrioridadDTO> listPri = new List<PrioridadDTO>();
+            using (var httpClient = new HttpClient())
+            {
+                var prioridades = await httpClient.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridades");
+                var usuarios = await httpClient.GetAsync("https://localhost:7198/Usuario/Empleados/Departamento/" + iddept );
+                listPri = JsonConvert.DeserializeObject<List<PrioridadDTO>>(await prioridades.Content.ReadAsStringAsync());
+                listemp = JsonConvert.DeserializeObject<List<EmpleadosDTO>>(await usuarios.Content.ReadAsStringAsync());
+                dynamic mymodel = new ExpandoObject();
+                mymodel.Prioridades = listPri;
+                mymodel.Usuarios = listemp;
+                return View(mymodel);
+            }
+            return View();
+        }
+
 
     }
 }
+
+
+
+

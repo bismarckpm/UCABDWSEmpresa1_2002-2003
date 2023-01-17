@@ -5,15 +5,23 @@ namespace ServicesDeskUCAB.DTO
     public class RegistroDTO
     {
         [Required(ErrorMessage = "Introduzca un email")]
-        [EmailAddress(ErrorMessage = "Introduzca un correo válido")]
+        [EmailAddress(ErrorMessage = "Introduzca un correo vï¿½lido")]
         public string? Email {get; set;}
 
-        [Required(ErrorMessage = "Introduzca la contraseña")]
-        [MinLength(8, ErrorMessage = "La contraseña debe tener minimo 8 caracteres")]
+        [Required(ErrorMessage = "Introduzca la contraseï¿½a")]
+        [MinLength(8, ErrorMessage = "La contraseï¿½a debe tener minimo 8 caracteres")]
         public string? Password {get; set;}
 
-        [Required(ErrorMessage = "Repita la contraseña")]
-        [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
+        [Required(ErrorMessage = "Repita la contraseï¿½a")]
+        [Compare("Password", ErrorMessage = "Las contraseï¿½as no coinciden")]
         public string? confirmationpassword {get; set;}
+        [Required(ErrorMessage = "Introduzca su nombre")]
+        public string nombre {get; set;}
+        public int cargoid {get; set;} = 0;
+        
+        public int GrupoId {get; set;}= 0;
+       
+        public int tipousuario {get; set;}= 3;
+        
     }
 }

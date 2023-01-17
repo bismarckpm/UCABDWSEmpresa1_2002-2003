@@ -84,48 +84,57 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     nombre = "Baja"
                 }
             };
-            // //Departamento
-            // var requestsDepartamentos = new List<Departamento>
-            // {
-            //     new Departamento
-            //     {
-            //         id = 1,
-            //         nombre = "departamento1",
-            //         Usuarios = new List<Usuario>()
-            //     }, new Departamento
-            //     {
-            //         id = 2,
-            //         nombre = "departamento2",
-            //         Usuarios = new List<Usuario>()
-            //     }, new Departamento
-            //     {
-            //         id = 3,
-            //         nombre = "departamento3",
-            //         Usuarios = new List<Usuario>()
-            //     }
-            // };
-            // //Grupo
-            // var requestsGrupo = new List<Grupo>
-            // {
-            //     new Grupo
-            //     {
-            //         id=1,
-            //         nombre = "Grupo1",
-            //         departamentoid =1,
-            //     },
-            //     new Grupo
-            //     {
-            //         id=2,
-            //         nombre = "Grupo2",
-            //         departamentoid =2,
-            //     },
-            //     new Grupo
-            //     {
-            //         id=3,
-            //         nombre = "Grupo3",
-            //         departamentoid =3,
-            //     }
-            // };
+            //Departamento
+             var requestsDepartamentos = new List<Departamento>
+             {
+                 new Departamento
+                 {
+                     id = 1,
+                     nombre = "departamento1",
+                     Tickets = new List<Ticket>(),
+                     Grupos = new List<Grupo>()
+                 }, new Departamento
+                 {
+                     id = 2,
+                     nombre = "departamento2",
+                     Tickets = new List<Ticket>(),
+                     Grupos = new List<Grupo>()
+                 }, new Departamento
+                 {
+                     id = 3,
+                     nombre = "departamento3",
+                     Tickets = new List<Ticket>(),
+                     Grupos = new List<Grupo>()
+                 }
+             };
+            //Grupo
+             var requestsGrupo = new List<Grupo>
+             {
+                 new Grupo
+                 {
+                     id=1,
+                     nombre = "grupo1",
+                     departamentoid = 1,
+                     departamento = new Departamento(),
+                     usuarios = new List<Usuario>()
+                 },
+                 new Grupo
+                 {
+                     id=2,
+                     nombre = "grupo2",
+                     departamentoid = 2,
+                     departamento = new Departamento(),
+                     usuarios = new List<Usuario>()
+                 },
+                 new Grupo
+                 {
+                     id=3,
+                     nombre = "grupo3",
+                     departamentoid = 3,
+                     departamento = new Departamento(),
+                     usuarios = new List<Usuario>()
+                 }
+             };
             // //Usuario
             // var requestsUsuarios = new List<Usuario>
             // {

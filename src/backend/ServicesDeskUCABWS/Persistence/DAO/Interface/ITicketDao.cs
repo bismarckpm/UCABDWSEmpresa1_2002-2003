@@ -6,6 +6,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
     public interface ITicketDao
     {
         ICollection<TicketCDTO>GetTickets();
+        ICollection<TicketCDTO>GetTicketsDept(int idgrupo);
         
         TicketCDTO GetTicket(int ticketid);
         ICollection<TicketCDTO> GetTicketporusuarioasignado(int usuarioasignado);

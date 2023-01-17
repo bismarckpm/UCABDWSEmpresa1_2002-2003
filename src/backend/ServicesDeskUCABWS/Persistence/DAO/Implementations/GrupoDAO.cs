@@ -1,109 +1,135 @@
-﻿using ServicesDeskUCABWS.Persistence.DAO.Interface;
-using ServicesDeskUCABWS.Persistence.Entity;
-using ServicesDeskUCABWS.BussinessLogic.DTO;
-using ServicesDeskUCABWS.BussinessLogic.Mapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
-using System;
-using System.Data;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
-
+using ServicesDeskUCABWS.Persistence.Entity;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
     public class GrupoDAO : IGrupoDAO
     {
-        private readonly IMigrationDbContext _dbContext;
+        private static DesignTimeDBContextFactory design = new DesignTimeDBContextFactory();
+        public readonly IMigrationDbContext _context = design.CreateDbContext(null);
+        private readonly IMapper _mapper;
+        private readonly ILogger<GrupoDAO> _log;
 
-        public GrupoDAO(IMigrationDbContext dbContext)
+
+        public GrupoDAO(IMapper mapper, ILogger<GrupoDAO> log, IMigrationDbContext context)
         {
-            _dbContext = dbContext;
+            _mapper = mapper;
+            _log = log;
+            _context = context;
         }
 
-        public GrupoDTO AgregarGrupo(Grupo grupo)
+
+
+        /// Agregar Grupo
+        public async Task<ActionResult<GrupoDTO>> AgregarGrupoDAO(Grupo grupo)
         {
             try
             {
-                _dbContext.Grupo.Add(grupo);
-                _dbContext.DbContext.SaveChanges();
+                _context.Grupo.Add(grupo);
+                await _context.DbContext.SaveChangesAsync();
 
-                var variable = GrupoMapper.EnityToDto(grupo);
-
-                //var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
-                //  .Select(a => new GrupoDTO
-                //  {
-                //      id = a.id,
-                //      nombre = a.nombre,
-                //      departamentoid = a.departamentoid,
-
-                //  });
-
-                return variable;
+                return _mapper.Map<GrupoDTO>(grupo);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + "ex start trace ===" + ex.StackTrace);
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw;
+            }
+        }
+
+
+        /// Consultar Grupos
+        public Task<List<Grupo>> ConsultarGrupoDAO()
+        {
+            try
+            {
+                return _context.Grupo.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
                 throw ex.InnerException!;
             }
         }
-        public GrupoDTO ActualizarGrupo(Grupo grupo)
+
+        /// Consultar Grupo por ID
+        public async Task<ActionResult<Grupo>> ConsultarGrupoByIdDAO(int id)
         {
             try
             {
-                _dbContext.Grupo.Update(grupo);
-                _dbContext.DbContext.SaveChanges();
+                var grupo = await _context.Grupo.FindAsync(id);
 
-                var data = _dbContext.Grupo.Where(a => a.id == grupo.id)
-                    .Select(a => new GrupoDTO
-                    {
-                        nombre = a.nombre,
-                        id = a.id
-                        
-                    });
-                return data.First();
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error al actualizar: " + grupo.nombre, ex);
-            }
-        }
-        public GrupoDTO EliminarGrupo(int id)
-        {                 
-            try
-            {
-                var data = _dbContext.Grupo.Where(a => a.id == id).FirstOrDefault();                                  
-                _dbContext.Grupo.Remove(data);
-                _dbContext.DbContext.SaveChanges();
-
-                return GrupoMapper.EnityToDto(data);
-
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error al Eliminar por id: " + id, ex);
-            }
-
-        }
-        public List<GrupoDTO> ConsultarGrupo()
-        {
-            try
-            {
-                var lista = _dbContext.Grupo.Select(a => new GrupoDTO
+                if (grupo == null)
                 {
-                    id = a.id,
-                    nombre = a.nombre
-                   
-                });
-                return lista.ToList();
-
-            }catch(Exception ex)
+                    return new Grupo();
+                }
+                return grupo;
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                throw new Exception("Error al consultar los Grupos");
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Error al Consultar por id: " + id, ex);
             }
         }
+
+
+        /// Actualizar Grupo
+        public async Task<ActionResult<Grupo>> ActualizarGrupoDAO(Grupo grupo, int id)
+        {
+            try
+            {
+                var grupoOld = await _context.Grupo.FindAsync(id);
+                if (grupoOld == null)
+                {
+                    return new Grupo();
+                }
+
+                grupoOld.nombre = grupo.nombre;
+                grupoOld.departamentoid = grupo.departamentoid;
+
+                await _context.DbContext.SaveChangesAsync();
+                return grupoOld;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw;
+            }
+        }
+
+
+        /// Eliminar cargo
+        public async Task<ActionResult> EliminarGrupoDAO(int id)
+        {
+            try
+            {
+                var existe = await _context.Grupo.FindAsync(id);
+                if (existe == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                _context.Grupo.Remove(existe);
+                await _context.DbContext.SaveChangesAsync();
+
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw;
+
+            }
+        }
+
+
 
     }
 }
