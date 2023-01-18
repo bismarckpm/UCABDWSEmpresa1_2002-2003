@@ -336,23 +336,79 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var usu = _context.Usuario.Where(c => c.id == usuarioasignado).FirstOrDefault();
                 var q = (from tk in _context.Tickets
                          join us in _context.Usuario on tk.creadopor equals us
-                         join us2 in _context.Usuario on tk.asginadoa equals us2
+                         join us2 in _context.Usuario on tk.asginadoa equals us2 into ljasignado
+                         from pc in ljasignado.DefaultIfEmpty() // LEFT JOIN
                          join e in _context.Estados on tk.Estado equals e
                          join p in _context.Prioridades on tk.prioridad equals p
+                         into ljprioridad
+                         from pr in ljprioridad.DefaultIfEmpty() // LEFT JOIN
                          join ca in _context.Categorias on tk.categoria equals ca
                          join dept in _context.Departamentos on tk.departamento equals dept
                          where tk.asginadoa == usu
                          select new TicketCDTO()
                          {
+                             id = tk.id,
                              nombre = tk.nombre,
-                             asginadoa = us2.email,
+                             idasignad = pc.id,
+                             asginadoa = pc.email,
                              creadopor = us.email,
                              descripcion = tk.descripcion,
                              fecha = tk.fecha,
+                             idestado = e.id,
                              estado = e.nombre,
-                             prioridad = p.nombre,
+                             idprioridad = pr.id,
+                             prioridad = pr.nombre,
+                             idcategoria = ca.id,
                              categoria = ca.nombre,
-                             departamentoid = tk.departamento.id
+                             departamento = dept.nombre,
+                             departamentoid= dept.id
+
+                         }).ToList();
+                return q;
+            }
+            catch (Exception ex)
+            {
+                throw new TickectExeception("Ha ocurrido un error al consultar: "
+              , ex.Message, ex);
+            }
+
+        }
+
+         public ICollection<TicketCDTO> GetTicketCreadopor(int usuarioasignado)
+        {
+            try
+            {
+
+                var usu = _context.Usuario.Where(c => c.id == usuarioasignado).FirstOrDefault();
+                var q = (from tk in _context.Tickets
+                         join us in _context.Usuario on tk.creadopor equals us
+                         join us2 in _context.Usuario on tk.asginadoa equals us2 into ljasignado
+                         from pc in ljasignado.DefaultIfEmpty() // LEFT JOIN
+                         join e in _context.Estados on tk.Estado equals e
+                         join p in _context.Prioridades on tk.prioridad equals p
+                         into ljprioridad
+                         from pr in ljprioridad.DefaultIfEmpty() // LEFT JOIN
+                         join ca in _context.Categorias on tk.categoria equals ca
+                         join dept in _context.Departamentos on tk.departamento equals dept
+                         where tk.creadopor == usu
+                         select new TicketCDTO()
+                         {
+                             id = tk.id,
+                             nombre = tk.nombre,
+                             idasignad = pc.id,
+                             asginadoa = pc.email,
+                             creadopor = us.email,
+                             descripcion = tk.descripcion,
+                             fecha = tk.fecha,
+                             idestado = e.id,
+                             estado = e.nombre,
+                             idprioridad = pr.id,
+                             prioridad = pr.nombre,
+                             idcategoria = ca.id,
+                             categoria = ca.nombre,
+                             departamento = dept.nombre,
+                             departamentoid= dept.id
+
                          }).ToList();
                 return q;
             }

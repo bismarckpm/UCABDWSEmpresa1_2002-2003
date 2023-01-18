@@ -103,7 +103,8 @@ namespace ServicesDeskUCAB.Controllers
             return View();
         }
        
-
+        public ViewResult Olvidocontrasena() => View();
+        [HttpPost]
         public async Task<IActionResult> Olvidocontrasena(string email)
         {
             using (var httpClient = new HttpClient())
