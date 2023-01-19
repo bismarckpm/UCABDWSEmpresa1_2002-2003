@@ -6,9 +6,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface;
 
 public interface IModeloParaleloDAO
 {
-    public Task<ActionResult<ModeloParaleloDTO>> AgregarModeloParaleloDAO(ModeloParalelo ModeloParalelo);
-    public Task<List<ModeloParalelo>> ConsultarModelosParalelosDAO();
-    public Task<ActionResult<ModeloParalelo>> ConsultaModeloParaleloDAO(int id);
-    public Task<ActionResult<ModeloParalelo>> ActualizarModeloParaleloDAO(int id, ModeloParaleloCreateDTO ModeloParalelo);
-    public Task<ActionResult> EliminarModeloParaleloDAO(int id);    
+    public ModeloParaleloDTO AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo);
+    public List<ModeloParaleloDTO> ConsultarModelosParalelosDAO();
+    public ModeloParaleloDTO ObtenerModeloParaleloDAO(int id);
+    public ModeloParaleloDTO ActualizarModeloParaleloDAO(ModeloParalelo modeloParalelo);
+    public ModeloParaleloDTO EliminarModeloParaleloDAO(int id);    
 }
