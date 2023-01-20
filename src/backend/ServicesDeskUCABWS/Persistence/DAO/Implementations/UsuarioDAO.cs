@@ -36,7 +36,20 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
          public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
              try
             {
-            var q = (from usua in _context.Usuario
+            ;
+            if (departamentoid==0){
+                var q = (from usua in _context.Usuario
+                     join dep in _context.Departamentos on usua.Grupo.departamento equals dep
+                     select new UsuarioDTO()
+                     {
+                        id = usua.id,
+                        Email = usua.email,
+                        iddept = dep.id,
+                        dept = dep.nombre
+                      }).ToList();
+                      return q;
+            }else{
+             var q = (from usua in _context.Usuario
                      join dep in _context.Departamentos on usua.Grupo.departamento equals dep
                      where dep.id == departamentoid
                      select new UsuarioDTO()
@@ -44,7 +57,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                         id = usua.id,
                         Email = usua.email
                       }).ToList();
-            return q;
+                       return q;
+           
+            }
             }
             catch (Exception ex)
             {

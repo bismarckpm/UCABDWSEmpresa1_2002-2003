@@ -65,8 +65,12 @@ namespace ServicesDeskUCAB.Controllers
                     {
                          return RedirectToAction("VerificarUsuario");
                     }
+                    if(json_respuesta["exception"].ToString().Contains("No se puede insertar una fila de clave duplicada")){
+                    ViewBag.Error ="Usuario duplicado" ;
+                    }else{
+                        ViewBag.Error = json_respuesta["message"].ToString() ;
+                    }
                     
-                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
 
                 }
             }
@@ -91,7 +95,7 @@ namespace ServicesDeskUCAB.Controllers
                        return RedirectToAction("Index");
                     }
                     
-                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
 
                 }
             }
@@ -99,7 +103,8 @@ namespace ServicesDeskUCAB.Controllers
             return View();
         }
        
-
+        public ViewResult Olvidocontrasena() => View();
+        [HttpPost]
         public async Task<IActionResult> Olvidocontrasena(string email)
         {
             using (var httpClient = new HttpClient())
@@ -116,7 +121,7 @@ namespace ServicesDeskUCAB.Controllers
                          return RedirectToAction("ResetPassword");
                     }
                     
-                 ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                 ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
 
 
                 }
@@ -146,7 +151,7 @@ namespace ServicesDeskUCAB.Controllers
                          return RedirectToAction("Index");
                     }
                     
-                ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["Exception"].ToString();
+                ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
 
 
                 }

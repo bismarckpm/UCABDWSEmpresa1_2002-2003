@@ -88,7 +88,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                response.Exception = ex.Excepcion.ToString();
+                response.Exception = ex.Excepcion.ToString() ;
             }
             return response;
         }

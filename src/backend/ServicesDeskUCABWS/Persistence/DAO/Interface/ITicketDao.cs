@@ -10,6 +10,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
         
         TicketCDTO GetTicket(int ticketid);
         ICollection<TicketCDTO> GetTicketporusuarioasignado(int usuarioasignado);
+        ICollection<TicketCDTO> GetTicketCreadopor(int usuarioasignado);
         string AgregarTicketDAO(TickectCreateDTO ticket);
         string AsignarTicket( AsignarTicketDTO asignarTicket);
         string CambiarEstado(TickectEstadoDTO tickectEstado);

@@ -27,10 +27,16 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-
-                        <li class="nav-item">
+                        @if (Context.Session.GetString("rol").ToUpper() == "CLIENTE"){
+                            <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="TicketsCreados">Tickets</a>
+                        </li>
+                        }else{
+                            <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="GestionTickets">Tickets</a>
                         </li>
+                        }
+                        
 
                          @if (Context.Session.GetString("rol").ToUpper() == "ADMINISTRADOR")
                             {

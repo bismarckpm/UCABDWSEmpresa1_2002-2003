@@ -1,0 +1,108 @@
+@model List<ServicesDeskUCAB.DTO.ModeloParaleloDTO>
+@section scripts
+{
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderMParalelo');
+            $('#btnAgregarMP').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>    
+
+    <script>
+       $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEliminar');
+            $("#btnMpEliminar, .btn-danger").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idModeloParalelo", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEditar');
+            $("#btnMpEditar, .btn-primary").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idModeloParalelo", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+}
+
+@{
+        ViewData["Title"] = "Gestion Modelo Paralelo";
+}  
+    <div id="PlaceHolderMParalelo"></div>
+    <div id="PlaceHolderEliminar"></div>
+    <div id="PlaceHolderEditar"></div>
+
+    @* Boton para abrir el modal*@
+    <button id=btnAgregarTc type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarModeloParalelo")">
+        Crear Modelo Paralelo
+    </button>
+    <br />
+    <br/>
+
+<table class="table">
+    <tr>
+        <th>
+            Listado
+        </th>
+        <th>
+            Modelo Paralelo
+        </th>
+        <th>
+            Cantidad de Aprobacion
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="id">
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.cantidaddeaprobacion)
+            </td>
+            <td>
+                <button id=btnMjEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarModeloParalelo","ModeloParalelo",new {id = "idModeloParalelo"})">
+                    Editar
+                </button>
+                <button id=btnMjEliminar type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarModeloParalelo","ModeloParalelo",new {id = "idModeloParalelo"})">
+                        Eliminar
+                </button>
+            </td>
+        </tr>
+    }
+
+</table>    

@@ -115,6 +115,23 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
            
         }
+        [HttpGet("Tickect/creado/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
+        public ApplicationResponse<ICollection<TicketCDTO>> GetTicketCreado([FromRoute] int id)
+        {
+            var response = new ApplicationResponse<ICollection<TicketCDTO>>();
+             try{
+             response.Data =_ticketDao.GetTicketCreadopor(id);
+           
+             } catch (TickectExeception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
+            }
+            return response;
+           
+        }
         
 
         [HttpPut("Estado/{ticketid}")]

@@ -86,8 +86,15 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             try
             {
                 var ticket = _context.Tickets.Where(c => c.id == delegadoDTO.idticket).FirstOrDefault();
-                ticket.asginadoa = _context.Usuario.Where(c => c.id == delegadoDTO.idAsignadoa).FirstOrDefault();
-                ticket.departamento = _context.Departamentos.Where(c => c.id == delegadoDTO.idDepartamento).FirstOrDefault();
+                ticket.asginadoa =  _context.Usuario.Where(c => c.id == delegadoDTO.idAsignadoa).FirstOrDefault();
+                var dep = (from usua in _context.Usuario
+                join dep2 in _context.Departamentos on usua.Grupo.departamento equals dep2
+                where usua.id == delegadoDTO.idAsignadoa
+                     select new UsuarioDTO()
+                     {
+                        iddept = dep2.id,
+                      }).FirstOrDefault();
+                ticket.departamento =  _context.Departamentos.Where(c => c.id == dep.iddept).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
@@ -169,7 +176,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                              prioridad = pr.nombre,
                              idcategoria = ca.id,
                              categoria = ca.nombre,
-                             departamento = dept.nombre
+                             departamento = dept.nombre,
+                             departamentoid = dept.id,
 
                          }).ToList();
                 return q;
@@ -226,7 +234,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                              prioridad = pr.nombre,
                              idcategoria = ca.id,
                              categoria = ca.nombre,
-                             departamento = dept.nombre
+                             departamento = dept.nombre,
+                             departamentoid= dept.id
 
                          }).ToList();
                 return q;
@@ -247,24 +256,29 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                          join tk in _context.Tickets on trk.Ticketid equals tk.id
                          join tkrelacion in _context.Tickets on trk.TicketRelacionadoid equals tkrelacion.id
                          join us in _context.Usuario on tk.creadopor equals us
-                         join us2 in _context.Usuario on tk.asginadoa equals us2
+                         join us2 in _context.Usuario on tk.asginadoa equals us2 into ljasignado
+                         from pc in ljasignado.DefaultIfEmpty() // LEFT JOIN
                          join e in _context.Estados on tk.Estado equals e
                          join p in _context.Prioridades on tk.prioridad equals p
+                         into ljprioridad
+                         from pr in ljprioridad.DefaultIfEmpty() // LEFT JOIN
                          join ca in _context.Categorias on tk.categoria equals ca
+                         join dept in _context.Departamentos on tk.departamento equals dept
+                         
                          where trk.Ticketid == ticketid
                          select new TicketCDTO()
                          {
                              id = tkrelacion.id,
                              nombre = tkrelacion.nombre,
-                             idasignad = us2.id,
-                             asginadoa = us2.email,
+                             idasignad = pc.id,
+                             asginadoa = pc.email,
                              creadopor = us.email,
                              descripcion = tkrelacion.descripcion,
                              fecha = tkrelacion.fecha,
                              idestado = e.id,
                              estado = e.nombre,
-                             idprioridad = p.id,
-                             prioridad = p.nombre,
+                             idprioridad = pr.id,
+                             prioridad = pr.nombre,
                              idcategoria = ca.id,
                              categoria = ca.nombre
                          }).ToList();
@@ -286,6 +300,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                          join e in _context.Estados on tk.Estado equals e
                          join p in _context.Prioridades on tk.prioridad equals p
                          join ca in _context.Categorias on tk.categoria equals ca
+                         join dept in _context.Departamentos on tk.departamento equals dept
                          where tk.id == ticketid
                          select new TicketCDTO()
                          {
@@ -301,7 +316,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                              idprioridad = p.id,
                              prioridad = p.nombre,
                              idcategoria = ca.id,
-                             categoria = ca.nombre
+                             categoria = ca.nombre,
+                             departamentoid = tk.departamento.id
                          }).FirstOrDefault();
                 return q;
             }
@@ -320,21 +336,79 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var usu = _context.Usuario.Where(c => c.id == usuarioasignado).FirstOrDefault();
                 var q = (from tk in _context.Tickets
                          join us in _context.Usuario on tk.creadopor equals us
-                         join us2 in _context.Usuario on tk.asginadoa equals us2
+                         join us2 in _context.Usuario on tk.asginadoa equals us2 into ljasignado
+                         from pc in ljasignado.DefaultIfEmpty() // LEFT JOIN
                          join e in _context.Estados on tk.Estado equals e
                          join p in _context.Prioridades on tk.prioridad equals p
+                         into ljprioridad
+                         from pr in ljprioridad.DefaultIfEmpty() // LEFT JOIN
                          join ca in _context.Categorias on tk.categoria equals ca
+                         join dept in _context.Departamentos on tk.departamento equals dept
                          where tk.asginadoa == usu
                          select new TicketCDTO()
                          {
+                             id = tk.id,
                              nombre = tk.nombre,
-                             asginadoa = us2.email,
+                             idasignad = pc.id,
+                             asginadoa = pc.email,
                              creadopor = us.email,
                              descripcion = tk.descripcion,
                              fecha = tk.fecha,
+                             idestado = e.id,
                              estado = e.nombre,
-                             prioridad = p.nombre,
-                             categoria = ca.nombre
+                             idprioridad = pr.id,
+                             prioridad = pr.nombre,
+                             idcategoria = ca.id,
+                             categoria = ca.nombre,
+                             departamento = dept.nombre,
+                             departamentoid= dept.id
+
+                         }).ToList();
+                return q;
+            }
+            catch (Exception ex)
+            {
+                throw new TickectExeception("Ha ocurrido un error al consultar: "
+              , ex.Message, ex);
+            }
+
+        }
+
+         public ICollection<TicketCDTO> GetTicketCreadopor(int usuarioasignado)
+        {
+            try
+            {
+
+                var usu = _context.Usuario.Where(c => c.id == usuarioasignado).FirstOrDefault();
+                var q = (from tk in _context.Tickets
+                         join us in _context.Usuario on tk.creadopor equals us
+                         join us2 in _context.Usuario on tk.asginadoa equals us2 into ljasignado
+                         from pc in ljasignado.DefaultIfEmpty() // LEFT JOIN
+                         join e in _context.Estados on tk.Estado equals e
+                         join p in _context.Prioridades on tk.prioridad equals p
+                         into ljprioridad
+                         from pr in ljprioridad.DefaultIfEmpty() // LEFT JOIN
+                         join ca in _context.Categorias on tk.categoria equals ca
+                         join dept in _context.Departamentos on tk.departamento equals dept
+                         where tk.creadopor == usu
+                         select new TicketCDTO()
+                         {
+                             id = tk.id,
+                             nombre = tk.nombre,
+                             idasignad = pc.id,
+                             asginadoa = pc.email,
+                             creadopor = us.email,
+                             descripcion = tk.descripcion,
+                             fecha = tk.fecha,
+                             idestado = e.id,
+                             estado = e.nombre,
+                             idprioridad = pr.id,
+                             prioridad = pr.nombre,
+                             idcategoria = ca.id,
+                             categoria = ca.nombre,
+                             departamento = dept.nombre,
+                             departamentoid= dept.id
+
                          }).ToList();
                 return q;
             }
