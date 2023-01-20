@@ -1,0 +1,119 @@
+@model List<ServicesDeskUCAB.DTO.GrupoDTO>
+
+
+@section scripts{
+
+    <!-- JS PARA TRAER LA VENTANA EMERGENTE DEL BOTON "CREAR GRUPO" -->
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderGrupo');
+            $('#btnAgregar').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+    <!-- JS PARA TRAER LA VENTANA EMERGENTE DE CONFIRMACION DE ELIMINACION -->
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEliminar');
+            $("#btnEliminar, .btn-danger").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idGrupo", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+
+    <!-- JS PARA TRAER LA VENTANA EMERGENTE DE EDICION DE GRUPO -->
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderEditar');
+            $("#btnEditar, .btn-primary").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idGrupo", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+}
+
+
+    @{
+    ViewData["Title"] = "Gestion Grupos";
+}
+
+<!-- DIVS CONTENEDORES DE LAS DIFERENTES VENTANAS EMERGENTES -->
+<div id="PlaceHolderGrupo"></div>
+<div id="PlaceHolderEliminar"></div>
+<div id="PlaceHolderEditar"></div>
+
+<!-- BOTON PARA ACCIONAR LA VENTANA EMERGENTE -->
+<button id=btnAgregar type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#popUpAgregar"
+        data-url="@Url.Action("VentanaAgregarGrupo")">
+    Crear Grupo
+</button>
+<br />
+<br />
+
+<!-- INICIO DE TABLA DE DATOS -->
+<table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Grupo
+        </th>
+        <th>
+            Departamento ID
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="id">
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.departamentoid)
+            </td>
+            <td>
+                <button id=btnEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarGrupo","Grupo",new { id = "idGrupo" })">
+                    Editar
+                </button>
+                <button id=btnEliminar type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarGrupo","Grupo",new { id = "idGrupo" })">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+    }
+
+</table>
