@@ -34,7 +34,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             };
         }
 
-        public static List<ModeloJerarquicoCargos> DtoToEntityList(List<JerarquicoTipoCargoDTO> dTO)
+        private static List<ModeloJerarquicoCargos> DtoToEntityList(List<JerarquicoTipoCargoDTO> dTO)
         {
             var lista = new List<ModeloJerarquicoCargos>();
             foreach (var item in dTO)

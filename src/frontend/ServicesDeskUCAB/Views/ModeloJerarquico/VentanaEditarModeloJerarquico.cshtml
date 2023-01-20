@@ -1,4 +1,5 @@
 @model ServicesDeskUCAB.DTO.ModeloJerarquicoDTO
+@using ServicesDeskUCAB.DTO
 @{
     ViewData["Title"] = "Gestion Modelo Jerarquico";
 }
@@ -26,6 +27,17 @@
                     <span>Modelo Jerarquico: </span> @Html.TextBoxFor(m => m.nombre, new { @Value = Model.nombre})
                     @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
                     <br />
+                <div class="form-group">
+                    <label for="categoria">Jerarquia</label>
+                    <select class="form-control" id="categoria" name="categoriaid">
+                        @foreach (JerarquicoTipoCargoDTO c in Model.orden)
+                        {
+                            <span>Orden: </span> @Html.TextBoxFor(c=> c.orden, new {@Value = c.orden})
+                            
+                        }
+                    </select>
+                </div>
+                
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionMJerarquico", "ModeloJerarquico")'">Cancelar</button>

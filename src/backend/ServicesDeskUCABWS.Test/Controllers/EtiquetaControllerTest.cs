@@ -59,7 +59,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var result = await _controller.Get();
             // validar statusCode
 
-            Assert.IsType<OkObjectResult>(result.Result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact(DisplayName = "Id menor a 0 Obtener Etiqueta")]
@@ -71,7 +71,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var result = await _controller.Get(0);
             // validar statusCode
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact(DisplayName = "Obtener Etiqueta")]
@@ -83,7 +83,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var result = await _controller.Get(1);
             // validar statusCode
 
-            Assert.IsType<OkObjectResult>(result.Result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact(DisplayName = "No existe Etiqueta")]
@@ -95,7 +95,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var result = await _controller.Get(5);
             // validar statusCode
 
-            Assert.IsType<NotFoundObjectResult>(result.Result);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact(DisplayName = "Id menor a 0 Actualizar Etiqueta")]
@@ -148,7 +148,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public async void DeleteEtiquetaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.EliminarEtiquetaDAO(1)).ReturnsAsync(new OkResult());
+            //_servicesMock.Setup(x => x.EliminarEtiquetaDAO(1)).ReturnsAsync(new OkResult());
             //probar metodo delete
             var result = await _controller.EliminarEtiqueta(1);
             // validar statusCode
@@ -160,7 +160,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public async void DeleteNoExisteEtiquetaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.EliminarEtiquetaDAO(5)).ReturnsAsync(new NotFoundResult());
+            //_servicesMock.Setup(x => x.EliminarEtiquetaDAO(5)).ReturnsAsync(new NotFoundResult());
             //probar metodo delete
             var result = await _controller.EliminarEtiqueta(5);
             // validar statusCode

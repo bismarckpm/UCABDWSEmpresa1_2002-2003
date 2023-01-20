@@ -52,15 +52,15 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+               /* tipo = "Solicitud" */
             };
 
             // prueba de la funcion
             var result = await _dao.AgregarPlantillaDAO(Plantilla);
-            var PlantillaResult = result.Value;
+            //var PlantillaResult = result.Value;
 
             // verificacion de la prueba
-            Assert.IsType<PlantillaDTO>(PlantillaResult);
+            Assert.IsType<PlantillaDTO>(result);
         }
 
         [Fact(DisplayName = "Crear una Plantilla con Excepcion")]
@@ -108,18 +108,18 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                /*tipo = "Solicitud"*/
             });
 
 
             var id = 1;
             // prueba de la funcion
             var result = await _dao.ObtenerPlantillaDAO(id);
-            var PlantillaResult = result.Value;
+            //var PlantillaResult = result.Value;
 
             // verificacion de la prueba
-            Assert.IsType<Plantilla>(PlantillaResult);
-            Assert.Equal(id, PlantillaResult!.id);
+            Assert.IsType<Plantilla>(result);
+            Assert.Equal(id, result!.id);
         }
 
         [Fact(DisplayName = "Consultar Plantilla por Id que no existe")]
@@ -136,7 +136,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
 
             // verificacion de la prueba
-            Assert.IsType<NotFoundResult>(result.Result);
+            Assert.IsType<NotFoundResult>(result);
         }
 
         [Fact(DisplayName = "Consultar Plantilla por Id con Excepcion")]
@@ -160,14 +160,14 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                // tipo = "Solicitud" 
             });
             var Plantilla = new Plantilla()
             {
                 id = 1,
                 titulo = "modificada",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                // tipo = "Solicitud"
             };
             // prueba de la funcion
             var result = await _dao.ActualizarPlantillaDAO(Plantilla, Plantilla.id);
@@ -211,7 +211,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                // tipo = "Solicitud"
             });
             var id = 1;
             // prueba de la funcion

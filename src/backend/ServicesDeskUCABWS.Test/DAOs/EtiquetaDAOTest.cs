@@ -56,10 +56,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
             // prueba de la funcion
             var result = await _dao.AgregarEtiquetaDAO(etiqueta);
-            var etiquetaResult = result.Value;
+            //var etiquetaResult = result.Value;
 
             // verificacion de la prueba
-            Assert.IsType<EtiquetaDTO>(etiquetaResult);
+            Assert.IsType<EtiquetaDTO>(result);
         }
 
         [Fact(DisplayName = "Crear una Etiqueta con Excepcion")]
@@ -112,11 +112,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var id = 1;
             // prueba de la funcion
             var result = await _dao.ObtenerEtiquetaDAO(id);
-            var etiquetaResult = result.Value;
+            //var etiquetaResult = result.Value;
 
             // verificacion de la prueba
-            Assert.IsType<Etiqueta>(etiquetaResult);
-            Assert.Equal(id, etiquetaResult!.id);
+            Assert.IsType<Etiqueta>(result);
+            Assert.Equal(id, result!.id);
         }
 
         [Fact(DisplayName = "Consultar Etiqueta por Id que no existe")]
@@ -130,10 +130,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var id = 4;
             // prueba de la funcion
             var result = await _dao.ObtenerEtiquetaDAO(id);
-            var etiquetaResult = result.Value;
+           // var etiquetaResult = result.Value;
 
             // verificacion de la prueba
-            Assert.Equal(0, etiquetaResult!.id);
+            Assert.Equal(0, result!.id);
         }
 
         [Fact(DisplayName = "Consultar Etiqueta por Id con Excepcion")]
@@ -166,9 +166,9 @@ namespace ServicesDeskUCABWS.Test.DAOs
             };
             // prueba de la funcion
             var result = await _dao.ActualizarEtiquetaDAO(etiqueta, etiqueta.id);
-            var etiquetaResult = result.Value;
+           // var etiquetaResult = result.Value;
             // verificacion de la prueba
-            Assert.IsType<Etiqueta>(etiquetaResult);
+            Assert.IsType<Etiqueta>(result);
         }
 
         [Fact(DisplayName = "No existe Etiqueta para actualizar")]
@@ -180,9 +180,9 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var etiqueta = new Etiqueta();
             // prueba de la funcion
             var result = await _dao.ActualizarEtiquetaDAO(etiqueta, etiqueta.id);
-            var etiquetaResult = result.Value;
+            //var etiquetaResult = result.Value;
             // verificacion de la prueba
-            Assert.IsType<Etiqueta>(etiquetaResult);
+            Assert.IsType<Etiqueta>(result);
         }
 
         [Fact(DisplayName = "Actualizar una Etiqueta con Excepcion")]

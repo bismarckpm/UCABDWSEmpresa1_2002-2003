@@ -25,11 +25,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this._context = context;
             this.mapper = map;
         }
+
+        /// <summary>
+        /// Agregar Modelo Jerarquico
+        /// </summary>
+        /// <param name="modeloJerarquico"></param>
+        /// <returns>Un ModeloJerarquicoDTO</returns>
         public ModeloJerarquicoDTO AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
         {
             try
             {
-               _context.ModeloAprobacion.Add(modeloJerarquico);
+               _context.ModeloJerarquicos.Add(modeloJerarquico);
                _context.DbContext.SaveChanges();
 
                 var maper = ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
@@ -42,6 +48,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
+
+        /// <summary>
+        /// Agregar Modelo Jerarquico
+        /// </summary>
+        /// <returns>Un listado de ModeloJerarquicoDTO</returns>        
         public List<ModeloJerarquicoDTO> ConsultarModeloJerarquicosDAO()
         {
             try
@@ -60,6 +71,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new ServicesDeskUcabWsException("Error al consultar los Modelos Jerarquicos" + ex.Message, ex);
             }
         }
+
+        /// <summary>
+        /// Obtiene un Modelo Jerarquico por un id
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32</param>
+        /// <returns>Un objeto ModeloJerarquicoDTO</returns>
         public ModeloJerarquicoDTO ObtenerModeloJerarquicoDAO(int id)
         {
             try
@@ -80,6 +97,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new ServicesDeskUcabWsException("Error al obtener el Modelo Jerarquico", ex.InnerException!);
             }
         }
+
+        /// <summary>
+        /// Actualiza un Objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="modeloJerarquico">Un objeto de tipo ModeloJerarquico</param>
+        /// <returns>Un Objeto ModeloJerarquicoDTO</returns>
         public ModeloJerarquicoDTO ActualizarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
         {
             try
@@ -104,6 +127,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        /// <summary>
+        /// Eliminar un Modelo Jerarquico por un id
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32</param>
+        /// <returns>Un objeto de tipo ModeloJerarquicoDTO</returns>
         public ModeloJerarquicoDTO EliminarModeloJerarquicoDAO(int id)
         {
             try
@@ -124,7 +152,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                throw new ServicesDeskUcabWsException(ex.Message, ex.InnerException!);
+                throw new ServicesDeskUcabWsException("[Error al Eliminar] " + ex.Message, ex);
             }
         }
     }

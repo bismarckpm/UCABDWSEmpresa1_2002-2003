@@ -41,9 +41,9 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Agregar una Plantilla")]
         public async void CreatePlantillaControllerTest()
         {
-            var dto = new PlantillaDTOCreate() { Titulo = "Plantilla 1", Cuerpo = "Descripcion de la plantilla 1", Tipo = "Solicitud" };
+            var dto = new PlantillaDTOCreate() { Titulo = "Plantilla 1", Cuerpo = "Descripcion de la plantilla 1", /*Tipo = "Solicitud"*/ };
             // preparacion de los datos
-            _servicesMock.Setup(x => x.AgregarPlantillaDAO(new Plantilla())).ReturnsAsync(new PlantillaDTO() { id = 1, Titulo = "Plantilla 1", Cuerpo = "Descripcion de la plantilla 1", Tipo = "Solicitud" });
+            _servicesMock.Setup(x => x.AgregarPlantillaDAO(new Plantilla())).ReturnsAsync(new PlantillaDTO() { id = 1, Titulo = "Plantilla 1", Cuerpo = "Descripcion de la plantilla 1", /*Tipo = "Solicitud"*/ });
             //probar metodo post
             var result = await _controller.Post(dto);
 
@@ -54,57 +54,57 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public async void GetPlantillasControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ObtenerPlantillasDAO()).ReturnsAsync(new List<Plantilla> { new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Descripcion de la plantilla 1", tipo = "Solicitud" } });
+            //_servicesMock.Setup(x => x.ObtenerPlantillasDAO()).ReturnsAsync(new List<Plantilla> { new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Descripcion de la plantilla 1", /*Tipo = "Solicitud"*/ } });
             //probar metodo get
             var result = await _controller.Get();
-            var listPlantillas = result.Value!;
+            //var listPlantillas = result.Value!;
             // validar cantidad de elementos
-            Assert.Equal(1, listPlantillas.Count);
+            Assert.Equal(1, result.Data.Count);
         }
 
         [Fact(DisplayName = "Id menor a 0 Obtener Plantilla")]
         public async void GetIdMenor0PlantillaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ObtenerPlantillaDAO(0)).ReturnsAsync(new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Descripcion de la plantilla 1", tipo = "Solicitud" });
+         //   _servicesMock.Setup(x => x.ObtenerPlantillaDAO(0)).ReturnsAsync(new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Descripcion de la plantilla 1", tipo = "Solicitud" });
             //probar metodo get
             var result = await _controller.Get(0);
             // validar statusCode
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact(DisplayName = "Obtener Plantilla")]
         public async void GetPlantillaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ObtenerPlantillaDAO(1)).ReturnsAsync(new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Descripcion de la plantilla 1", tipo = "Solicitud" });
+           // _servicesMock.Setup(x => x.ObtenerPlantillaDAO(1)).ReturnsAsync(new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Descripcion de la plantilla 1", tipo = "Solicitud" });
             //probar metodo get
             var result = await _controller.Get(1);
             // validar statusCode
 
-            Assert.IsType<OkObjectResult>(result.Result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact(DisplayName = "No existe Plantilla")]
         public async void GetNoExistePlantillaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ObtenerPlantillaDAO(5)).ReturnsAsync(new ActionResult<Plantilla>(new NotFoundResult()));
+            //_servicesMock.Setup(x => x.ObtenerPlantillaDAO(5)).ReturnsAsync(new ActionResult<Plantilla>(new NotFoundResult()));
             //probar metodo get
             var result = await _controller.Get(5);
             // validar statusCode
 
-            Assert.IsType<NotFoundObjectResult>(result.Result);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact(DisplayName = "Actualizar Plantilla")]
         public async void PutPlantillaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ActualizarPlantillaDAO(It.IsAny<Plantilla>(), 1)).ReturnsAsync(new OkResult());
+           // _servicesMock.Setup(x => x.ActualizarPlantillaDAO(It.IsAny<Plantilla>(), 1)).ReturnsAsync(new OkResult());
             //probar metodo put
-            var result = await _controller.ActualizarPlantilla(new PlantillaDTOCreate() { Titulo = "Plantilla 1", Cuerpo = "Descripcion de la plantilla 1", Tipo = "Solicitud" }, 1);
+            var result = await _controller.ActualizarPlantilla(new PlantillaDTOCreate() { Titulo = "Plantilla 1", Cuerpo = "Descripcion de la plantilla 1", /*Tipo = "Solicitud"*/ }, 1);
             // validar statusCode
 
             Assert.IsType<OkObjectResult>(result);
@@ -137,7 +137,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public async void DeletePlantillaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.EliminarPlantillaDAO(1)).ReturnsAsync(new OkResult());
+           // _servicesMock.Setup(x => x.EliminarPlantillaDAO(1)).ReturnsAsync(new OkResult());
             //probar metodo delete
             var result = await _controller.EliminarPlantilla(1);
             // validar statusCode
@@ -149,7 +149,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public async void DeleteNoExistePlantillaControllerTest()
         {
             // preparacion de los datos
-            _servicesMock.Setup(x => x.EliminarPlantillaDAO(5)).ReturnsAsync(new NotFoundResult());
+           // _servicesMock.Setup(x => x.EliminarPlantillaDAO(5)).ReturnsAsync(new NotFoundResult());
             //probar metodo delete
             var result = await _controller.EliminarPlantilla(5);
             // validar statusCode

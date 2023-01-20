@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System;
+using System.Text;
+using Newtonsoft.Json;
 using ServicesDeskUCAB.DTO;
-using ServicesDeskUCAB.Models;
-using System.Reflection;
+using ServicesDeskUCAB.ResponseHandler;
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -16,24 +12,23 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                List<TipoCargoDTO> listTCargo = new List<TipoCargoDTO>();
+                AplicationResponseHandler<List<TipoCargoDTO>> ApiResponseH = new AplicationResponseHandler<List<TipoCargoDTO>>();
                 
                 HttpClient clientTCargo = new HttpClient();
-                    var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/TipoCargo/ConsultaTCargo/");
-                    var _client = await clientTCargo.SendAsync(request);
+                    
+                   var response = await clientTCargo.GetAsync("https://localhost:7198/TipoCargo/ConsultaTCargo/");
 
-                    if(_client.IsSuccessStatusCode)
+                    if(response.IsSuccessStatusCode)
                     {
-                        var responseStream = await _client.Content.ReadAsStreamAsync();
-                        listTCargo = await JsonSerializer.DeserializeAsync<List<TipoCargoDTO>>(responseStream);
-
+                        var responseStream = await response.Content.ReadAsStringAsync();
+                        ApiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<List<TipoCargoDTO>>>(responseStream);
                     } else 
                     {
                         BadRequest();
                     }
 
 
-                return View(listTCargo);
+                return View(ApiResponseH!.Data);
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
@@ -48,6 +43,7 @@ namespace ServicesDeskUCAB.Controllers
                 return View();
             }catch(Exception ex)
             {
+                Console.WriteLine(ex.Message + " || "+ex.StackTrace);
                 throw new Exception(ex.Message + " || "+ex.StackTrace, ex.InnerException);
             }
         }
@@ -72,22 +68,24 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-               TipoCargoDTO dto = new TipoCargoDTO();
+                AplicationResponseHandler<TipoCargoDTO> ResponseTipoCargo = new AplicationResponseHandler<TipoCargoDTO>();
+                var dto = new TipoCargoDTO();
                 HttpClient client = new HttpClient();
-                
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/TipoCargo/ConsultaTCargo/"+id.ToString());
-                var _client = await client.SendAsync(request);
 
-                if(_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/TipoCargo/ConsultaTCargo/" + id.ToString());    
+
+                if(response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    dto = await JsonSerializer.DeserializeAsync<TipoCargoDTO>(responseStream);
+                    var responseStream = await response.Content.ReadAsStringAsync();
+                    ResponseTipoCargo = JsonConvert.DeserializeObject<AplicationResponseHandler<TipoCargoDTO>>(responseStream);
+                    dto = ResponseTipoCargo!.Data;
                 }
                 return View(dto);
                 
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message, ex);
+                Console.WriteLine(ex.Message + " || "+ex.StackTrace);
+                throw new (ex.Message, ex);
             }
         }
         public async Task<IActionResult> ActualizarTCargo(TipoCargoDTO tipoCargo)
@@ -95,13 +93,13 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
               HttpClient client = new HttpClient();
-              var _client = await client.PutAsJsonAsync<TipoCargoDTO>("https://localhost:7198/TipoCargo/ActualizarTCargo/",tipoCargo);      
+              var _client = await client.PutAsJsonAsync("https://localhost:7198/TipoCargo/ActualizarTCargo/",tipoCargo);      
 
               return RedirectToAction("GestionTipoCargo");      
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " || "+ex.StackTrace);
-                throw new Exception(ex.Message + " || "+ex.StackTrace, ex.InnerException);
+                throw new (ex.Message + " || "+ex.StackTrace, ex.InnerException);
             }
         }
 
@@ -113,6 +111,7 @@ namespace ServicesDeskUCAB.Controllers
                 
             }catch(Exception ex)
             {
+                Console.WriteLine(ex.Message + " || "+ex.StackTrace);
                 throw new Exception(ex.Message, ex);
             }
         }

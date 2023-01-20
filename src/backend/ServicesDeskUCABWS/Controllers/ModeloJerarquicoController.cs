@@ -8,7 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ServicesDeskUCABWS.Exceptions;
-
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using System.Net;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -20,7 +21,7 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly ILogger<ModeloJerarquicoController> _log;
 
         private readonly IMapper _mapper;
-
+        const string message = "Solicitud Exitosa";
 
         public ModeloJerarquicoController(ILogger<ModeloJerarquicoController> logger, IModeloJerarquicoDAO dao, IMapper mapper)
         {
@@ -29,84 +30,141 @@ namespace ServicesDeskUCABWS.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que agrega un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="dto">Un Objeto ModeloJerarquicoDTO. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto creado
+        /// satisfactoriamente. </returns>
         [HttpPost]
         [Route("Jerarquico/")]
-        public ModeloJerarquicoDTO Post([FromBody] ModeloJerarquicoDTO dto)
+        public ApplicationResponse<ModeloJerarquicoDTO> Post([FromBody] ModeloJerarquicoDTO dto)
         {
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
             try
             {
                 var p = ModeloJerarquicoMapper.DtoToEntity(dto);
-
-                _log.LogInformation("ModeloJerarquico agregada con exito");
-                return _dao.AgregarModeloJerarquicoDAO(p);
+                response.Data = _dao.AgregarModeloJerarquicoDAO(p);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = message;
 
             }catch(ServicesDeskUcabWsException ex)
             {
-                _log.LogError("Error al crear" + ex.Mensaje, ex.Excepcion);
-                throw new ServicesDeskUcabWsException(ex.Mensaje,ex.Excepcion);
+                response.Success = false;
+                response.Message = ex.Mensaje;
+                response.Exception = ex.Excepcion.ToString();
+
             }
+            return response;
         }
 
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que 
+        ///obtiene un listado de objetos ModeloJerarquico
+        /// </summary>
+        /// <returns>Un ApplicationResponse que contiene un
+        /// listado de objetos modelo jerarquico. </returns>
         [HttpGet]
         [Route("GetModeloJerarquico/")]
-        public List<ModeloJerarquicoDTO> GetModeloJerarquico()
+        public ApplicationResponse<List<ModeloJerarquicoDTO>> GetModeloJerarquico()
         {
+            var response = new ApplicationResponse<List<ModeloJerarquicoDTO>>();
             try
             {
-                return _dao.ConsultarModeloJerarquicosDAO();
+                response.Data= _dao.ConsultarModeloJerarquicosDAO();
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = message;
+
             }catch(ServicesDeskUcabWsException ex)
             {
-                _log.LogError("Error al consultar " + ex.Mensaje, ex.StackTrace);
-                throw new ServicesDeskUcabWsException("Error al Consultar" + ex.Mensaje, ex);
+                response.Message = ex.Mensaje;
+                response.Success = false;
+                response.Exception = ex.Excepcion.ToString();
+
             }
+            return response;
         }        
 
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que consulta un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto de
+        /// la consulta. </returns>
         [HttpGet]
         [Route("Jerarquico/{id}")]
-        public ModeloJerarquicoDTO ConsultaMJerarquicoPorId(int id)
+        public ApplicationResponse<ModeloJerarquicoDTO> ConsultaMJerarquicoPorId(int id)
         {
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
             try
             {
-                return _dao.ObtenerModeloJerarquicoDAO(id);
+                response.Data = _dao.ObtenerModeloJerarquicoDAO(id);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = message;
 
             }catch(ServicesDeskUcabWsException ex)
             {
-                _log.LogError("[Error]: "+ ex.Mensaje + " || " + ex.StackTrace);
-                throw new ServicesDeskUcabWsException("[Error] : "+ ex.Mensaje, ex);
+                response.Success = false;
+                response.Message = ex.Mensaje;
+                response.Exception = ex.Excepcion.ToString();
+
             }
+            return response;
         }
 
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que actualiza 
+        ///un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="dto">Un Objeto ModeloJerarquicoDTO. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto actualizado
+        /// satisfactoriamente. </returns>
          [HttpPut]
          [Route("ActualizaModeloJerarquico/")]
-         public ModeloJerarquicoDTO ActualizarModeloJerarquico([FromBody] ModeloJerarquicoDTO dto)
+         public ApplicationResponse<ModeloJerarquicoDTO> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoDTO dto)
          {
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
             try
-            {
-                   var data = _dao.ActualizarModeloJerarquicoDAO(ModeloJerarquicoMapper.DtoToEntity(dto));
-                    _log.LogInformation("[Objeto Actualizado]: " + data.Nombre + ", " + data.CategoriaId + ", " + data.orden);
-                    return data;
+            {                   
+                    response.Data =_dao.ActualizarModeloJerarquicoDAO(ModeloJerarquicoMapper.DtoToEntity(dto));;
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = message;
 
             }catch(ServicesDeskUcabWsException ex)
             {
-                _log.LogError(ex.Mensaje + " || " + ex.StackTrace);
-                throw new ServicesDeskUcabWsException(ex.Mensaje, ex.Excepcion);
+                response.Success = false;
+                response.Message = ex.Mensaje;
+                response.Exception = ex.Excepcion.ToString();
+
             }
-             
+             return  response;
          }
 
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que agrega un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto eliminado
+        /// satisfactoriamente. </returns>
         [HttpDelete]
         [Route("DeleteModeloJerarquico/{id}")]
-        public ModeloJerarquicoDTO EliminarModeloJerarquico([FromRoute] int id)
+        public ApplicationResponse<ModeloJerarquicoDTO> EliminarModeloJerarquico([FromRoute] int id)
         {
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
                 try
                 {
-                    return  _dao.EliminarModeloJerarquicoDAO(id);
+                    response.Data=  _dao.EliminarModeloJerarquicoDAO(id);
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = message;
                     
-                }catch(Exception ex)
+                }catch(ServicesDeskUcabWsException ex)
                 {
-                    _log.LogError("("+DateTime.Now +") "+"- [ "+ex.Message +" ]");
-                    throw new ServicesDeskUcabWsException("Error al eliminar el Objeto: " + id, ex.Message, ex);
+                    response.Success = false;
+                    response.Message = ex.Mensaje;
+                    response.Exception = ex.Excepcion.ToString();
+                    
                 }
+                return response;
         }
     }
 }
