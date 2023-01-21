@@ -111,15 +111,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 _context.ModeloJerarquicos.Update(modeloJerarquico);
                 _context.DbContext.SaveChanges();
 
-                var data = _context.ModeloJerarquicos.Where(mj => mj.id == modeloJerarquico.id)
-                                                     .Select(mj => new ModeloJerarquicoDTO()
-                                                     {
-                                                        id = mj.id,
-                                                        Nombre = mj.nombre,
-                                                        CategoriaId = mj.categoriaid,
-                                                        orden = ModeloJerarquicoMapper.EntityToDtoList(mj.Jeraruia!)
-                                                     });
-                return data.First();
+                return ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
             }
             catch (Exception ex)
             {
@@ -136,14 +128,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var data = _context.ModeloJerarquicoCargos
-                                    .Where(jc => jc.modelojerarquicoid == id)
-                                    .First();
                 var modeloJerarquico = _context.ModeloJerarquicos
                                                 .Where(mj => mj.id == id)
                                                 .First();
 
-                _context.DbContext.Remove(data);
                 _context.DbContext.Remove(modeloJerarquico); 
 
                 _context.DbContext.SaveChanges();

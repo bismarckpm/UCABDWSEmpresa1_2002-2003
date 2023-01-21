@@ -20,7 +20,6 @@ namespace ServicesDeskUCABWS.Test.Controllers
         private readonly ModeloJerarquicoController _controller;
         private readonly Mock<IModeloJerarquicoDAO> _servicesMock;
         public ModeloJerarquicoDTO modeloJerarquicoDTO = It.IsAny<ModeloJerarquicoDTO>();
-        // public ModeloJerarquicoCreateDTO modeloJerarquicoCreateDTO = It.IsAny<ModeloJerarquicoCreateDTO>();
         public ModeloJerarquico modeloJerarquico = It.IsAny<ModeloJerarquico>();
         private readonly Mock<IMigrationDbContext> _contextMock;
         private readonly Mock<ILogger<ModeloJerarquicoController>> _logger;
@@ -115,14 +114,19 @@ namespace ServicesDeskUCABWS.Test.Controllers
     #endregion
 
     #region Caso Particular
-//Por corregir
+
         [Fact(DisplayName = "Agregar modelo jerarquico con Excepcion")]
         public Task CreateModeloJerarquicoControllerExceptionTest()
         {
             _servicesMock.Setup(e => e.AgregarModeloJerarquicoDAO(modeloJerarquico))
-                .Throws(new ServicesDeskUcabWsException("", new NullReferenceException()));
+                .Throws(new Exception());
 
-                var response = _controller.Post(ErrorModelDTO());
+                var dto = new ModeloJerarquicoDTO()
+                            {
+                                Nombre = "Prueba de excepcion",
+                            };
+
+                var response = _controller.Post(dto);
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -156,12 +160,11 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
-//por corregir
         [Fact(DisplayName = "Actualizar modelo jerarquico con excepcion")]
         public Task ActualizarModeloJerarquicoControllerExceptionTest()
         {
             _servicesMock.Setup(e => e.ActualizarModeloJerarquicoDAO(modeloJerarquico))
-                        .Throws(new ServicesDeskUcabWsException("", new Exception()));
+                        .Throws(new Exception());
 
             var response = _controller.ActualizarModeloJerarquico(ErrorModelDTO());
 
@@ -214,15 +217,11 @@ namespace ServicesDeskUCABWS.Test.Controllers
             };
         }
 
-private ModeloJerarquicoDTO  ErrorModelDTO()
-{
-    var lista = new List<JerarquicoTipoCargoDTO>();
-    return new ModeloJerarquicoDTO()
-    {
-        orden = lista
-    };
-}
-        
+        private ModeloJerarquicoDTO  ErrorModelDTO()
+        {
+            return new ModeloJerarquicoDTO();
+        }
+                
         #endregion
 
     }

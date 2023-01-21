@@ -94,8 +94,26 @@ namespace ServicesDeskUCABWS.Test.DAOs
     public Task ActualizarModeloJerarquicoTest()
     {
             _contextMock.Setup(m=> m.DbContext.SaveChanges()).Returns(1);
-            _contextMock.Setup(m => m.ModeloJerarquicos.Find(It.IsAny<int>())).Returns(NewModeloJerarquico());
-            var dtoModel = new ModeloJerarquico(){id = 3, nombre = "Prueba.", categoriaid = 4};
+            var dtoModel = new ModeloJerarquico()
+            {id = 3, 
+            nombre = "Prueba.", 
+            categoriaid = 4,
+            Jeraruia = new List<ModeloJerarquicoCargos>()
+            {
+                new ModeloJerarquicoCargos()
+                {
+                    Id = 1,
+                    orden = 2,
+                    TipoCargoid = 1,
+                    modelojerarquicoid =3
+                }
+            },
+            categoria = new Categoria()
+            {
+                id = 4,
+                nombre = "prueba 4"
+            }
+            };
 
                 var result = _dao.ActualizarModeloJerarquicoDAO(dtoModel);
 
@@ -103,8 +121,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
         return Task.CompletedTask;
     }
 
-// PROBLEMA: Arroja ServicesDeskUCABWS.Exceptions.ServicesDeskUcabWsException : 
-//Exception of type 'ServicesDeskUCABWS.Exceptions.
     /// <summary>
     /// Elimina un modelo jerarquico por id 
     /// </summary>
@@ -112,19 +128,15 @@ namespace ServicesDeskUCABWS.Test.DAOs
     [Fact(DisplayName = "Eliminar un Modelo Jerarquico")]
     public Task EliminarModeloJerarquicoTest()
     {
-        _contextMock.Setup(j => j.ModeloJerarquicoCargos.Find(IdModeloJerarquico))
-                    .Returns(NewModelJerarquicCargos());
-        _contextMock.Setup(j => j.ModeloJerarquicos.Find(IdModeloJerarquico))
-                    .Returns(NewModeloJerarquico());
-
-        _contextMock.Setup(m => m.DbContext.SaveChanges()).Returns(1);
-
         var id = 1;
+        _contextMock.Setup(m => m.DbContext.SaveChanges()).Returns(1);
+        
         var result = _dao.EliminarModeloJerarquicoDAO(id);
 
         Assert.IsType<ModeloJerarquicoDTO>(result);
         return Task.CompletedTask;
     }
+
     #endregion
 
     #region  Caso Particulares

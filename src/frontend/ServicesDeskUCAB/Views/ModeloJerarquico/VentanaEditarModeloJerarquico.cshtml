@@ -1,5 +1,4 @@
 @model ServicesDeskUCAB.DTO.ModeloJerarquicoDTO
-@using ServicesDeskUCAB.DTO
 @{
     ViewData["Title"] = "Gestion Modelo Jerarquico";
 }
@@ -23,21 +22,25 @@
             @using (Html.BeginForm("ActualizarModeloJerarquico", "ModeloJerarquico", FormMethod.Post))
             {
                 <div class="modal-body">
-                    @Html.TextBoxFor(m => m.id, new { @Value = Model.id, @type="hidden"})
-                    <span>Modelo Jerarquico: </span> @Html.TextBoxFor(m => m.nombre, new { @Value = Model.nombre})
-                    @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
-                    <br />
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.id , new { @Value = Model.id, @type="hidden"})
+                        <span>Modelo Jerarquico: </span> @Html.TextBoxFor(m => m.nombre, new { @Value = Model.nombre})
+                        @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <span>Categoria: </span> @Html.TextBoxFor(m => m.categoriaId, new {@Value = Model.categoriaId})
+                        @Html.ValidationMessageFor(m => m.categoriaId, null, new {@Class = "text-danger"})
+                    </div>                    
+                   
                 <div class="form-group">
-                    <label for="categoria">Jerarquia</label>
-                    <select class="form-control" id="categoria" name="categoriaid">
-                        @foreach (JerarquicoTipoCargoDTO c in Model.orden)
-                        {
-                            <span>Orden: </span> @Html.TextBoxFor(c=> c.orden, new {@Value = c.orden})
-                            
-                        }
-                    </select>
+                    <span>Orden: </span> @Html.TextBoxFor(m => m.orden[0].orden, new{ @Value = Model.orden[0].orden})
+                    @Html.ValidationMessageFor( m => m.orden[0].orden, null, new {@Class = "text-danger"})
                 </div>
-                
+                <div class="form-group">
+                    <span>Tipo Cargo: </span> @Html.TextBoxFor(m => m.orden[0].tipoCargoid, new{ @Value = Model.orden[0].tipoCargoid})
+                    @Html.ValidationMessageFor( m => m.orden[0].tipoCargoid, null, new {@Class = "text-danger"})
+                </div>
+                                
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionMJerarquico", "ModeloJerarquico")'">Cancelar</button>
@@ -47,4 +50,4 @@
 
         </div>
     </div>
-</div>
+</div>((byte)
