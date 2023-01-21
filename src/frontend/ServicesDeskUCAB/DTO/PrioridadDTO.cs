@@ -6,6 +6,6 @@ namespace ServicesDeskUCAB.DTO
     {
         public int id { get; set; }
         [Required(ErrorMessage ="Ingrese una prioridad")]
-        public string? nombre { get; set; }
+        public string nombre { get; set; }
     }
 }

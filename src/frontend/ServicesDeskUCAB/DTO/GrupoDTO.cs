@@ -7,7 +7,7 @@ namespace ServicesDeskUCAB.DTO
 
         public int id { get; set; }
         [Required(ErrorMessage = "Ingrese un Grupo")]
-        public string? nombre { get; set; }
+        public string nombre { get; set; }
         public int departamentoid { get; set; }
     }
 }

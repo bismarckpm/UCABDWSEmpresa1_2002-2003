@@ -111,7 +111,7 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = FactoryHttp.CreateClient();
                 var _client = await client.DeleteAsync(URL+"/" + id.ToString());
                 return RedirectToAction("GestionEtiquetas");
             }
