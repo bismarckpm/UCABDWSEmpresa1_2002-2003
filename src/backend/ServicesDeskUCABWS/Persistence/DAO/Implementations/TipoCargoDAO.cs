@@ -68,18 +68,10 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 _context.TipoCargos.Update(tipoCargo);
                 _context.DbContext.SaveChanges();
 
-                var data = _context.TipoCargos.Where(t => t.id == tipoCargo.id).Select(
-                    t=> new TipoCargoDTO
-                    {
-                        Id = t.id,
-                        Nombre = t.nombre
-                    }
-                );
-                return data.First();
+                return TipoCargoMapper.EntityToDTO(tipoCargo);
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
-                throw new ServicesDeskUcabWsException("Fallo al actualizar: " + tipoCargo.nombre + ", " + ex.Message, ex);
+                throw new Exception("Fallo al actualizar: " + tipoCargo.nombre + ", " + ex.Message, ex);
             } 
         } 
 

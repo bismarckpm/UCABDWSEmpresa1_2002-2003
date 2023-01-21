@@ -41,11 +41,11 @@ namespace ServicesDeskUCABWS.Controllers
                     response.StatusCode = HttpStatusCode.OK;
                     response.Message = message;                    
                                         
-            }catch(ServicesDeskUcabWsException ex)
+            }catch(Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                response.Exception = ex.Excepcion.ToString();
+                response.Exception = ex.ToString();
                 _log.LogError("[Error al crear]: " + ex.Message + ", [Ubicado]: " + ex.StackTrace);
             }
             return response;
@@ -92,13 +92,12 @@ namespace ServicesDeskUCABWS.Controllers
                 response.Data = _dao.ActualizarTipoCargoDAO(TipoCargoMapper.DtoToEntity(tipoCargo));
                 response.StatusCode = HttpStatusCode.OK;
                 response.Message = message;
-                
 
-            }catch(ServicesDeskUcabWsException ex)
+            }catch(Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                response.Exception = ex.Excepcion.ToString();
+                response.Exception = ex.ToString();
                 _log.LogError("[Error al crear]: " + ex.Message + ", [Ubicado]: " + ex.StackTrace);
             }
             return response;

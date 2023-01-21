@@ -471,7 +471,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);            
                 _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
                 _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
-                _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
+                _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.id == i).Single());
 
             //     _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
             //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);

@@ -91,14 +91,15 @@ namespace ServicesDeskUCABWS.Test.Controllers
     #endregion
 
     #region  Casos Particulares
-                            //FALLA
+                         
             [Fact(DisplayName = "Agregar Tipo Cargo con Excepcion")]
             public Task CreateTipoCargoControllerTestException()
-            {var dto = new TipoCargoDTO(){Id = 3, Nombre = "Senior"};
+            {
+                var dto = new TipoCargoDTO(){Id = 3, Nombre = "Senior"};
                 
                 _servicesMock.Setup(t=>t.AgregarTipoCargoDAO(tipo))
-                .Throws(new ServicesDeskUcabWsException("", new NullReferenceException()));               
-                var result = _controller.AgregarTipoCargo(dto);
+                .Throws(new Exception());               
+                var result = _controller.AgregarTipoCargo(tipoCargo);
                 
                 Assert.NotNull(result);        
                 Assert.False(result.Success);
@@ -119,12 +120,11 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 return Task.CompletedTask;
             }
 
-                    //Por Corregir
              [Fact(DisplayName="Actualiza Tipo Cargo con Excepcion")]
              public Task ActualizarTipoCargoControllerTestException()
              {
                  _servicesMock.Setup(t=>t.ActualizarTipoCargoDAO(NewTipoCargo())).
-                 Throws(new ServicesDeskUcabWsException("", new Exception()));
+                 Throws(new Exception());
             
                 var resultEx = _controller.ActualizarTipoCargo(tipoCargo);
 
