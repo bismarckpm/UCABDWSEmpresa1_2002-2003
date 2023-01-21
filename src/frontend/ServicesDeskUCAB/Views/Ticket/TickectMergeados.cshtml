@@ -1,12 +1,9 @@
-﻿@model List<ServicesDeskUCAB.DTO.TicketCDTO>  
+@model List<ServicesDeskUCAB.DTO.TicketCDTO>  
 @{
-    ViewBag.Title = "Tickect Gestion";
-   
+    ViewData["Title"] = " Tickets Mergeados";
 }
- @Html.Partial("_MenuTicket");
- @if (Context.Session.GetString("rol").ToUpper() != "CLIENTE"){
+  @Html.Partial("_MenuTicket");
 <div class="table-responsive">
-
 <table class="table">
     <tr>
         <th>
@@ -39,9 +36,7 @@
         <th>
             Departamento
         </th>
-        <th>
-            Acciones
-        </th>
+     
     </tr>
 
     @foreach (var item in Model)
@@ -76,33 +71,12 @@
             </td>
             <td>
                 @Html.DisplayFor(i => item.departamento)
-            </td>
-            <td>
-                <a class="acciones" href="@Url.Action("CambiarEstado","Ticket",new { Tickectid = item.id })">
-                    Cambiar Estado
-                </a>
-                <a class="acciones" href="@Url.Action("AsignarTicket","Ticket",new { iddept =   item.departamentoid, Tickectid = item.id })">
-                    Asignar
-                </a>
-                <a class="acciones" href="@Url.Action("Delegar","Ticket",new { Tickectid = item.id })">
-                    Delegar Ticket
-                </a>
-                <a class="acciones" href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
-                    Merguear Ticket
-                </a>
-                 <a class="acciones" href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
-                    Ver Tickets Mergeados
-                </a>
-            </td>
-          
+            </td>         
         </tr>
     }
 
-
 </table>
 </div>
-<p>@ViewBag.Error</p>  
-}
- 
+ <p>@ViewBag.Error</p>  
 
 

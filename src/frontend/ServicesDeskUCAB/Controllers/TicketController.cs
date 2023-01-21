@@ -56,6 +56,30 @@ namespace ServicesDeskUCAB.Controllers
             return View();
 
         }
+        
+        public async Task<IActionResult> TickectMergeados( int Tickectid)
+        {
+
+            List<TicketCDTO> listaTickets = new List<TicketCDTO>();
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("https://localhost:7198/Tickets/TickectMergeados/" + Tickectid))
+                {
+
+                    var response2 = await response.Content.ReadAsStringAsync();
+                    JObject json_respuesta = JObject.Parse(response2);
+                    if (json_respuesta["success"].ToString() == "True")
+                    {
+                        listaTickets = JsonConvert.DeserializeObject<List<TicketCDTO>>(json_respuesta["data"].ToString());
+                        return View(listaTickets);
+                    }
+                    ViewBag.Error = json_respuesta["message"].ToString() + json_respuesta["exception"].ToString();
+
+                }
+            }
+            return View();
+
+        }
         public async Task<IActionResult> TicketsAsignados()
         {
 
