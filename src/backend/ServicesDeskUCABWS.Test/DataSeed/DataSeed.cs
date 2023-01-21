@@ -14,7 +14,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Categoria>> mockSetCategorias = new Mock<DbSet<Categoria>>();
         public static Mock<DbSet<Prioridad>> mockSetPrioridades = new Mock<DbSet<Prioridad>>();
         public static Mock<DbSet<Departamento>> mockSetDepartamentos = new Mock<DbSet<Departamento>>();
-        public static Mock<DbSet<Grupo>>mockSetGrupo = new Mock<DbSet<Grupo>>();
+        public static Mock<DbSet<Grupo>> mockSetGrupo = new Mock<DbSet<Grupo>>();
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
@@ -85,7 +85,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 }
             };
             //Departamento
-             var requestsDepartamentos = new List<Departamento>
+            var requestsDepartamentos = new List<Departamento>
              {
                  new Departamento
                  {
@@ -108,7 +108,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                  }
              };
             //Grupo
-             var requestsGrupo = new List<Grupo>
+            var requestsGrupo = new List<Grupo>
              {
                  new Grupo
                  {
@@ -267,7 +267,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     id = 1,
                     titulo = "Plantilla1",
                     cuerpo = "Cuerpo1",
-                    tipo = "Tipo1",
+                    EstadoId = 1,
+                    estado = new Estado()
                     //notifications = new List<Notification>()
                 },
                 new Plantilla
@@ -275,7 +276,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     id = 2,
                     titulo = "Plantilla2",
                     cuerpo = "Cuerpo2",
-                    tipo = "Tipo2",
+                    EstadoId = 2,
+                    estado = new Estado()
                     //notifications = new List<Notification>()
                 }
             };
@@ -306,18 +308,18 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 {
                     id=1,
                     nombre="Estado1",
-                    //EtiquetaId=1,
-                   // etiqueta= new Etiqueta(),
-                    //notification = new Notification(),
+                    EtiquetaId=1,
+                    etiqueta= new Etiqueta(),
+                    plantillas = new List<Plantilla>(),
                     tickets = new List<Ticket>()
                 },
                 new Estado
                 {
                     id=2,
                     nombre="Estado2",
-                  //  EtiquetaId=2,
-                  //  etiqueta= new Etiqueta(),
-                    //notification = new Notification(),
+                    EtiquetaId=1,
+                    etiqueta= new Etiqueta(),
+                    plantillas = new List<Plantilla>(),
                     tickets = new List<Ticket>()
                 }
             };
@@ -404,73 +406,73 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             //     }
             // };
 
-        //     //TipoCargo DataSeed
-        //     _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.TipoCargos).Returns(requests.AsQueryable().BuildMockDbSet().Object);
-        //     //Categoria DataSeed
-        //     _mockContext.Setup(t => t.Categorias).Returns(mockSetCategorias.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Categorias).Returns(requestsCategorias.AsQueryable().BuildMockDbSet().Object);
-        //     //Prioridad DataSeed
-        //     _mockContext.Setup(t => t.Prioridades).Returns(mockSetPrioridades.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Prioridades).Returns(requestsPrioridades.AsQueryable().BuildMockDbSet().Object);
-        //     //Departamento DataSeed
-        //     _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
-        //     // Grupo Dataseed
-        //     _mockContext.Setup(t => t.Grupo).Returns(mockSetGrupo.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
-        //     //Usuario DataSeed
-        //     _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Usuario).Returns(requestsUsuarios.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(c => c.Empleados).Returns(requestsEmpleados.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(c => c.Administradores).Returns(requestsAdmins.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(c => c.clientes).Returns(requestsClientes.AsQueryable().BuildMockDbSet().Object);
-        //     //Cargos DataSeed
-        //     _mockContext.Setup(t => t.Cargos).Returns(mockSetCargos.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Cargos).Returns(requestsCargos.AsQueryable().BuildMockDbSet().Object);
-        //     //Etiquetas DataSeed	
-        //     _mockContext.Setup(t => t.Etiquetas).Returns(mockSetEtiquetas.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Etiquetas).Returns(requestsEtiquetas.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEtiquetas.Where(x => x.id == i).Single());
-        //     //Plantillas DataSeed
-        //     _mockContext.Setup(t => t.Plantillas).Returns(mockSetPlantillas.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
-        //     //ModeloParalelo DataSeed
-        //     _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloParalelo.Where(x => x.paraid == i).Single());
-        //     //Estados DataSeed
-        //     _mockContext.Setup(t => t.Estados).Returns(mockSetEstados.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Estados).Returns(requestsEstado.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEstado.Where(x => x.id == i).Single());
-        //     //Tickets DataSeed
-        //     _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
-        //     //ModeloJerarquico DataSeed
-        //     _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);            
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
-            
-        //     _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
-        //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-        //     _mockContext.Setup(c => c.FlujoAprobaciones).Returns(requestsFlujoAprobacion.AsQueryable().BuildMockDbSet().Object);
-        //     _mockContext.Setup(e => e.FlujoAprobaciones.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsFlujoAprobacion.Where(x => x.id == i).Single());
+            //     //TipoCargo DataSeed
+            //     _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.TipoCargos).Returns(requests.AsQueryable().BuildMockDbSet().Object);
+            //     //Categoria DataSeed
+            //     _mockContext.Setup(t => t.Categorias).Returns(mockSetCategorias.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Categorias).Returns(requestsCategorias.AsQueryable().BuildMockDbSet().Object);
+            //     //Prioridad DataSeed
+            //     _mockContext.Setup(t => t.Prioridades).Returns(mockSetPrioridades.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Prioridades).Returns(requestsPrioridades.AsQueryable().BuildMockDbSet().Object);
+            //     //Departamento DataSeed
+            //     _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
+            //     // Grupo Dataseed
+            //     _mockContext.Setup(t => t.Grupo).Returns(mockSetGrupo.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
+            //     //Usuario DataSeed
+            //     _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Usuario).Returns(requestsUsuarios.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(c => c.Empleados).Returns(requestsEmpleados.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(c => c.Administradores).Returns(requestsAdmins.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(c => c.clientes).Returns(requestsClientes.AsQueryable().BuildMockDbSet().Object);
+            //     //Cargos DataSeed
+            //     _mockContext.Setup(t => t.Cargos).Returns(mockSetCargos.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Cargos).Returns(requestsCargos.AsQueryable().BuildMockDbSet().Object);
+            //Etiquetas DataSeed	
+            _mockContext.Setup(t => t.Etiquetas).Returns(mockSetEtiquetas.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Etiquetas).Returns(requestsEtiquetas.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEtiquetas.Where(x => x.id == i).Single());
+            //Plantillas DataSeed
+            _mockContext.Setup(t => t.Plantillas).Returns(mockSetPlantillas.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
+            //     //ModeloParalelo DataSeed
+            //     _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloParalelo.Where(x => x.paraid == i).Single());
+            //Estados DataSeed
+            _mockContext.Setup(t => t.Estados).Returns(mockSetEstados.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Estados).Returns(requestsEstado.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEstado.Where(x => x.id == i).Single());
+            //     //Tickets DataSeed
+            //     _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
+            //     //ModeloJerarquico DataSeed
+            //     _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);            
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
 
-        // }
-    }
+            //     _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.FlujoAprobaciones).Returns(requestsFlujoAprobacion.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(e => e.FlujoAprobaciones.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsFlujoAprobacion.Where(x => x.id == i).Single());
+
+            // }
+        }
     }
 }

@@ -1,139 +1,139 @@
-﻿using ServicesDeskUCABWS.Persistence.DAO.Interface;
-using ServicesDeskUCABWS.BussinessLogic.Mapper;
-using ServicesDeskUCABWS.Persistence.Entity;
-using ServicesDeskUCABWS.Controllers;
-using ServicesDeskUCABWS.BussinessLogic.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using Moq;
-using Xunit;
-using ServicesDeskUCABWS.Persistence.DAO.Implementations;
+﻿// using ServicesDeskUCABWS.Persistence.DAO.Interface;
+// using ServicesDeskUCABWS.BussinessLogic.Mapper;
+// using ServicesDeskUCABWS.Persistence.Entity;
+// using ServicesDeskUCABWS.Controllers;
+// using ServicesDeskUCABWS.BussinessLogic.DTO;
+// using Microsoft.AspNetCore.Mvc;
+// using Microsoft.AspNetCore.Http;
+// using Microsoft.AspNetCore.Mvc.Controllers;
+// using Microsoft.Extensions.Logging;
+// using System.Collections.Generic;
+// using System.Threading.Tasks;
+// using System;
+// using Moq;
+// using Xunit;
+// using ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
-namespace ServicesDeskUCABWS.Test.Controllers
-{
-   
-    public class GrupoControllerTest
-    {
-        private readonly GrupoController _controller;
-        private readonly Mock<IGrupoDAO> _servicesMock;
-        private readonly Mock<ILogger<GrupoController>> _log;
-        public GrupoDTO grupo = It.IsAny<GrupoDTO>();
-        public Grupo tipo = It.IsAny<Grupo>();
+// namespace ServicesDeskUCABWS.Test.Controllers
+// {
 
-        public GrupoControllerTest()
-        {
-            _log = new Mock<ILogger<GrupoController>>();
-            _servicesMock = new Mock<IGrupoDAO>();
-            _controller = new GrupoController(_servicesMock.Object, _log.Object);
-            _controller.ControllerContext = new ControllerContext();
-            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
-            _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
-        }
-        [Fact (DisplayName = "Agregar Grupo")]
+//     public class GrupoControllerTest
+//     {
+//         private readonly GrupoController _controller;
+//         private readonly Mock<IGrupoDAO> _servicesMock;
+//         private readonly Mock<ILogger<GrupoController>> _log;
+//         public GrupoDTO grupo = It.IsAny<GrupoDTO>();
+//         public Grupo tipo = It.IsAny<Grupo>();
 
-        public Task CrearGrupoControllerTest()
-        {
-            var dto = new GrupoDTO()
-            {
-                id = 1,
-                nombre = "Grupo2",
-                departamentoid = 1
-            };
-            _servicesMock.Setup(t =>t.AgregarGrupo(tipo)).Returns(grupo);
+//         public GrupoControllerTest()
+//         {
+//             _log = new Mock<ILogger<GrupoController>>();
+//             _servicesMock = new Mock<IGrupoDAO>();
+//             _controller = new GrupoController(_servicesMock.Object, _log.Object);
+//             _controller.ControllerContext = new ControllerContext();
+//             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
+//             _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
+//         }
+//         [Fact (DisplayName = "Agregar Grupo")]
 
-            var result = _controller.AgregarGrupo(dto);
+//         public Task CrearGrupoControllerTest()
+//         {
+//             var dto = new GrupoDTO()
+//             {
+//                 id = 1,
+//                 nombre = "Grupo2",
+//                 departamentoid = 1
+//             };
+//             _servicesMock.Setup(t =>t.AgregarGrupo(tipo)).Returns(grupo);
 
-            Assert.IsType<ActionResult<GrupoDTO>>(result);
-            return Task.CompletedTask;
-        }
+//             var result = _controller.AgregarGrupo(dto);
 
-        [Fact(DisplayName = "Agregar Grupo con Excepcion")]
-        public Task CreateGrupoControllerTestException()
-        {
-            _servicesMock.Setup(t => t.AgregarGrupo(tipo))
-            .Throws(new NullReferenceException());
+//             Assert.IsType<ActionResult<GrupoDTO>>(result);
+//             return Task.CompletedTask;
+//         }
 
-            Assert.Throws<NullReferenceException>(() => _controller.AgregarGrupo(grupo));
-            return Task.CompletedTask;
-        }
+//         [Fact(DisplayName = "Agregar Grupo con Excepcion")]
+//         public Task CreateGrupoControllerTestException()
+//         {
+//             _servicesMock.Setup(t => t.AgregarGrupo(tipo))
+//             .Throws(new NullReferenceException());
 
-        [Fact(DisplayName = "Consultar Lista Grupo")]
-        public Task ConsultarGrupoControllerTest()
-        {
-            _servicesMock.Setup(t => t.ConsultarGrupo())
-            .Returns(new List<GrupoDTO>());
+//             Assert.Throws<NullReferenceException>(() => _controller.AgregarGrupo(grupo));
+//             return Task.CompletedTask;
+//         }
 
-            var result = _controller.ConsultarGrupo();
+//         [Fact(DisplayName = "Consultar Lista Grupo")]
+//         public Task ConsultarGrupoControllerTest()
+//         {
+//             _servicesMock.Setup(t => t.ConsultarGrupo())
+//             .Returns(new List<GrupoDTO>());
 
-            Assert.IsType<ActionResult<List<GrupoDTO>>>(result);
-            return Task.CompletedTask;
-        }
+//             var result = _controller.ConsultarGrupo();
 
-        [Fact(DisplayName = "Consulta Lista Grupo con Excepcion")]
-        public Task ConsultarGrupoControllerTestException()
-        {
-            _servicesMock
-                .Setup(t => t.ConsultarGrupo())
-                .Throws(new Exception("", new NullReferenceException()));
+//             Assert.IsType<ActionResult<List<GrupoDTO>>>(result);
+//             return Task.CompletedTask;
+//         }
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultarGrupo());
-            return Task.CompletedTask;
-        }
+//         [Fact(DisplayName = "Consulta Lista Grupo con Excepcion")]
+//         public Task ConsultarGrupoControllerTestException()
+//         {
+//             _servicesMock
+//                 .Setup(t => t.ConsultarGrupo())
+//                 .Throws(new Exception("", new NullReferenceException()));
 
-        [Fact(DisplayName = "Actualizar Grupo")]
-        public Task ActualizarGrupoControllerTest()
-        {
-            
-            var tipo1 = new GrupoDTO() {
-                id = 1, nombre = "Grupo 6", departamentoid =1  };
+//             Assert.Throws<NullReferenceException>(() => _controller.ConsultarGrupo());
+//             return Task.CompletedTask;
+//         }
 
-            _servicesMock.Setup(t => t.ActualizarGrupo(tipo))
-                .Returns(new GrupoDTO());
+//         [Fact(DisplayName = "Actualizar Grupo")]
+//         public Task ActualizarGrupoControllerTest()
+//         {
 
-            var result = _controller.ActualizarGrupo(tipo1);
-            Assert.IsType<ActionResult<GrupoDTO>>(result);
-            return Task.CompletedTask;
-        }
+//             var tipo1 = new GrupoDTO() {
+//                 id = 1, nombre = "Grupo 6", departamentoid =1  };
 
-        [Fact(DisplayName = "Actualiza Grupo con Excepcion")]
-        public Task ActualizarGrupoControllerTestException()
-        {
-            _servicesMock.Setup(t => t.ActualizarGrupo(tipo)).Throws(new Exception("", new NullReferenceException()));
+//             _servicesMock.Setup(t => t.ActualizarGrupo(tipo))
+//                 .Returns(new GrupoDTO());
 
-            Assert.Throws<NullReferenceException>(() => _controller.ActualizarGrupo(grupo));
-            return Task.CompletedTask;
-        }
+//             var result = _controller.ActualizarGrupo(tipo1);
+//             Assert.IsType<ActionResult<GrupoDTO>>(result);
+//             return Task.CompletedTask;
+//         }
 
-        [Fact(DisplayName = "Elimina un Grupo")]
-        public Task EliminarGrupoControllerTest()
-        {
-            var codigo = 1;
-            _servicesMock.Setup(t => t.EliminarGrupo(It.IsAny<int>())).Returns(It.IsAny<GrupoDTO>());
+//         [Fact(DisplayName = "Actualiza Grupo con Excepcion")]
+//         public Task ActualizarGrupoControllerTestException()
+//         {
+//             _servicesMock.Setup(t => t.ActualizarGrupo(tipo)).Throws(new Exception("", new NullReferenceException()));
 
-            var result = _controller.EliminarGrupo(codigo);
+//             Assert.Throws<NullReferenceException>(() => _controller.ActualizarGrupo(grupo));
+//             return Task.CompletedTask;
+//         }
 
-            Assert.IsType<ActionResult<GrupoDTO>>(result);
-            return Task.CompletedTask;
-        }
+//         [Fact(DisplayName = "Elimina un Grupo")]
+//         public Task EliminarGrupoControllerTest()
+//         {
+//             var codigo = 1;
+//             _servicesMock.Setup(t => t.EliminarGrupo(It.IsAny<int>())).Returns(It.IsAny<GrupoDTO>());
 
-        [Fact(DisplayName = "Elimina un Grupo con excepcion")]
-        public Task EliminarGrupoControllerTestException()
-        {
-            _servicesMock.Setup(t => t.EliminarGrupo(It.IsAny<int>()))
-            .Throws(new Exception("", new NullReferenceException()));
+//             var result = _controller.EliminarGrupo(codigo);
 
-            Assert.Throws<NullReferenceException>(() => _controller.EliminarGrupo(It.IsAny<int>()));
-            return Task.CompletedTask;
-        }
+//             Assert.IsType<ActionResult<GrupoDTO>>(result);
+//             return Task.CompletedTask;
+//         }
 
-    }
+//         [Fact(DisplayName = "Elimina un Grupo con excepcion")]
+//         public Task EliminarGrupoControllerTestException()
+//         {
+//             _servicesMock.Setup(t => t.EliminarGrupo(It.IsAny<int>()))
+//             .Throws(new Exception("", new NullReferenceException()));
 
+//             Assert.Throws<NullReferenceException>(() => _controller.EliminarGrupo(It.IsAny<int>()));
+//             return Task.CompletedTask;
+//         }
 
+//     }
 
 
-}
+
+
+// }

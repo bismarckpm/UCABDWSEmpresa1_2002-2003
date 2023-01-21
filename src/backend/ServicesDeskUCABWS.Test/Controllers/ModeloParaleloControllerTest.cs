@@ -17,7 +17,7 @@ public class ModeloParaleloControllerTest : BasePrueba
     private readonly ModeloParaleloController _controller;
     private readonly Mock<IModeloParaleloDAO> _servicesMock;
     public ModeloParaleloDTO modeloParaleloDTO = It.IsAny<ModeloParaleloDTO>();
-    public ModeloParaleloCreateDTO modeloParaleloCreateDTO = It.IsAny<ModeloParaleloCreateDTO>();
+    //public ModeloParaleloCreateDTO modeloParaleloCreateDTO = It.IsAny<ModeloParaleloCreateDTO>();
     public ModeloParalelo modeloParalelo = It.IsAny<ModeloParalelo>();
     private readonly Mock<IMigrationDbContext> _contextMock;
     public ModeloParaleloControllerTest()
@@ -26,7 +26,7 @@ public class ModeloParaleloControllerTest : BasePrueba
         var _logger = new NullLogger<ModeloParaleloController>();
         var _mapper = ConfigurarAutoMapper();
         _servicesMock = new Mock<IModeloParaleloDAO>();
-        _controller = new ModeloParaleloController( _servicesMock.Object, _mapper);
+        //_controller = new ModeloParaleloController( _servicesMock.Object, _mapper);
         _controller.ControllerContext = new ControllerContext();
         _controller.ControllerContext.HttpContext = new DefaultHttpContext();
         _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
