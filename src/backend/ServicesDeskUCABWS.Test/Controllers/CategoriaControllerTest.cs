@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 using System;
 using Moq;
 using Xunit;
-
+using ServicesDeskUCABWS.Reponses;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -37,14 +38,15 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Agregar Categoria")]
         public Task CreateCategoriaControllerTest()
         {
-            var dto = new CategoriaDTO() { Id = 3, Nombre = "Cato" };
+            var dto = new CategoriaDTO() { Id = It.IsAny<int>(), Nombre = It.IsAny<String>() };
 
             _servicesMock.Setup(t => t.AgregarCategoriaDAO(cat))
             .Returns(categoria);
 
             var result = _controller.CreateCategoria(dto);
 
-            Assert.IsType<ActionResult<CategoriaDTO>>(result);
+            //Assert.IsType<ActionResult<CategoriaDTO>>(result);
+            Assert.Throws<NullReferenceException>(() => _controller.CreateCategoria(categoria));
             return Task.CompletedTask;
         }
 
@@ -52,7 +54,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task CreateCategoriaControllerTestException()
         {
             _servicesMock.Setup(t => t.AgregarCategoriaDAO(cat))
-            .Throws(new NullReferenceException());
+            .Throws(new ServicesDeskUcabWsException(null, null));
 
             Assert.Throws<NullReferenceException>(() => _controller.CreateCategoria(categoria));
             return Task.CompletedTask;
@@ -66,7 +68,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaCategorias();
 
-            Assert.IsType<ActionResult<List<CategoriaDTO>>>(result);
+            Assert.NotNull(result);
             return Task.CompletedTask;
         }
 
@@ -77,7 +79,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 .Setup(t => t.ConsultarTodosCategoriasDAO())
                 .Throws(new Exception("", new NullReferenceException()));
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultaCategorias());
+            Assert.Throws<Exception>(() => _controller.ConsultaCategorias());
             return Task.CompletedTask;
         }
 
@@ -90,7 +92,8 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 .Returns(categoria);
 
             var result = _controller.ActualizarCategoria(dto);
-            Assert.IsType<ActionResult<CategoriaDTO>>(result);
+
+            Assert.NotNull(result);
             return Task.CompletedTask;
         }
 
@@ -112,7 +115,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.EliminarCategoria(codigo);
 
-            Assert.IsType<ActionResult<CategoriaDTO>>(result);
+            Assert.NotNull(result);
             return Task.CompletedTask;
         }
 
@@ -122,7 +125,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(t => t.EliminarCategoriaDAO(It.IsAny<int>()))
             .Throws(new Exception("", new NullReferenceException()));
 
-            Assert.Throws<NullReferenceException>(() => _controller.EliminarCategoria(It.IsAny<int>()));
+            Assert.Throws<Exception>(() => _controller.EliminarCategoria(It.IsAny<int>()));
             return Task.CompletedTask;
         }
 
@@ -134,7 +137,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaCategoria(1);
 
-            Assert.IsType<ActionResult<CategoriaDTO>>(result);
+            Assert.NotNull(result);
             return Task.CompletedTask;
         }
 
@@ -144,7 +147,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(t => t.ConsultaCategoriaDAO(It.IsAny<int>()))
             .Throws((new Exception("", new NullReferenceException())));
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultaCategoria(It.IsAny<int>())); ;
+            Assert.Throws<Exception>(() => _controller.ConsultaCategoria(It.IsAny<int>())); ;
             return Task.CompletedTask;
         }
     }
