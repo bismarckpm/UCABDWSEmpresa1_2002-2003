@@ -33,6 +33,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 ticket.descripcion = newTickect.descripcion;
                 ticket.fecha = newTickect.fecha;
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == ticket.Estado.id).FirstOrDefault();
+                var email = new EmailDTO();
+                email.para = ticket.creadopor.email;
+                email.Cuerpo = Plantilla.cuerpo;
+                email.asunto = "Tickect creado" + Plantilla.titulo;
+                _emailRepository.SendEmail(email);
                 _context.Tickets.Add(ticket);
                 _context.DbContext.SaveChanges();
                 return "Ticket Creado";
@@ -51,6 +57,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                 var ticket = _context.Tickets.Where(c => c.id == tickectEstadoDTO.idticket).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.id == tickectEstadoDTO.idestado).FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == tickectEstadoDTO.idestado).FirstOrDefault();
+                var email = new EmailDTO();
+                email.para = ticket.creadopor.email;
+                email.Cuerpo = Plantilla.cuerpo;
+                email.asunto = "Tickect cambio de estado" + Plantilla.titulo;
+                _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
                 return "Estatus cambiado";
@@ -70,6 +82,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 ticket.asginadoa = _context.Usuario.Where(c => c.id == asignarTicket.asginadoa).FirstOrDefault();
                 ticket.prioridad = _context.Prioridades.Where(c => c.id == asignarTicket.prioridadid).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En proceso").FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == ticket.Estado.id).FirstOrDefault();
+                var email = new EmailDTO();
+                email.para = ticket.creadopor.email;
+                email.Cuerpo = Plantilla.cuerpo;
+                email.asunto = "Tickect asginado" + Plantilla.titulo;
+                _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
                 return "Ticket Asignado";
@@ -96,6 +114,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                       }).FirstOrDefault();
                 ticket.departamento =  _context.Departamentos.Where(c => c.id == dep.iddept).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == ticket.Estado.id).FirstOrDefault();
+                var email = new EmailDTO();
+                email.para = ticket.creadopor.email;
+                email.Cuerpo = Plantilla.cuerpo;
+                email.asunto = "Tickect delegado" + Plantilla.titulo;
+                _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
                 return "Ticket Delegado";
