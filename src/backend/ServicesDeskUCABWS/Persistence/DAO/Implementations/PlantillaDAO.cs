@@ -38,8 +38,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     throw new Exception("El estado con id: " + plantilla.EstadoId + " no existe");
                 }
                 var etiqueta = await _context.Etiquetas.FirstOrDefaultAsync(x => x.id == estado.EtiquetaId);
-                var cuerpo = "Estado: " + estado.nombre + " -- " + etiqueta!.nombre;
-                plantilla.cuerpo = string.Format("{0}{2}{1}", plantilla.cuerpo, cuerpo, "| |");
+                var cuerpo = "Estado: " + estado.nombre + " Etiqueta: " + etiqueta!.nombre;
+                plantilla.cuerpo = string.Format("{0}{2}{1}", plantilla.cuerpo, cuerpo, " || ");
                 _context.Plantillas.Add(plantilla);
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla agregada exitosamente en la base de datos");
