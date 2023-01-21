@@ -2,12 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServicesDeskUCAB.DTO
 {
-    public class CargoDTO
+    public class GrupoDTO
     {
 
         public int id { get; set; }
-        [Required(ErrorMessage = "Ingrese un Cargo")]
+        [Required(ErrorMessage = "Ingrese un Grupo")]
         public string nombre { get; set; }
-        public int tipoCargoId { get; set; }
+        public int departamentoid { get; set; }
     }
 }

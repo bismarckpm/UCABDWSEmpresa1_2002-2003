@@ -2,26 +2,31 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using ServicesDeskUCAB.DTO;
 using System.Net.Http;
-
+using ServicesDeskUCAB.Factory;
+using ServicesDeskUCAB.ResponseHandler;
+using Newtonsoft.Json;
 
 namespace ServicesDeskUCAB.Controllers
 {
     public class EtiquetaController : Controller
     {
+        public const string URL = "https://localhost:7198/api/etiquetas";
+        public string responseString = string.Empty;
+
+        
         public async Task<IActionResult> GestionEtiquetas()
         {
             try
             {
-                List<EtiquetaDTO> etiquetas = new List<EtiquetaDTO>();
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/api/etiquetas");
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
-                {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    etiquetas = await JsonSerializer.DeserializeAsync<List<EtiquetaDTO>>(responseStream);
-                }
-                return View(etiquetas);
+                AplicationResponseHandler<List<EtiquetaDTO>> apiResponse = new AplicationResponseHandler<List<EtiquetaDTO>>();
+                HttpClient client = FactoryHttp.CreateClient();
+                HttpResponseMessage response = await client.GetAsync(URL);
+                responseString = await response.Content.ReadAsStringAsync();
+                apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<EtiquetaDTO>>>(responseString);
+                if (apiResponse.Success) return View(apiResponse.Data);
+                //redireccionar a una pagina de error
+                return RedirectToAction("Error", "Error");
+                
             }
             catch (Exception ex)
             {
@@ -46,8 +51,8 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
                 etiqueta.id = 0;
-                HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<EtiquetaDTO>("https://localhost:7198/api/etiquetas", etiqueta);
+                HttpClient client =  FactoryHttp.CreateClient();
+                var _client = await client.PostAsJsonAsync<EtiquetaDTO>(URL, etiqueta);
                 return RedirectToAction("GestionEtiquetas");
             }
             catch (Exception ex)
@@ -60,16 +65,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                EtiquetaDTO Etiqueta = new EtiquetaDTO();
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/api/etiquetas/" + id.ToString());
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                AplicationResponseHandler<EtiquetaDTO> apiResponse = new AplicationResponseHandler<EtiquetaDTO>();
+                HttpClient client =  FactoryHttp.CreateClient();
+                var response = await client.GetAsync( URL +"/"+id.ToString());
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    Etiqueta = await JsonSerializer.DeserializeAsync<EtiquetaDTO>(responseStream);
+                    responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse =  JsonConvert.DeserializeObject<AplicationResponseHandler<EtiquetaDTO>>(responseString);
                 }
-                return View(Etiqueta);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
@@ -81,8 +85,8 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var _client = await client.PutAsJsonAsync("https://localhost:7198/api/etiquetas/" + etiqueta.id.ToString(), etiqueta);
+                HttpClient client =  FactoryHttp.CreateClient();
+                var _client = await client.PutAsJsonAsync(URL+"/" + etiqueta.id.ToString(), etiqueta);
                 return RedirectToAction("GestionEtiquetas");
             }
             catch (Exception ex)
@@ -107,8 +111,8 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var _client = await client.DeleteAsync("https://localhost:7198/api/etiquetas/" + id.ToString());
+                HttpClient client = FactoryHttp.CreateClient();
+                var _client = await client.DeleteAsync(URL+"/" + id.ToString());
                 return RedirectToAction("GestionEtiquetas");
             }
             catch (Exception ex)

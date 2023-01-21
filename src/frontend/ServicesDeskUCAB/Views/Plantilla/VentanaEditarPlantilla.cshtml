@@ -43,7 +43,7 @@
                     <span>Cuerpo: </span> @Html.TextAreaFor(m => m.cuerpo)
                     @Html.ValidationMessageFor(m => m.cuerpo ,null, new { @class = "text-danger" })
                     <br /> <br />
-                    <span>Tipo: </span> @Html.TextBoxFor(m => m.tipo)
+                    <span>ID Estado: </span> @Html.TextBoxFor(m => m.estadoId, new { @type = "number" })
                     <br> <br />
                 </div>
                 <div class="modal-footer">

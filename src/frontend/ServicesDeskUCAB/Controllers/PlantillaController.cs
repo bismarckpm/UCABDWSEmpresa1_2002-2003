@@ -2,26 +2,28 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using ServicesDeskUCAB.DTO;
 using System.Net.Http;
-
+using ServicesDeskUCAB.ResponseHandler;
+using ServicesDeskUCAB.Factory;
+using Newtonsoft.Json;
 
 namespace ServicesDeskUCAB.Controllers
 {
     public class PlantillaController : Controller
     {
+        public const string URL = "https://localhost:7198/api/plantillas";
+        public string responseString = string.Empty;
         public async Task<IActionResult> GestionPlantillas()
         {
             try
             {
-                List<PlantillaDTO> Plantillas = new List<PlantillaDTO>();
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/api/plantillas");
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
-                {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    Plantillas = await JsonSerializer.DeserializeAsync<List<PlantillaDTO>>(responseStream);
-                }
-                return View(Plantillas);
+                AplicationResponseHandler<List<PlantillaDTO>> apiResponse = new AplicationResponseHandler<List<PlantillaDTO>>();
+                HttpClient client = FactoryHttp.CreateClient();
+                HttpResponseMessage response = await client.GetAsync(URL);
+                responseString = await response.Content.ReadAsStringAsync();
+                apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<PlantillaDTO>>>(responseString);
+                if (apiResponse.Success) return View(apiResponse.Data);
+                //redireccionar a una pagina de error
+                return RedirectToAction("Error", "Error");
             }
             catch (Exception ex)
             {
@@ -46,8 +48,9 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
                 Plantilla.id = 0;
-                HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<PlantillaDTO>("https://localhost:7198/api/plantillas", Plantilla);
+                HttpClient client =  FactoryHttp.CreateClient();
+                var _client = await client.PostAsJsonAsync<PlantillaDTO>(URL, Plantilla);
+                // Si el estado se agrega correctamente, se redirige a la vista de gestión de estados
                 return RedirectToAction("GestionPlantillas");
             }
             catch (Exception ex)
@@ -60,16 +63,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                PlantillaDTO Plantilla = new PlantillaDTO();
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/api/plantillas/" + id.ToString());
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                AplicationResponseHandler<PlantillaDTO> apiResponse = new AplicationResponseHandler<PlantillaDTO>();
+                HttpClient client =  FactoryHttp.CreateClient();
+                var response = await client.GetAsync( URL +"/"+id.ToString());
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    Plantilla = await JsonSerializer.DeserializeAsync<PlantillaDTO>(responseStream);
+                    responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse =  JsonConvert.DeserializeObject<AplicationResponseHandler<PlantillaDTO>>(responseString);
                 }
-                return View(Plantilla);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
@@ -81,8 +83,8 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var _client = await client.PutAsJsonAsync("https://localhost:7198/api/plantillas/" + Plantilla.id.ToString(), Plantilla);
+                HttpClient client =  FactoryHttp.CreateClient();
+                var _client = await client.PutAsJsonAsync(URL+"/" + Plantilla.id.ToString(), Plantilla);
                 return RedirectToAction("GestionPlantillas");
             }
             catch (Exception ex)
@@ -107,8 +109,8 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var _client = await client.DeleteAsync("https://localhost:7198/api/plantillas/" + id.ToString());
+               HttpClient client = FactoryHttp.CreateClient();
+                var _client = await client.DeleteAsync(URL+"/" + id.ToString());
                 return RedirectToAction("GestionPlantillas");
             }
             catch (Exception ex)

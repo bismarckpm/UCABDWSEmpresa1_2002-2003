@@ -89,6 +89,9 @@
             Id Etiqueta
         </th>
         <th>
+            Etiqueta
+        </th>
+        <th>
             Acciones
         </th>
     </tr>
@@ -104,6 +107,9 @@
             </td>
             <td>
                 @Html.DisplayFor(i => item.etiquetaId)
+            </td>
+             <td>
+                @Html.DisplayFor(i => item.etiqueta)
             </td>
             <td>
                 <button id=btnEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal"

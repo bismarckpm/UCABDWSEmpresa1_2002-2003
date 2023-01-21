@@ -75,19 +75,19 @@
                 @Html.DisplayFor(i => item.departamento)
             </td>
             <td>
-                <a href="@Url.Action("CambiarEstado","Ticket",new { Tickectid = item.id })">
+                <a class="acciones" href="@Url.Action("CambiarEstado","Ticket",new { Tickectid = item.id })">
                     Cambiar Estado
                 </a>
-                <a href="@Url.Action("AsignarTicket","Ticket",new { iddept =   item.departamentoid, Tickectid = item.id })">
+                <a class="acciones" href="@Url.Action("AsignarTicket","Ticket",new { iddept =   item.departamentoid, Tickectid = item.id })">
                     Asignar
                 </a>
-                <a href="@Url.Action("Delegar","Ticket",new { Tickectid = item.id })">
+                <a class="acciones" href="@Url.Action("Delegar","Ticket",new { Tickectid = item.id })">
                     Delegar Ticket
                 </a>
-                <a href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
+                <a class="acciones" href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
                     Merguear Ticket
                 </a>
-                 <a href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
+                 <a class="acciones" href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
                     Ver Tickets Mergeados
                 </a>
             </td>

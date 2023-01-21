@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCAB", "..\..\f
 EndProject
 Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Reportes", "..\Reportes\Reportes.rptproj", "{86B6FB60-2744-45CF-9108-2048919173F5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesDeskUCABWS.Test", "..\ServicesDeskUCABWS.Test\ServicesDeskUCABWS.Test.csproj", "{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,12 @@ Global
 		{86B6FB60-2744-45CF-9108-2048919173F5}.Release|Any CPU.ActiveCfg = Release
 		{86B6FB60-2744-45CF-9108-2048919173F5}.Release|Any CPU.Build.0 = Release
 		{86B6FB60-2744-45CF-9108-2048919173F5}.Release|Any CPU.Deploy.0 = Release
+		{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30B89B5A-6459-4A5A-BE0D-60AE2EAFE142}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
