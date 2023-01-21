@@ -7,7 +7,8 @@ using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
-
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using System.Net;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -29,75 +30,138 @@ namespace ServicesDeskUCABWS.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<List<EstadoDTO>>> Get()
+        public async Task<ApplicationResponse<List<EstadoResponseDTO>>> Get()
         {
 
-            var result = await _dao_Estado.GetEstadosDAO();
-            _log.LogInformation("Estados obtenidos exitosamente");
-            return Ok(result.Value);
+            var response = new ApplicationResponse<List<EstadoResponseDTO>>();
+            try
+            {
+                response.Data = await _dao_Estado.GetEstadosDAO();
+                response.Message = "Estados obtenidos con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Estados obtenidos con exito");
 
+            }
+            catch (EstadoException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al obtener estados", ex);
+            }
+            return response;
 
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<EstadoDTO>> Get([FromRoute][Required] int id)
+        public async Task<ApplicationResponse<EstadoResponseDTO>> Get([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
+            var response = new ApplicationResponse<EstadoResponseDTO>();
+            try
+            {
+                response.Data = await _dao_Estado.GetEstadoDAO(id);
+                response.Message = "Estado obtenido con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Estado obtenido con exito");
 
-            if (id <= 0)
-            {
-                _log.LogError("El id del estado no puede ser menor o igual a 0");
-                return BadRequest("El id del estado no puede ser menor o igual a 0");
             }
-            var result = await _dao_Estado.GetEstadoDAO(id);
-            _log.LogInformation("Estado obtenido exitosamente");
-            if (result.Value == null)
+            catch (EstadoException ex)
             {
-                return NotFound("Id de estado no encontrado");
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al obtener estado", ex);
             }
-            return Ok(result.Value);
+            return response;
 
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put([FromBody] EstadoCreateDTO dto, [FromRoute][Required] int id)
+        public async Task<ApplicationResponse<EstadoDTO>> Put(
+                                        [FromBody] EstadoCreateDTO dto,
+                                        [FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
-
-
-            if (id <= 0)
+            var response = new ApplicationResponse<EstadoDTO>();
+            try
             {
-                return BadRequest("El id del estado debe ser mayor a 0");
+                var estado = _mapper.Map<Estado>(dto);
+                response.Data = await _dao_Estado.ActualizarEstadoDAO(estado, id);
+                response.Message = "Estado actualizado con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Estado actualizado con exito");
+
             }
-            var estado = _mapper.Map<Estado>(dto);
-            return await _dao_Estado.ActualizarEstadoDAO(estado, id);
+            catch (EstadoException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al actualizar estado", ex);
+            }
+            return response;
 
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete([FromRoute][Required] int id)
+        public async Task<ApplicationResponse<ActionResult>> Delete([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
-
-            if (id <= 0)
+            var response = new ApplicationResponse<ActionResult>();
+            try
             {
-                return BadRequest("El id del estado debe ser mayor a 0");
-            }
+                response.Success = await _dao_Estado.EliminarEstadoDAO(id);
+                if (!response.Success)
+                {
+                    response.Message = "No se pudo eliminar el estado";
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Data = NotFound("No se encontro la etiqueta");
+                    _log.LogInformation("No se pudo eliminar el estado");
+                    return response;
+                }
+                response.Message = "Estado eliminado con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                response.Data = Ok("Estado eliminado con exito");
+                _log.LogInformation("Estado eliminado con exito");
 
-            return await _dao_Estado.EliminarEstadoDAO(id);
+            }
+            catch (EstadoException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al eliminar estado", ex);
+            }
+            return response;
 
         }
 
         [HttpPost]
-        public async Task<ActionResult<EstadoDTO>> Post([FromBody] EstadoCreateDTO dto)
+        public async Task<ApplicationResponse<EstadoDTO>> Post([FromBody] EstadoCreateDTO dto)
         {
 
-
-            var estado = _mapper.Map<Estado>(dto);
-            var result = await _dao_Estado.AgregarEstadoDAO(estado);
-            if (result.Value == null)
+            var response = new ApplicationResponse<EstadoDTO>();
+            try
             {
-                return NotFound("Id de etiqueta no encontrado");
-            }
-            return Ok(result.Value);
+                var estado = _mapper.Map<Estado>(dto);
+                response.Data = await _dao_Estado.AgregarEstadoDAO(estado);
+                response.Message = "Estado creado con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Estado creado con exito");
 
+            }
+            catch (EstadoException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al crear estado", ex);
+
+            }
+            return response;
         }
 
 

@@ -1,0 +1,30 @@
+@model dynamic
+@using ServicesDeskUCAB.DTO
+@{
+    ViewData["Title"] = "Mergear Tickets";
+}
+ <form asp-action="Mergear"  method="post">
+            <input type="hidden" name="idtickethijo" value="@Model.id" />
+            <div class="form-group">
+                <h1>Delegar Ticket</h1>
+                <label for="Usuario">Delegar Ticket a</label>
+                <select class="form-control" id="idticketpadre" name="idticketpadre">
+                    @foreach (TicketCDTO empleado in Model.Tickects)
+
+                    {
+                        <option value="@empleado.id">@empleado.nombre | @empleado.categoria | @empleado.departamento</option>
+
+                    }
+                </select>
+            </div>
+             <div class="botones">
+                <button type="submit" class="btn btn-success">Merge</button>
+            </div>
+         
+        </form>
+
+</table>
+</div>
+ <p>@ViewBag.Error</p>  
+
+

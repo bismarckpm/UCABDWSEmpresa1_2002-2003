@@ -1,4 +1,19 @@
-﻿using ServicesDeskUCABWS.Persistence.Entity;
+﻿using AutoMapper;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.Persistence.Entity;
+
+namespace ServicesDeskUCABWS.BussinessLogic.Mapper
+{
+    public class GrupoMapper : Profile
+    {
+        public GrupoMapper()
+        {
+            CreateMap<Grupo, GrupoDTO>().ReverseMap();
+        }
+    }
+}
+
+/*using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 
 
@@ -12,7 +27,7 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             {
                 id = grupo.id,
                 nombre = grupo.nombre,  
-                departamentoid = grupo.departamentoid
+               
             };
         }
         public static Grupo DtoToEntity(GrupoDTO dto)
@@ -21,9 +36,10 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             {
                 id = dto.id,
                 nombre = dto.nombre,
-                departamentoid = dto.departamentoid
+                
             };
         }
 
     }
 }
+*/

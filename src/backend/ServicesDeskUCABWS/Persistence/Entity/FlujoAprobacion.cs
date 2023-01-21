@@ -6,23 +6,16 @@ namespace ServicesDeskUCABWS.Persistence.Entity
     {
         public int id { get; set; }
         public int ticketid { get; set; }
-        public virtual Ticket? ticket {get; set;}
-        public virtual ModeloJerarquico? modeloJerarquico {get; set; }
-        public int modelojerarquicoid
-        {
-            get; set;
-        }
-        public virtual ModeloParalelo? modeloParalelo {get; set;}
-        public int paraleloid {get; set;}
-        public virtual Usuario? usuario {get;set;}
-        public int secuencia {get;set;}
-        public Status status {get; set;}
+        public virtual Ticket Ticket{get;set;}
+
+        public int modeloid{get;set; } 
+        public virtual ModeloAprobacion ModeloAprobacion { get;set;} 
+
+        public int empleadoid{get;set;}
+        public virtual Empleado Empleado{get;set;}    
+        public int estatus {get;set;}
+
     }
 
-    public enum Status
-    {
-        Pendiente,
-        Aprobado,
-        Rechazado
-    }
+   
 }

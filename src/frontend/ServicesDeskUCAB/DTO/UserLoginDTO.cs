@@ -8,6 +8,7 @@ namespace ServicesDeskUCAB.DTO
         [Required(ErrorMessage = "Introduzca un email")]
         [EmailAddress(ErrorMessage = "Introduzca un correo válido")]
         public string? Email {get; set;}
+
         [Required(ErrorMessage = "Introduzca la contraseña")]
         public string? Password {get; set;}
     }

@@ -5,7 +5,9 @@ using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using System.Net;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -27,80 +29,132 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] PlantillaDTOCreate dto)
+        public async Task<ApplicationResponse<PlantillaDTO>> Post([FromBody] PlantillaDTOCreate dto)
         {
-
-            var Plantilla = _mapper.Map<Plantilla>(dto);
-            var result = await _dao.AgregarPlantillaDAO(Plantilla);
-            _log.LogInformation("Plantilla agregada con exito");
-            return Ok(result);
+            var response = new ApplicationResponse<PlantillaDTO>();
+            try
+            {
+                var plantilla = _mapper.Map<Plantilla>(dto);
+                response.Data = await _dao.AgregarPlantillaDAO(plantilla);
+                response.Message = "Plantilla agregada con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Plantilla agregada con exito");
+            }
+            catch (PlantillaException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al agregar Plantilla", ex);
+            }
+            return response;
 
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PlantillaDTO>>> Get()
+        public async Task<ApplicationResponse<List<PlantillaDTO>>> Get()
         {
 
-
-            var result = await _dao.ObtenerPlantillasDAO();
-            _log.LogInformation("Plantillas consultadas con exito");
-            var plantillas = _mapper.Map<List<PlantillaDTO>>(result);
-            return plantillas;
-
+            var response = new ApplicationResponse<List<PlantillaDTO>>();
+            try
+            {
+                response.Data = await _dao.ObtenerPlantillasDAO();
+                response.Message = "Plantillas consultadas con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Plantillas consultadas con exito");
+            }
+            catch (PlantillaException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al consultar Plantillas", ex);
+            }
+            return response;
 
         }
 
         [HttpGet("{id:int}", Name = "obtenerPlantilla")]
-        public async Task<ActionResult<PlantillaDTO>> Get(int id)
+        public async Task<ApplicationResponse<PlantillaDTO>> Get([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
-
-            if (id <= 0)
+            var response = new ApplicationResponse<PlantillaDTO>();
+            try
             {
-                return BadRequest("El id debe ser mayor a 0");
-            }
-            var result = await _dao.ObtenerPlantillaDAO(id);
-            if (result.Value != null)
-            {
+                response.Data = await _dao.ObtenerPlantillaDAO(id);
+                response.Message = "Plantilla consultada con exito";
+                response.StatusCode = HttpStatusCode.OK;
                 _log.LogInformation("Plantilla consultada con exito");
-                return Ok(_mapper.Map<PlantillaDTO>(result.Value));
             }
-            else
+            catch (PlantillaException ex)
             {
-                return NotFound("No se encontro la Plantilla");
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al consultar Plantilla", ex);
             }
-
+            return response;
         }
 
 
 
         [HttpPut("{id:int}")]
 
-        public async Task<ActionResult> ActualizarPlantilla([FromBody] PlantillaDTOCreate dto, int id)
+        public async Task<ApplicationResponse<PlantillaDTO>> ActualizarPlantilla(
+                                        [FromBody] PlantillaDTOCreate dto,
+                                        [FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
-
-
-            if (id <= 0)
+            var response = new ApplicationResponse<PlantillaDTO>();
+            try
             {
-                return BadRequest("El id debe ser mayor a 0");
+                var plantilla = _mapper.Map<Plantilla>(dto);
+                response.Data = await _dao.ActualizarPlantillaDAO(plantilla, id);
+                response.Message = "Plantilla actualizada con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Plantilla actualizada con exito");
             }
-            var Plantilla = _mapper.Map<Plantilla>(dto);
-            var result = await _dao.ActualizarPlantillaDAO(Plantilla, id);
-            return Ok(result);
-
+            catch (PlantillaException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al actualizar Plantilla", ex);
+            }
+            return response;
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarPlantilla([Required] int id)
+        public async Task<ApplicationResponse<ActionResult>> EliminarPlantilla([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
-
-            if (id <= 0)
+            var response = new ApplicationResponse<ActionResult>();
+            try
             {
-                return BadRequest("El id debe ser mayor a 0");
+                response.Success = await _dao.EliminarPlantillaDAO(id);
+                if (!response.Success)
+                {
+                    response.Message = "La plantilla con el id " + id + " no existe";
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    _log.LogInformation("No se pudo eliminar la plantilla");
+                    response.Data = NotFound();
+                    return response;
+                }
+                response.Message = "Plantilla eliminada con exito";
+                response.StatusCode = HttpStatusCode.OK;
+                _log.LogInformation("Plantilla eliminada con exito");
+                response.Data = Ok();
             }
-
-            var result = await _dao.EliminarPlantillaDAO(id);
-            return result;
-
+            catch (PlantillaException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Exception = ex.innerException.ToString();
+                _log.LogError("Error al eliminar Plantilla", ex);
+            }
+            return response;
         }
 
     }

@@ -12,6 +12,8 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             CreateMap<Ticket, TicketDTO>();
             CreateMap<TickeUDTO, Ticket>();
             CreateMap<Ticket, TickeUDTO>();
+            
+
 
         }
 

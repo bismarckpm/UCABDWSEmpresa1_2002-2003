@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System;
 using ServicesDeskUCAB.DTO;
-using ServicesDeskUCAB.Models;
-using System.Reflection;
+using ServicesDeskUCAB.ResponseHandler;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -16,23 +12,22 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                List<PrioridadDTO> listPrioridades = new List<PrioridadDTO>();
+                AplicationResponseHandler<List<PrioridadDTO>> apiResponse = new AplicationResponseHandler<List<PrioridadDTO>>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Prioridad/ConsultaPrioridades");
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridades");
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    listPrioridades = await JsonSerializer.DeserializeAsync<List<PrioridadDTO>>(responseStream);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<PrioridadDTO>>>(responseString);
                 }
-                return View(listPrioridades);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
                 throw ex.InnerException!;
             }
         }
-
+        
         public IActionResult VentanaAgregarPrioridad()
         {
             try
@@ -44,13 +39,14 @@ namespace ServicesDeskUCAB.Controllers
                 throw ex.InnerException!;
             }
         }
-
+        
         public async Task<IActionResult> AgregarPrioridad(PrioridadDTO prioridad)
         {
             try
             {
                 HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<PrioridadDTO>("https://localhost:7198/Prioridad/CreatePrioridad", prioridad);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(prioridad), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("https://localhost:7198/Prioridad/CreatePrioridad", content);
                 return RedirectToAction("GestionPrioridades");
             }
             catch (Exception ex)
@@ -58,7 +54,7 @@ namespace ServicesDeskUCAB.Controllers
                 throw ex.InnerException!;
             }
         }
-
+        
         public IActionResult VentanaEliminarPrioridad(int id)
         {
             try
@@ -70,7 +66,7 @@ namespace ServicesDeskUCAB.Controllers
                 throw ex.InnerException!;
             }
         }
-
+        
         public async Task<IActionResult> EliminarPrioridad(int id)
         {
             try
@@ -84,28 +80,27 @@ namespace ServicesDeskUCAB.Controllers
                 throw ex.InnerException!;
             }
         }
-
+        
         public async Task<IActionResult> VentanaEditarPrioridad(int id)
         {
             try
             {
-                PrioridadDTO prioridad = new PrioridadDTO();
+                AplicationResponseHandler<PrioridadDTO> apiResponse = new AplicationResponseHandler<PrioridadDTO>();
                 HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/Prioridad/ConsultaPrioridad/"+ id.ToString());
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                var response = await client.GetAsync("https://localhost:7198/Prioridad/ConsultaPrioridad/" + id.ToString());
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    prioridad = await JsonSerializer.DeserializeAsync<PrioridadDTO>(responseStream);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<PrioridadDTO>>(responseString);
                 }
-                return View(prioridad);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
                 throw ex.InnerException!;
             }
         }
-
+        
         public async Task<IActionResult> EditarPrioridad(PrioridadDTO prioridad)
         {
             try

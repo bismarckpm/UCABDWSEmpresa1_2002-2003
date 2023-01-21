@@ -1,86 +1,101 @@
+using System.Data.Common;
 using Microsoft.AspNetCore.Mvc;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ServicesDeskUCABWS.Persistence.Entity;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Controllers;
 
-[Route("modeloparalelo")]
+[ApiController]
+[Route("ModeloParalelo/")]
 
 public class ModeloParaleloController : Controller
 {
     private readonly IModeloParaleloDAO modeloParaleloDAO;
     private readonly IMapper mapper;
+    private readonly ILogger<ModeloParaleloController> log;
     
-    public ModeloParaleloController(IModeloParaleloDAO dao, IMapper map)
+    public ModeloParaleloController(ILogger<ModeloParaleloController> _log, IModeloParaleloDAO dao, IMapper map)
     {
         modeloParaleloDAO = dao;
         mapper = map;
+        log = _log;
     }
 
-    [HttpGet ("consultar/{id:int}")]
-    public async Task<ActionResult<ModeloParaleloDTO>> Consultar([Required][FromRoute] int id)
+    [HttpGet ("Paralelo/{id}")]
+    public ModeloParaleloDTO ConsultarMParaleloPorId([Required][FromRoute] int id)
     {
-        if (id <= 0)
+        try
         {
-            return BadRequest("El id debe ser mayor a 0");
+            return modeloParaleloDAO.ObtenerModeloParaleloDAO(id);
         }
-        var consulta = await modeloParaleloDAO.ConsultaModeloParaleloDAO(id);
-        if (consulta.Value?.paraid == id)
+        catch(ServicesDeskUcabWsException ex)
         {
-            return Ok(mapper.Map<ModeloParaleloDTO>(consulta.Value));            
-        }
-            return NotFound(" ModeloParalelo no encontrado");        
+            log.LogError("[Error]: "+ ex.Mensaje + " || " + ex.StackTrace);
+            throw new ServicesDeskUcabWsException("[Error] : "+ ex.Mensaje, ex);
+        }     
     }
 
-    [HttpGet ("consultar")]
-    public async Task<ActionResult<List<ModeloParaleloDTO>>> ConsultarTodos()
+    [HttpGet ("GetModeloParalelo/")]
+    public List<ModeloParaleloDTO> GetModeloParalelo()
     {
-        var consulta = await modeloParaleloDAO.ConsultarModelosParalelosDAO();
-        if (consulta == null)
+        try
         {
-            return BadRequest("No se encontraron los modelos paralelos");
+            return modeloParaleloDAO.ConsultarModelosParalelosDAO();
         }
-        return Ok(mapper.Map<List<ModeloParaleloDTO>>(consulta));        
+        catch(ServicesDeskUcabWsException ex)
+        {
+            log.LogError("Error al consultar " + ex.Mensaje, ex.StackTrace);
+            throw new ServicesDeskUcabWsException("Error al Consultar" + ex.Mensaje, ex);
+        }              
     }
 
-    [HttpPost ("crear")]
-    public async Task<ActionResult> Crear([Required][FromBody] ModeloParaleloCreateDTO dto)
+    [HttpPost ("Paralelo/")]
+    public ModeloParaleloDTO Post([Required][FromBody] ModeloParaleloDTO dto)
     {
-        var modeloParalelo = mapper.Map<ModeloParalelo>(dto);
-        var result = await modeloParaleloDAO.AgregarModeloParaleloDAO(modeloParalelo);
-        return Ok(result);
-    }
-
-    [HttpPut ("actualizar/{id}")]
-    public async Task<ActionResult> Actualizar([Required][FromRoute] int id, [Required][FromBody] ModeloParaleloCreateDTO dto)
-    {
-        if (id <= 0)
+        try
         {
-            return BadRequest("El id debe ser mayor a 0");
+            var modeloParalelo = mapper.Map<ModeloParalelo>(dto);
+            log.LogInformation("ModeloParalelo agregado con exito");
+            return modeloParaleloDAO.AgregarModeloParaleloDAO(modeloParalelo);
         }
-        var modeloParalelo = mapper.Map<ModeloParaleloCreateDTO>(dto);
-        var result = await modeloParaleloDAO.ActualizarModeloParaleloDAO(id, modeloParalelo);
-        if (result.Value.paraid == id)
+        catch(ServicesDeskUcabWsException ex)
         {
-            return result.Result;
-        }
-        else
-        {
-            return NotFound("No se encontro el modelo paralelo");
+            log.LogError("Error al crear" + ex.Mensaje, ex.Excepcion);
+            throw new ServicesDeskUcabWsException(ex.Mensaje,ex.Excepcion);
         }        
     }
 
-    [HttpDelete ("eliminar/{id}")]
-    public async Task<ActionResult> Eliminar([Required][FromRoute] int id)
+    [HttpPut ("ActualizarModeloParalelo/")]
+    public ModeloParaleloDTO ActualizarModeloParalelo([Required][FromBody] ModeloParaleloDTO dto)
     {
-        if (id <= 0)
+        try
         {
-            return BadRequest("El id debe ser mayor a 0");
+            var data = modeloParaleloDAO.ActualizarModeloParaleloDAO(mapper.Map<ModeloParalelo>(dto));
+            log.LogInformation("[Objeto Actualizado]: " + data.nombre + ", " + data.categoriaId + ", " + data.cantidaddeaprobacion);
+            return data;
         }
-        var result = await modeloParaleloDAO.EliminarModeloParaleloDAO(id);
-        return result;
+        catch(ServicesDeskUcabWsException ex)
+        {
+            log.LogError(ex.Mensaje + " || " + ex.StackTrace);
+            throw new ServicesDeskUcabWsException(ex.Mensaje, ex.Excepcion);
+        }       
+    }
+
+    [HttpDelete ("DeleteModeloParalelo/{id}")]
+    public ModeloParaleloDTO EliminarModeloParalelo([Required][FromRoute] int id)
+    {
+        try
+        {
+            return modeloParaleloDAO.EliminarModeloParaleloDAO(id);
+        }
+        catch(Exception ex)
+        {
+            log.LogError("("+DateTime.Now +") "+"- [ "+ex.Message +" ]");
+            throw new ServicesDeskUcabWsException("Error al eliminar el Objeto: " + id, ex.Message, ex);
+        }
     }
 }
