@@ -64,8 +64,7 @@ namespace ServicesDeskUCABWS.Controllers
 
 
         //Consultar Grupo por Id
-        [HttpGet]
-        [Route("ConsultaGrupo/{id}")]
+        [HttpGet("{id:int}", Name = "obtenerGrupo")]
         public async Task<ActionResult<GrupoDTO>> Get(int id)
         {
             try
@@ -95,7 +94,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         //Actualizar Grupo
         [HttpPut]
-        [Route("Actualizar/")]
+        [Route("ActualizarGrupo/")]
         public async Task<ActionResult> ActualizarGrupo([FromBody] GrupoDTO dto, int id)
         {
             try
