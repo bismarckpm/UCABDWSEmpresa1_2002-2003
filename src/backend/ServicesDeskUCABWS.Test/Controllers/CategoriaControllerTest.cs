@@ -13,6 +13,7 @@ using System;
 using Moq;
 using Xunit;
 using ServicesDeskUCABWS.Reponses;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Test.Controllers
@@ -35,6 +36,8 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
         }
 
+
+        #region Casos Exitosos
         [Fact(DisplayName = "Agregar Categoria")]
         public Task CreateCategoriaControllerTest()
         {
@@ -45,20 +48,10 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.CreateCategoria(dto);
 
-            //Assert.IsType<ActionResult<CategoriaDTO>>(result);
-            Assert.Throws<NullReferenceException>(() => _controller.CreateCategoria(categoria));
+            Assert.IsType<ApplicationResponse<CategoriaDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Categoria con Excepcion")]
-        public Task CreateCategoriaControllerTestException()
-        {
-            _servicesMock.Setup(t => t.AgregarCategoriaDAO(cat))
-            .Throws(new ServicesDeskUcabWsException(null, null));
-
-            Assert.Throws<NullReferenceException>(() => _controller.CreateCategoria(categoria));
-            return Task.CompletedTask;
-        }
 
         [Fact(DisplayName = "Consultar Lista Categorias")]
         public Task ConsultarCategoriasControllerTest()
@@ -68,20 +61,10 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaCategorias();
 
-            Assert.NotNull(result);
+            Assert.IsType<ApplicationResponse<List<CategoriaDTO>>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Consulta Lista Categorias con Excepcion")]
-        public Task ConsultarCategoriasControllerTestException()
-        {
-            _servicesMock
-                .Setup(t => t.ConsultarTodosCategoriasDAO())
-                .Throws(new Exception("", new NullReferenceException()));
-
-            Assert.Throws<Exception>(() => _controller.ConsultaCategorias());
-            return Task.CompletedTask;
-        }
 
         [Fact(DisplayName = "Actualizar Categoria")]
         public Task ActualizarCategoriaControllerTest()
@@ -93,18 +76,10 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ActualizarCategoria(dto);
 
-            Assert.NotNull(result);
+            Assert.IsType<ApplicationResponse<CategoriaDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Actualiza Categoria con Excepcion")]
-        public Task ActualizarCategoriaControllerTestException()
-        {
-            _servicesMock.Setup(t => t.ActualizarCategoriaDAO(cat)).Throws(new Exception("", new NullReferenceException()));
-
-            Assert.Throws<NullReferenceException>(() => _controller.ActualizarCategoria(categoria));
-            return Task.CompletedTask;
-        }
 
         [Fact(DisplayName = "Elimina una Categoria")]
         public Task EliminarTipoCargoControllerTest()
@@ -115,19 +90,10 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.EliminarCategoria(codigo);
 
-            Assert.NotNull(result);
+            Assert.IsType<ApplicationResponse<CategoriaDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Elimina una Categoria con excepcion")]
-        public Task EliminarTipoCargoControllerTestException()
-        {
-            _servicesMock.Setup(t => t.EliminarCategoriaDAO(It.IsAny<int>()))
-            .Throws(new Exception("", new NullReferenceException()));
-
-            Assert.Throws<Exception>(() => _controller.EliminarCategoria(It.IsAny<int>()));
-            return Task.CompletedTask;
-        }
 
         [Fact(DisplayName = "Consultar Categoria por id")]
         public Task ConsultarCategoriaIdControllerTest()
@@ -137,18 +103,86 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaCategoria(1);
 
-            Assert.NotNull(result);
+            Assert.IsType<ApplicationResponse<CategoriaDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Valida consultar categoria por id excepcion")]
+        #endregion
+
+
+
+        #region Casos Particulares
+        [Fact(DisplayName = "Exception: Crear categoria")]
+        public Task CreateCategoriaControllerTestException()
+        {
+            _servicesMock.Setup(t => t.AgregarCategoriaDAO(cat))
+            .Throws(new Exception());
+
+            var result = _controller.CreateCategoria(categoria);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        
+
+        [Fact(DisplayName = "Exception: Consultar lista de categorias")]
+        public Task ConsultarCategoriasControllerTestException()
+        {
+            _servicesMock
+                .Setup(t => t.ConsultarTodosCategoriasDAO())
+                .Throws(new ServicesDeskUcabWsException("", new Exception()));
+
+            var result = _controller.ConsultaCategorias();
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        
+
+        [Fact(DisplayName = "Exception: Actualizar categoria")]
+        public Task ActualizarCategoriaControllerTestException()
+        {
+            _servicesMock.Setup(t => t.ActualizarCategoriaDAO(cat))
+                .Throws(new Exception());
+
+            var result = _controller.ActualizarCategoria(categoria);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Exception: Eliminar categoria")]
+        public Task EliminarTipoCargoControllerTestException()
+        {
+            _servicesMock.Setup(t => t.EliminarCategoriaDAO(It.IsAny<int>()))
+            .Throws(new ServicesDeskUcabWsException("", new Exception()));
+
+            var result = _controller.EliminarCategoria(It.IsAny<int>());
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Exception: Consultar categoria con ID")]
         public Task ConsultarCategoriaIdControllerTestException()
         {
             _servicesMock.Setup(t => t.ConsultaCategoriaDAO(It.IsAny<int>()))
-            .Throws((new Exception("", new NullReferenceException())));
+            .Throws(new ServicesDeskUcabWsException("", new Exception()));
 
-            Assert.Throws<Exception>(() => _controller.ConsultaCategoria(It.IsAny<int>())); ;
+            var result = _controller.ConsultaCategoria(It.IsAny<int>());
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
             return Task.CompletedTask;
         }
+        #endregion
     }
 }

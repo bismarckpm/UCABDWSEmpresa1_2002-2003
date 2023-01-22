@@ -44,11 +44,11 @@ namespace ServicesDeskUCABWS.Controllers
                 response.StatusCode = HttpStatusCode.OK;
 
             }
-            catch(ServicesDeskUcabWsException ex)
+            catch(Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Mensaje;
-                response.Exception = ex.Excepcion.ToString();
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
             }
             return response;
         }
@@ -112,11 +112,11 @@ namespace ServicesDeskUCABWS.Controllers
                 response.StatusCode = HttpStatusCode.OK;
 
             }
-            catch(ServicesDeskUcabWsException ex)
+            catch(Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Mensaje;
-                response.Exception = ex.Excepcion.ToString();
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
             }
             return response;
         }
