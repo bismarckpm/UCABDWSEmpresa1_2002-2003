@@ -14,11 +14,5 @@ namespace ServicesDeskUCABWS.Exceptions
             logger.LogError(message, innerException);
         }
 
-        public PlantillaException(string message, Exception innerException) : base(message)
-        {
-            this.innerException = innerException;
-            this.Message = message;
-        }
-
     }
 }
