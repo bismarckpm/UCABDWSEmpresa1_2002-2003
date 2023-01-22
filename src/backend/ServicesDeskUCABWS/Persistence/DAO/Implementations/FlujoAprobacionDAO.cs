@@ -61,15 +61,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                         id = usua.id
                       }).FirstOrDefault();
                       var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
-                        FlujoAprobacion f = new FlujoAprobacion();
-                        f.empleadoid = a.id;
-                        f.modeloid = modelo.Id;
-                        f.ticketid = listaTickets.id;
-                        f.ModeloAprobacion = Modelo;
-                        f.estatus = 0;
-                        Console.WriteLine(f.ToString());
+                        FlujoAprobacion f = new FlujoAprobacion{
+                        empleadoid = a.id,
+                        modeloid = modelo.Id,
+                        ticketid = listaTickets.id,
+                        ModeloAprobacion = Modelo,
+                        estatus = 0
+                        };
+                         _context.FlujoAprobaciones.AddRange(f);
                         
                     }
+                    _context.DbContext.SaveChanges();
                   
                 }
                 return "Flujo creado";
