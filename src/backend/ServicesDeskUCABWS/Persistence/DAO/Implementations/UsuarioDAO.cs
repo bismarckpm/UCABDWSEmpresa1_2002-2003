@@ -36,7 +36,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
          public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
              try
             {
-            ;
             if (departamentoid==0){
                 var q = (from usua in _context.Usuario
                      join dep in _context.Departamentos on usua.Grupo.departamento equals dep
@@ -87,6 +86,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new UsuarioExepcion("Ha ocurrido un error al crear el usuario ", ex.Message, ex);
             }
         }
+
         public string UpdateU(Usuario usuario){
             try
             {
