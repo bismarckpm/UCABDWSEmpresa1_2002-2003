@@ -167,7 +167,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 .Returns(user);
 
             _servicesMock.Setup(u => u.CreateUsuario(It.IsAny<Usuario>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Throws(new UsuarioExepcion(null!, null!));
+                .Throws(new UsuarioExepcion(null!, null!, null!, null!));
 
             Assert.Throws<NullReferenceException>(() => _controller.CreateUsuario(dto));
             return Task.CompletedTask;

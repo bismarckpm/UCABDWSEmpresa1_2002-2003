@@ -165,8 +165,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public Task ConsultarCategoriaIdTestException()
         {
             _servicesMock.Setup(c => c.ConsultaCategoriaDAO(It.IsAny<int>()))
-                .Throws(new ServicesDeskUcabWsException(null, null));
-            //var result = _dao.ConsultarTodosCategoriasDAO();
+                .Throws(new ServicesDeskUcabWsException(null));
 
             Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ConsultaCategoriaDAO(-1));
             return Task.CompletedTask;
