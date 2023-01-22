@@ -25,6 +25,7 @@ public class ModeloParaleloController : Controller
         log = _log;
     }
 
+   /*Llama al servicio de ModeloParaleloDAO que retorna un objeto de ModeloParalelo*/
     [HttpGet ("Paralelo/{id}")]
     public ModeloParaleloDTO ConsultarMParaleloPorId([Required][FromRoute] int id)
     {
@@ -39,6 +40,7 @@ public class ModeloParaleloController : Controller
         }     
     }
 
+    /*Llama al servicio de ModeloParaleloDAO que retorna una lista de objetos de ModeloParalelo*/
     [HttpGet ("GetModeloParalelo/")]
     public List<ModeloParaleloDTO> GetModeloParalelo()
     {
@@ -53,8 +55,9 @@ public class ModeloParaleloController : Controller
         }              
     }
 
+    /*Llama al servicio de ModeloParaleloDAO que agrega un objeto de ModeloParalelo*/
     [HttpPost ("Paralelo/")]
-    public ModeloParaleloDTO Post([Required][FromBody] ModeloParaleloDTO dto)
+    public ModeloParaleloCreateDTO Post([Required][FromBody] ModeloParaleloCreateDTO dto)
     {
         try
         {
@@ -69,6 +72,7 @@ public class ModeloParaleloController : Controller
         }        
     }
 
+    /*Llama al servicio de ModeloParaleloDAO que actualiza un objeto de ModeloParalelo*/
     [HttpPut ("ActualizarModeloParalelo/")]
     public ModeloParaleloDTO ActualizarModeloParalelo([Required][FromBody] ModeloParaleloDTO dto)
     {
@@ -85,6 +89,7 @@ public class ModeloParaleloController : Controller
         }       
     }
 
+    /*Llama al servicio de ModeloParaleloDAO que elimina un objeto de ModeloParalelo*/
     [HttpDelete ("DeleteModeloParalelo/{id}")]
     public ModeloParaleloDTO EliminarModeloParalelo([Required][FromRoute] int id)
     {

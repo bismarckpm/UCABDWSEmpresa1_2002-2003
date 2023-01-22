@@ -5,8 +5,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Controllers;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -39,7 +41,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.CreatePrioridad(dto);
 
-            Assert.IsType<ActionResult<PrioridadDTO>>(result);
+            Assert.IsType<ApplicationResponse<PrioridadDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -47,21 +49,33 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task CreatePrioridadControllerTestException()
         {
             _servicesMock.Setup(t => t.AgregarPrioridadDAO(prioridad))
-            .Throws(new NullReferenceException());
+            .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.CreatePrioridad(prioridadDto));
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.CreatePrioridad(prioridadDto));
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Consultar Lista Prioridad")]
-        public Task ConsultarPrioridadControllerTest()
+        [Fact(DisplayName = "Consultar Lista Prioridad Vacia")]
+        public Task ConsultarPrioridadVaciaControllerTest()
         {
             _servicesMock.Setup(t => t.ConsultarTodosPrioridadesDAO())
             .Returns(new List<PrioridadDTO>());
 
             var result = _controller.ConsultaPrioridades();
 
-            Assert.IsType<ActionResult<List<PrioridadDTO>>>(result);
+            Assert.IsType<ApplicationResponse<List<PrioridadDTO>>>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Consultar Lista Prioridad Exitoso")]
+        public Task ConsultarPrioridadExitosoControllerTest()
+        {
+            _servicesMock.Setup(t => t.ConsultarTodosPrioridadesDAO())
+            .Returns(new List<PrioridadDTO>() { new PrioridadDTO() });
+
+            var result = _controller.ConsultaPrioridades();
+
+            Assert.IsType<ApplicationResponse<List<PrioridadDTO>>>(result);
             return Task.CompletedTask;
         }
 
@@ -70,9 +84,9 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             _servicesMock
                 .Setup(t => t.ConsultarTodosPrioridadesDAO())
-                .Throws(new Exception("", new NullReferenceException()));
+                .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultaPrioridades());
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.ConsultaPrioridades());
             return Task.CompletedTask;
         }
 
@@ -85,7 +99,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 .Returns(prioridadDto);
 
             var result = _controller.ActualizarPrioridad(pr);
-            Assert.IsType<ActionResult<PrioridadDTO>>(result);
+            Assert.IsType<ApplicationResponse<PrioridadDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -106,7 +120,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.EliminarPrioridad(1);
 
-            Assert.IsType<ActionResult<PrioridadDTO>>(result);
+            Assert.IsType<ApplicationResponse<PrioridadDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -114,9 +128,9 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task EliminarPrioridadControllerTestException()
         {
             _servicesMock.Setup(t => t.EliminarPrioridadDAO(It.IsAny<int>()))
-            .Throws(new Exception("", new NullReferenceException()));
+            .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.EliminarPrioridad(It.IsAny<int>()));
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.EliminarPrioridad(It.IsAny<int>()));
             return Task.CompletedTask;
         }
 
@@ -128,7 +142,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaPrioridad(1);
 
-            Assert.IsType<ActionResult<PrioridadDTO>>(result);
+            Assert.IsType<ApplicationResponse<PrioridadDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -136,9 +150,9 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task ConsultarPrioridadIdControllerTestException()
         {
             _servicesMock.Setup(t => t.ConsultaPrioridadDAO(It.IsAny<int>()))
-            .Throws((new Exception("", new NullReferenceException())));
+            .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultaPrioridad(It.IsAny<int>())); ;
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.ConsultaPrioridad(It.IsAny<int>())); ;
             return Task.CompletedTask;
         }
 

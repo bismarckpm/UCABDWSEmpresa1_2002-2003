@@ -115,7 +115,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                      id=1,
                      nombre = "grupo1",
                      departamentoid = 1,
-                     departamento = new Departamento(),
+                     departamento = requestsDepartamentos[0],
                      usuarios = new List<Usuario>()
                  },
                  new Grupo
@@ -135,92 +135,65 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                      usuarios = new List<Usuario>()
                  }
              };
-            // //Usuario
-            // var requestsUsuarios = new List<Usuario>
-            // {
-            //     new Cliente
-            //     {
-            //         id=1,
-            //         email="prueba@gmail.com",
-            //         cargo= new Cargo{ id=1 },
-            //         Departamento = new Departamento { id=1 },
-            //         VerificationToken = "prueba",
-            //         VerifiedAt = new DateTime(),
-            //         PasswordResetToken=Guid.NewGuid().ToString(),
-            //         ResetTokenExpires= new DateTime(),
-            //         ticketsasignados = new List<Ticket>(),
-            //         ticketscreados= new List<Ticket>(),
-            //         Flujo = new List<FlujoAprobacion>()
-            //     }
-            // };
-            // //Empleados
-            // var requestsEmpleados = new List<Empleado>
-            // {
-            //     new Empleado
-            //     {
-            //         id=1,
-            //         email="prueba@gmail.com",
-            //         cargo= new Cargo{ id=1 },
-            //         Departamento = new Departamento { id=1 },
-            //         VerificationToken = "prueba",
-            //         VerifiedAt = new DateTime(),
-            //         PasswordResetToken=Guid.NewGuid().ToString(),
-            //         ResetTokenExpires= new DateTime(),
-            //         ticketsasignados = new List<Ticket>(),
-            //         ticketscreados= new List<Ticket>(),
-            //         Flujo = new List<FlujoAprobacion>()
-            //     },
-            //     new Empleado
-            //     {
-            //         id=2,
-            //         email="prueba2@gmail.com",
-            //         cargo= new Cargo{ id=1 },
-            //         Departamento = new Departamento { id=1 },
-            //         VerificationToken = "prueba",
-            //         VerifiedAt = new DateTime(),
-            //         PasswordResetToken=Guid.NewGuid().ToString(),
-            //         ResetTokenExpires= new DateTime(),
-            //         ticketsasignados = new List<Ticket>(),
-            //         ticketscreados= new List<Ticket>(),
-            //         Flujo = new List<FlujoAprobacion>()
-            //     }
-            // };
-            // //Administradores
-            // var requestsAdmins = new List<administrador>
-            // {
-            //     new administrador
-            //     {
-            //         id=1,
-            //         email="prueba@gmail.com",
-            //         cargo= new Cargo{ id=1 },
-            //         Departamento = new Departamento { id=1 },
-            //         VerificationToken = "prueba",
-            //         VerifiedAt = new DateTime(),
-            //         PasswordResetToken=Guid.NewGuid().ToString(),
-            //         ResetTokenExpires= new DateTime(),
-            //         ticketsasignados = new List<Ticket>(),
-            //         ticketscreados= new List<Ticket>(),
-            //         Flujo = new List<FlujoAprobacion>()
-            //     }
-            // };
-            // //Clientes
-            // var requestsClientes = new List<Cliente>
-            // {
-            //     new Cliente
-            //     {
-            //         id=1,
-            //         email="prueba@gmail.com",
-            //         cargo= new Cargo{ id=1 },
-            //         Departamento = new Departamento { id=1 },
-            //         VerificationToken = "prueba",
-            //         VerifiedAt = new DateTime(),
-            //         PasswordResetToken=Guid.NewGuid().ToString(),
-            //         ResetTokenExpires= new DateTime(),
-            //         ticketsasignados = new List<Ticket>(),
-            //         ticketscreados= new List<Ticket>(),
-            //         Flujo = new List<FlujoAprobacion>()
-            //     }
-            // };
+            //usuario
+            var requestsusuarios = new List<Usuario>
+             {
+                 new Cliente
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                     Grupo = requestsGrupo[0],
+                 }
+             };
+            //empleados
+            var requestsempleados = new List<Empleado>
+             {
+                 new Empleado
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                 },
+                 new Empleado
+                 {
+                     id=2,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                 }
+             };
+            //administradores
+            var requestsadmins = new List<administrador>
+             {
+                 new administrador
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                 }
+             };
+            //clientes
+            var requestsclientes = new List<Cliente>
+             {
+                 new Cliente
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                     nombre="Prueba",
+                     Flujo = new List<FlujoAprobacion>()
+                 }
+             };
             //Cargos
             var requestsCargos = new List<Cargo>
             {
@@ -281,26 +254,34 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     //notifications = new List<Notification>()
                 }
             };
-            // //ModeloParalelo
-            // var requestsModeloParalelo = new List<ModeloParalelo>
-            // {
-            //     new ModeloParalelo
-            //     {
-            //         paraid=1,
-            //         cantidadAprobaciones=2,
-            //         categoriaId=1,
-            //         nombre="prueba",
-            //         categoria= new Categoria()
-            //     },
-            //     new ModeloParalelo
-            //     {
-            //         paraid=2,
-            //         cantidadAprobaciones=3,
-            //         categoriaId=1,
-            //         nombre="prueba2",
-            //         categoria= new Categoria()
-            //     }
-            // };
+            //ModeloParalelo
+            var requestsModeloParalelo = new List<ModeloParalelo>
+            {
+                new ModeloParalelo
+                {
+                    id = 1,
+                    nombre = "Prueba Modelo",
+                    categoriaid = 1,
+                    categoria = new Categoria()
+                    {
+                        id = 1,
+                        nombre = "Guardado"
+                    },
+                    cantidaddeaprobacion = 5
+                },
+                new ModeloParalelo
+                {
+                    id = 2,
+                    nombre = "Prueba Modelo",
+                    categoriaid = 3,
+                    categoria = new Categoria()
+                    {
+                        id = 4,
+                        nombre = "Rechazado"
+                    },
+                    cantidaddeaprobacion = 5
+                }
+            };
             //Estado
             var requestsEstado = new List<Estado>
             {
@@ -420,29 +401,29 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             //     _mockContext.Setup(t => t.Categorias).Returns(mockSetCategorias.Object);
             //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             //     _mockContext.Setup(c => c.Categorias).Returns(requestsCategorias.AsQueryable().BuildMockDbSet().Object);
-            //     //Prioridad DataSeed
-            //     _mockContext.Setup(t => t.Prioridades).Returns(mockSetPrioridades.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Prioridades).Returns(requestsPrioridades.AsQueryable().BuildMockDbSet().Object);
-            //     //Departamento DataSeed
-            //     _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
-            //     // Grupo Dataseed
-            //     _mockContext.Setup(t => t.Grupo).Returns(mockSetGrupo.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
-            //     //Usuario DataSeed
-            //     _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Usuario).Returns(requestsUsuarios.AsQueryable().BuildMockDbSet().Object);
-            //     _mockContext.Setup(c => c.Empleados).Returns(requestsEmpleados.AsQueryable().BuildMockDbSet().Object);
-            //     _mockContext.Setup(c => c.Administradores).Returns(requestsAdmins.AsQueryable().BuildMockDbSet().Object);
-            //     _mockContext.Setup(c => c.clientes).Returns(requestsClientes.AsQueryable().BuildMockDbSet().Object);
-            //     //Cargos DataSeed
-            //     _mockContext.Setup(t => t.Cargos).Returns(mockSetCargos.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Cargos).Returns(requestsCargos.AsQueryable().BuildMockDbSet().Object);
+            //Prioridad DataSeed
+            _mockContext.Setup(t => t.Prioridades).Returns(mockSetPrioridades.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Prioridades).Returns(requestsPrioridades.AsQueryable().BuildMockDbSet().Object);
+            //Departamento DataSeed
+            _mockContext.Setup(t => t.Departamentos).Returns(mockSetDepartamentos.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Departamentos).Returns(requestsDepartamentos.AsQueryable().BuildMockDbSet().Object);
+            // Grupo Dataseed
+            _mockContext.Setup(t => t.Grupo).Returns(mockSetGrupo.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
+            //Usuario DataSeed
+            _mockContext.Setup(T => T.Usuario).Returns(mockSetUsuarios.Object);
+            _mockContext.Setup(T => T.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(C => C.Usuario).Returns(requestsusuarios.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(C => C.Empleados).Returns(requestsempleados.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(C => C.Administradores).Returns(requestsadmins.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(c => c.clientes).Returns(requestsclientes.AsQueryable().BuildMockDbSet().Object);
+            //Cargos DataSeed
+            _mockContext.Setup(t => t.Cargos).Returns(mockSetCargos.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Cargos).Returns(requestsCargos.AsQueryable().BuildMockDbSet().Object);
             //Etiquetas DataSeed	
             _mockContext.Setup(t => t.Etiquetas).Returns(mockSetEtiquetas.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -453,11 +434,11 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Plantillas).Returns(requestsPlantillas.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(p => p.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsPlantillas.Where(x => x.id == i).Single());
-            //     //ModeloParalelo DataSeed
-            //     _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
-            //     _mockContext.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloParalelo.Where(x => x.paraid == i).Single());
+            //ModeloParalelo DataSeed
+            _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.ModeloParalelos.Find(It.IsAny<int>())).Returns((int i) => requestsModeloParalelo.Where(x => x.id == i).Single());
             //Estados DataSeed
             _mockContext.Setup(t => t.Estados).Returns(mockSetEstados.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);

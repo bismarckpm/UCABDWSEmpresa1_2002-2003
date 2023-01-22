@@ -1,19 +1,15 @@
-
-
-
-namespace ServicesDeskUCABWS.Exceptions
+﻿namespace ServicesDeskUCABWS.Exceptions
 {
-    public class EstadoException : Exception
+    public class FlujoAprobacionException : Exception
     {
         public override string Message { get; }
         public Exception innerException { get; set; }
-        public EstadoException(string message, Exception innerException, ILogger logger) : base(message, innerException)
+
+        public FlujoAprobacionException(string message, Exception innerException, ILogger logger) : base(message, innerException)
         {
             this.Message = message;
             this.innerException = innerException;
             logger.LogError(message, innerException);
         }
-
-
     }
 }

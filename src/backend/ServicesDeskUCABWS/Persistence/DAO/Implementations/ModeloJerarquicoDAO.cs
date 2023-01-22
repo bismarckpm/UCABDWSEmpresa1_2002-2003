@@ -37,7 +37,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                _context.ModeloJerarquicos.Add(modeloJerarquico);
                _context.DbContext.SaveChanges();
-
                 var maper = ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
               return maper;
             }

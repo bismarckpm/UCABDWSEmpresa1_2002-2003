@@ -15,7 +15,6 @@ namespace ServicesDeskUCABWS.Controllers
     {
         //DECLARACION DE VARIABLES
         private readonly IPrioridadDAO _dao;
-        private readonly ILogger<PrioridadController> _log;
 
         //CONSTANTE DE MENSAJE SOLITUD EXITOSA
         static string MSG_SOL_EXITOSA = "Solicitud exitosa";
@@ -23,7 +22,6 @@ namespace ServicesDeskUCABWS.Controllers
         //CONSTRUCTOR
         public PrioridadController(ILogger<PrioridadController> log, IPrioridadDAO dao)
         {
-            this._log = log;
             this._dao = dao;
         }
 
@@ -43,7 +41,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al crear prioridad", ex, _log);
+                throw new ServicesDeskUcabWsException("Error al crear prioridad", ex);
             }
             return response;
         }
@@ -70,7 +68,7 @@ namespace ServicesDeskUCABWS.Controllers
             catch(Exception ex) { 
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al consultar prioridades", ex, _log);
+                throw new ServicesDeskUcabWsException("Error al consultar prioridades", ex);
             }
             return response;
         }
@@ -91,7 +89,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al consultar la prioridad de id: "+id, ex, _log);
+                throw new ServicesDeskUcabWsException("Error al consultar la prioridad de id: "+id, ex);
             }
             return response;
         }
@@ -112,7 +110,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al actualizar la prioridad de id: " + dto.Id, ex, _log);
+                throw new ServicesDeskUcabWsException("Error al actualizar la prioridad de id: " + dto.Id, ex);
             }
             return response;
         }
@@ -133,7 +131,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al eliminar la prioridad de id: " + id, ex, _log);
+                throw new ServicesDeskUcabWsException("Error al eliminar la prioridad de id: " + id, ex);
             }
             return response;
         }

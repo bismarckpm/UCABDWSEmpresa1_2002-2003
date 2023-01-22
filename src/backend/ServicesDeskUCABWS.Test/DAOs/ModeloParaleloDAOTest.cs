@@ -38,240 +38,143 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.SetupDbContextData();
         }
 
-        // [Fact(DisplayName = "Crear un modelo paralelo")]
-        // public async Task CrearModeloParaleloTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     var mp = new ModeloParalelo()
-        //     {
-        //         paraid = 1,
-        //         nombre = "paralelo1",
-        //         cantidadAprobaciones = 3,
-        //         categoriaId=2
-        //     };
+        private ModeloParalelo NewModeloParalelo()
+        {
+            return new ModeloParalelo{
+                    id = 1,
+                    nombre = "Prueba Modelo",
+                    categoriaid = 1,
+                    categoria = new Categoria()
+                    {
+                        id = 1,
+                        nombre = "Guardado"
+                    },
+                    cantidaddeaprobacion = 5,
+                    };
+        }
+        
+        //Crear modelo Paralelo
+        [Fact(DisplayName = "Agregar nuevo modelo Paralelo")]
+        public Task CreateModeloParaleloDAOTest()
+        {
+            _contextMock.Setup(j => j.DbContext.SaveChanges()).Returns(1);
+            var result = _dao.AgregarModeloParaleloDAO(NewModeloParalelo());
+            Assert.IsType<ModeloParaleloCreateDTO>(result);
+            return Task.CompletedTask;
+        }
 
-        //     // prueba de la funcion
-        //     var result = await _dao.AgregarModeloParaleloDAO(mp);
-        //     var mpResult = result.Value;
-        //     // verificacion de la prueba
-        //     Assert.IsType<ModeloParaleloDTO>(mpResult);
-        // }
+        //Consulta una lista de modelos Paralelos
+        [Fact(DisplayName = "Consultar todos los modelos paralelos")]
+        public Task ConsultarModelosParalelosTest()
+        {
+            // prueba de la funcion
+            var result =  _dao.ConsultarModelosParalelosDAO();
 
-        // [Fact(DisplayName = "Crear un modelo paralelo excepcion no categoria")]
-        // public async Task CrearModeloParaleloNoCategoriaTestException()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
-        //         .ThrowsAsync(new DbUpdateException());
+            // verificacion de la prueba
+            Assert.IsType<List<ModeloParaleloDTO>>(result);
+            return Task.CompletedTask;
+        }
 
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao!.AgregarModeloParaleloDAO(new ModeloParalelo { categoriaId=1 }));
-        // }
+        //Consultar un modelo Paralelo
+        [Fact(DisplayName = "Consultar modelo paralelo por Id")]
+        public Task ConsultarModeloParaleloIdTest()
+        {
+            var id = 1;
+            // prueba de la funcion
+                var result =  _dao.ObtenerModeloParaleloDAO(id);
+                // verificacion de la prueba
+                Assert.IsType<ModeloParaleloDTO>(result);
+                return Task.CompletedTask;
+            }
 
-        // [Fact(DisplayName = "Crear un modelo paralelo con excepcion")]
-        // public async Task CrearModeloParaleloTestException()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
-        //         .ThrowsAsync(new DbUpdateException());
+        //Actualizar un modelo Paralelo
+        [Fact(DisplayName = "Actualizar Modelo Paralelo")]
+        public Task ActualizarModeloParaleloTest()
+        {
+            _contextMock.Setup(m=> m.DbContext.SaveChanges()).Returns(1);
+            var dtoModel = new ModeloParalelo()
+            {
+                id = 2, 
+                nombre = "Prueba.", 
+                categoriaid = 4,
+                categoria = new Categoria()
+                {
+                    id = 4,
+                    nombre = "prueba 4"
+                },
+                cantidaddeaprobacion = 5 
+            };
+            var result = _dao.ActualizarModeloParaleloDAO(dtoModel);
+            Assert.IsType<ModeloParaleloDTO>(result);
+            return Task.CompletedTask;
+        }
 
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<Exception>(() => _dao!.AgregarModeloParaleloDAO(new ModeloParalelo()));
-        // }
+        //Elimina un modelo Paralelo
+        [Fact(DisplayName = "Eliminar un Modelo Paralelo")]
+        public Task EliminarModeloParaleloTest()
+        {
+            var id = 1;
+            _contextMock.Setup(m => m.DbContext.SaveChanges()).Returns(1);
 
-        // [Fact(DisplayName = "Consultar todos los modelos paralelos")]
-        // public async Task ConsultarModelosParalelosTest()
-        // {
+            var result = _dao.EliminarModeloParaleloDAO(id);
 
-        //     // prueba de la funcion
-        //     var result = await _dao.ConsultarModelosParalelosDAO();
+            Assert.IsType<ModeloParaleloDTO>(result);
+            return Task.CompletedTask;
+        }
 
-        //     // verificacion de la prueba
-        //     Assert.IsType<List<ModeloParalelo>>(result);
-        //     Assert.Equal(2, result.Count);
-        // }
+        //Agregar modelo paralelo con excepcion
+        [Fact(DisplayName = "Agregar un modelo paralelo con excepcion ")]
+        public Task CrearModeloParaleloTestException()
+        {
+            _contextMock.Setup(m => m.DbContext.SaveChanges())
+            .Throws(new ModeloParaleloException("", new NullReferenceException()));
 
-        // [Fact(DisplayName = "Consultar todos los modelos paralelos con Excepcion")]
-        // public async Task ConsultarModelosParalelosTestException()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(c => c.ModeloParalelos).Throws(new Exception());
+            Assert.Throws<ModeloParaleloException>(()=>_dao.AgregarModeloParaleloDAO(NewModeloParalelo()));
+            return Task.CompletedTask;
+        }
 
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao.ConsultarModelosParalelosDAO());
-        // }
+        //Consultar una lista de modelos paralelos con excepcion
+        [Fact(DisplayName = "Consultar todos los modelos paralelos con Excepcion")]
+        public Task ConsultarModelosParalelosTestException()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(c => c.ModeloParalelos).Throws(new Exception());
+            // prueba de la funcion
+            Assert.Throws<ModeloParaleloException>(() =>_dao.ConsultarModelosParalelosDAO());
+            return Task.CompletedTask;
+        }
 
-        // [Fact(DisplayName = "Consultar modelo paralelo por Id")]
-        // public async Task ConsultarModeloParaleloIdTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(e => e.Categorias.FindAsync(It.IsAny<int>()))
-        //     .ReturnsAsync(new Categoria ()
-        //     {
-        //         id = 1,
-        //         nombre = "Prueba"
-        //     });
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>()))
-        //     .ReturnsAsync(new ModeloParalelo()
-        //     {
-        //         paraid = 1,
-        //         nombre = "ModeloParalelo1",
-        //         cantidadAprobaciones = 3,
-        //         categoriaId = 1
-        //     });
+        //Consulta un modelo paralelo con excepcion
+        [Fact(DisplayName = "Consultar Modelo Paralelo por Id con Excepcion")]
+        public Task ConsultarModeloParaleloByIdValidarExceptionTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(m => m.ModeloParalelos.Find(It.IsAny<int>())).Throws(new Exception());
+            // prueba de la funcion
+            Assert.Throws<ModeloParaleloException>(()=> _dao.ObtenerModeloParaleloDAO(-1));
+            return Task.CompletedTask;
+        }
 
+        //Actualizar un modelo paralelo con excepcion
+        [Fact(DisplayName = "Validar Excepcion al actualizar")]
+        public Task ActualizarModeloParaleloTestException()
+        {
+            _contextMock.Setup(m=>m.DbContext.SaveChanges())
+            .Throws(new ModeloParaleloException("", new Exception()));
 
-        //     var id = 1;
-        //     // prueba de la funcion
-        //     var result = await _dao.ConsultaModeloParaleloDAO(id);
-        //     var mpResult = result.Value;
+            Assert.Throws<ModeloParaleloException>(()=>_dao.ActualizarModeloParaleloDAO(It.IsAny<ModeloParalelo>()));
+            return Task.CompletedTask;
+        }
 
-        //     // verificacion de la prueba
-        //     Assert.IsType<ModeloParalelo>(mpResult);
-        //     Assert.Equal(id, mpResult!.paraid);
-        // }
+        //Eliminar un modelo paralelo con excepcion
+        [Fact(DisplayName = "Eliminar un Modelo Paralelo con Excepcion")]
+        public Task EliminarModeloParaleloExceptionTest()
+        {
+            _contextMock.Setup(m => m.ModeloParalelos.Find(It.IsAny<int>()))
+                .Throws(new ModeloParaleloException("", new Exception()));
 
-        // [Fact(DisplayName = "Consultar modelo paralelo por Id que no existe")]
-        // public async Task ConsultarModeloParaleloIdNoExisteTest()
-        // {
-        //     // preparacion de los datos
-        //     // no obtener ningun modelo paralelo
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(null as ModeloParalelo);
-
-        // // prueba de la funcion
-        //     var id = 4;
-        // // verificacion de la prueba           
-        //     await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao.ConsultaModeloParaleloDAO(id));    
-        // }
-
-        // [Fact(DisplayName = "Consultar modelo paralelo por Id con Excepcion")]
-        // public async Task ConsultarModeloParaleloIdTestException()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(t => t.ModeloParalelos).Throws(new Exception());
-
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao.ConsultaModeloParaleloDAO(-1));
-        // }
-
-        // [Fact(DisplayName = "Actualizar un modelo paralelo")]
-        // public async Task ActualizarModeloParaleloTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(new ModeloParalelo()
-        //     {
-        //         paraid = 1,
-        //         nombre = "paralelo1",
-        //         cantidadAprobaciones = 3,
-        //         categoriaId=2
-        //     });
-        //     var paraid = 1;
-        //     var modeloParalelo = new ModeloParaleloCreateDTO()
-        //     {
-        //         nombre = "Modificada",
-        //         cantidadAprobaciones = 3,
-        //         categoriaId=2
-        //     };
-        //     // prueba de la funcion
-        //     var result = await _dao.ActualizarModeloParaleloDAO(paraid, modeloParalelo);
-        //     var mpResult = result.Value;
-        //     // verificacion de la prueba
-        //     Assert.IsType<ModeloParalelo>(mpResult);
-        // }
-
-        // [Fact(DisplayName = "Actualizar un modelo paralelo sin categoria")]
-        // public async Task ActualizarModeloParaleloSinCategoriaTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(new ModeloParalelo()
-        //     {
-        //         paraid = 1,
-        //         nombre = "paralelo1",
-        //         cantidadAprobaciones = 3
-        //     });
-        //     var paraid = 1;
-        //     var modeloParalelo = new ModeloParaleloCreateDTO()
-        //     {
-        //         nombre = "Modificada",
-        //         cantidadAprobaciones = 3
-        //     };
-        //     // prueba de la funcion
-        //     // verificacion de la prueba
-        //     Assert.ThrowsAsync<NullReferenceException>(async () => await _dao.ActualizarModeloParaleloDAO(paraid, modeloParalelo));
-        // }
-
-        // [Fact(DisplayName = "No existe modelo paralelo para actualizar")]
-        // public async Task ActualizarModeloParaleloNoExisteTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(null as ModeloParalelo);
-        //     var paraid = 5;
-        //     var modeloParalelo = new ModeloParaleloCreateDTO();
-        //     // verificacion de la prueba
-        //     Assert.ThrowsAsync<ModeloParaleloException>(async () => await _dao.ActualizarModeloParaleloDAO(paraid, modeloParalelo));
-        // }
-
-        // [Fact(DisplayName = "Actualizar un modelo paralelo con Excepcion")]
-        // public async Task ActualizarModeloParaleloTestException()
-        // {
-        //     // preparacion de los datos
-        //     var id = 1;
-        //     _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
-        //         .ThrowsAsync(new Exception());
-
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao!.ActualizarModeloParaleloDAO(id, new ModeloParaleloCreateDTO()));
-        // }
-
-        // [Fact(DisplayName = "Eliminar un modelo paralelo")]
-        // public async Task EliminarModeloParaleloTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(new ModeloParalelo()
-        //     {
-        //         paraid = 1,
-        //         nombre = "paralelo1",
-        //         cantidadAprobaciones = 3,
-        //         categoriaId=2
-        //     });
-        //     var id = 1;
-        //     // prueba de la funcion
-        //     var result = await _dao.EliminarModeloParaleloDAO(id);
-
-        //     // verificacion de result Ok
-        //     Assert.IsType<OkResult>(result);
-
-        // }
-
-        // [Fact(DisplayName = "No existe modelo paralelo a eliminar")]
-        // public async Task EliminarModeloParaleloNoExisteTest()
-        // {
-        //     // preparacion de los datos
-        //     _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-        //     _contextMock.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync(null as ModeloParalelo);
-        //     var id = 1;
-        //     // prueba de la funcion
-        //     var result = await _dao.EliminarModeloParaleloDAO(id);
-
-        //     // verificacion de result NotFound
-        //     Assert.IsType<NotFoundResult>(result);
-        // }
-
-        // [Fact(DisplayName = "Eliminar una modelo paralelo con Excepcion")]
-        // public async void EliminarModeloParaleloTestException()
-        // {
-        //     // preparacion de los datos
-        //     var id = 1;
-        //     _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
-        //         .ThrowsAsync(new Exception());
-
-        //     // prueba de la funcion
-        //     await Assert.ThrowsAsync<ModeloParaleloException>(() => _dao.EliminarModeloParaleloDAO(id));
-        // }
+            Assert.Throws<ModeloParaleloException>(()=> _dao.EliminarModeloParaleloDAO(-1));
+            return Task.CompletedTask;
+        }
     }
 }
