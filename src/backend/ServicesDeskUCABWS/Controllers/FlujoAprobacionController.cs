@@ -34,13 +34,13 @@ namespace ServicesDeskUCABWS.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("AgregarFlujo/")]
-        public async Task<ApplicationResponse<FlujoAprobacionDTO>> AgregarFlujo([FromBody] FlujoAprobacionDTO dto)
+        public async Task<ApplicationResponse<string>> AgregarFlujo([FromBody] FlujoAprobacionDTO dto)
         {
-            var response = new ApplicationResponse<FlujoAprobacionDTO>();
+            var response = new ApplicationResponse<string>();
             try
             {
                 // response.Data = await _flujoAprobacionDAO.AgregarFlujoDAO(dto);
-                response.Data = await _flujoAprobacionDAO.AgregarFlujoAprobacionDAO(dto);
+                response.Data =  _flujoAprobacionDAO.AgregarFlujoAprobacionDAO(dto);
                 response.Message = "Flujo agregado con exito";
                 response.StatusCode = HttpStatusCode.OK;
                 _log.LogInformation("Flujo agregado con exito");
@@ -59,31 +59,6 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
 
-        [HttpPut]
-        [Route("ActualizarEstadoTicketFlujoAprobacion/")]
-        public async Task<ApplicationResponse<FlujoAprobacionDTO>> UpdateEstadoTicketFlujoAprobacion([FromBody] FlujoAprobacionDTO dto)
-        {
-            var response = new ApplicationResponse<FlujoAprobacionDTO>();
-            try
-            {
-                response.Data = await _flujoAprobacionDAO.ActualizarEstadoTicketFlujoDAO(dto);
-
-                response.Message = "Estado del flujo actualizado con exito";
-                response.StatusCode = HttpStatusCode.OK;
-                _log.LogInformation("Estado del flujo actualizado con exito");
-
-            }
-            catch (FlujoAprobacionException ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.Exception = ex.innerException.ToString();
-                _log.LogError("Error al actualizar el estado en el flujo de aprobacion", ex);
-            }
-            return response;
-        }
-
-
+        
     }
 }

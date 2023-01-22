@@ -28,138 +28,51 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         /// <param name="flujoAprobacion"></param>
         /// <returns></returns>
         /// <exception cref="FlujoAprobacionException"></exception>
-        public async Task<FlujoAprobacionDTO> AgregarFlujoDAO(FlujoAprobacionDTO flujoAprobacion)
+       
+
+        public string AgregarFlujoAprobacionDAO(FlujoAprobacionDTO flujoAprobacion)
         {
             try
             {
-                List<FlujoAprobacion> listaNuevoFlujo = new List<FlujoAprobacion>();
-                List<Ticket> listaTickets  = new List<Ticket>();
-                listaTickets = _context.Tickets.Where(c => c.categoria.id == flujoAprobacion.categoriaId && c.asginadoa.id==flujoAprobacion.empleadoId).ToList();
-               
-                foreach (Ticket ticket in listaTickets)
-                {
-                    FlujoAprobacion nuevoFlujo = new FlujoAprobacion();
-
-                    nuevoFlujo.ticketid = ticket.id;
-                    nuevoFlujo.empleadoid = flujoAprobacion.empleadoId;
-                    nuevoFlujo.modeloid = flujoAprobacion.modeloId;
-                    nuevoFlujo.ModeloAprobacion = _context.ModeloAprobacion.Where(c => c.id == flujoAprobacion.modeloId).FirstOrDefault();
-                    nuevoFlujo.estatus = flujoAprobacion.estatus;
-                    
-                    listaNuevoFlujo.Add(nuevoFlujo);
-                }
-
-                foreach (FlujoAprobacion flujo in listaNuevoFlujo)
-                {
-                    _context.FlujoAprobaciones.Add(flujo);
-                    await _context.DbContext.SaveChangesAsync();
-                }
-
-                return flujoAprobacion;
-            }
-            catch (Exception ex)
-            {
-                throw new FlujoAprobacionException("Error al agregar el flujo de aprobacion", ex, _logger);
-            }
-        }
-
-
-
-
-        public async Task<FlujoAprobacionDTO> ActualizarEstadoTicketFlujoDAO(FlujoAprobacionDTO flujoAprobacion)
-        {
-            try
-            {
-                var ticket = await _context.Tickets.FindAsync(flujoAprobacion.ticketId);
-                List<FlujoAprobacion> listaEstadoTicket = new List<FlujoAprobacion>();
-                List<FlujoAprobacion> listaEstadoActualizadoTicket = new List<FlujoAprobacion>();
-                listaEstadoTicket = _context.FlujoAprobaciones.Where(c => c.ticketid == ticket.id).ToList();
-
-                foreach(FlujoAprobacion flujo in listaEstadoTicket)
-                {
-                    flujo.estatus = flujoAprobacion.estatus;
-                    listaEstadoActualizadoTicket.Add(flujo);
-                }
-
-                _context.FlujoAprobaciones.UpdateRange(listaEstadoActualizadoTicket);
-                await _context.DbContext.SaveChangesAsync();
-
-                return flujoAprobacion;
-            }
-            catch (Exception ex)
-            {
-                throw new FlujoAprobacionException("Error al actualizar el flujo de aprobacion", ex, _logger);
-            }
-        }
-
-
-
-
-
-        public async Task<FlujoAprobacionDTO> AgregarFlujoAprobacionDAO(FlujoAprobacionDTO flujoAprobacion)
-        {
-            try
-            {
-                List<Ticket> listaTickets = new List<Ticket>();
+                Ticket listaTickets = new Ticket();
                 
                 Ticket ticket1 = new Ticket();
 
-                listaTickets = _context.Tickets.Include(c=>c.asginadoa).
+                listaTickets = _context.Tickets.Where(c => c.id == flujoAprobacion.ticketId).Include(c=>c.asginadoa).
                     Include(c=>c.categoria).
                     Include(c => c.Estado).
-                    Include(c=>c.creadopor).
-                    ToList();
+                    Include(c=>c.creadopor).FirstOrDefault();
 
-                foreach(Ticket ticket in listaTickets)
+                var Modelo = _context.ModeloAprobacion.Where(c => c.categoriaid == listaTickets.categoria.id).FirstOrDefault();    
+
+
+                if (Modelo.Discriminator == "ModeloJerarquico")
                 {
-                    if(ticket.id == flujoAprobacion.ticketId)
+                var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();    
+                                       
+                    foreach(ModeloJerarquicoCargos modelo in ModeloCargos)
                     {
-                        ticket1 = ticket;
-                        break;
-                    }
-                }
-
-                FlujoAprobacion nuevoFlujo = new FlujoAprobacion();
-                List<FlujoAprobacion> listaFlujoAprobacion = new List<FlujoAprobacion>();
-                nuevoFlujo.ticketid = ticket1.id;
-                nuevoFlujo.empleadoid = ticket1.asginadoa.id;
-                nuevoFlujo.ModeloAprobacion = _context.ModeloAprobacion.
-                                                    Where(c => c.categoriaid == ticket1.categoria.id).FirstOrDefault();
-                nuevoFlujo.modeloid = nuevoFlujo.ModeloAprobacion.id;
-                nuevoFlujo.estatus = ticket1.Estado.id;
-
-                listaFlujoAprobacion.Add(nuevoFlujo);
-
-
-                if (nuevoFlujo.ModeloAprobacion.Discriminator == "ModeloJerarquico")
-                {
-                    var modeloJerarquico = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == nuevoFlujo.modeloid).ToList();
-                    
-                    foreach(ModeloJerarquicoCargos modelo in modeloJerarquico)
-                    {
-                        var empleado = _context.Usuario.Where(c => c.cargo.id == modelo.TipoCargoid).FirstOrDefault();
-                        FlujoAprobacion nuevoFlujo2 = new FlujoAprobacion();
-
-                        nuevoFlujo2.ticketid = ticket1.id;
-                        nuevoFlujo2.empleadoid = empleado.id;
-                        nuevoFlujo2.ModeloAprobacion = nuevoFlujo.ModeloAprobacion; 
-                        nuevoFlujo2.modeloid = nuevoFlujo.ModeloAprobacion.id;
-                        nuevoFlujo2.estatus = ticket1.Estado.id;
-
-                        listaFlujoAprobacion.Add(nuevoFlujo2);
+                   var a = (from usua in _context.Usuario
+                     join dep in _context.Cargos on usua.cargo equals dep
+                     join tp in _context.TipoCargos on dep.tipoCargo equals tp
+                     where tp.id == modelo.TipoCargoid
+                     select new UsuarioDTO()
+                     {
+                        id = usua.id
+                      }).FirstOrDefault();
+                      var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
+                        FlujoAprobacion f = new FlujoAprobacion();
+                        f.empleadoid = a.id;
+                        f.modeloid = modelo.Id;
+                        f.ticketid = listaTickets.id;
+                        f.ModeloAprobacion = Modelo;
+                        f.estatus = 0;
+                        Console.WriteLine(f.ToString());
+                        
                     }
                   
                 }
-
-
-                foreach (var flujo in listaFlujoAprobacion)
-                {
-                    _context.FlujoAprobaciones.Add(flujo);
-                    await _context.DbContext.SaveChangesAsync();
-                }
-
-
-                return flujoAprobacion;
+                return "Flujo creado";
             }
             catch (Exception ex)
             {
