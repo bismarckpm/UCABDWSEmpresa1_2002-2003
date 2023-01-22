@@ -62,7 +62,8 @@ namespace ServicesDeskUCABWS
             services.AddTransient<ITicketDao, TicketDao>();
             services.AddTransient<IModeloJerarquicoDAO, ModeloJerarquicoDAO>();
             services.AddTransient<IModeloParaleloDAO, ModeloParaleloDAO>();
-           services.AddAuthentication(options => {
+            services.AddTransient<IFlujoAprobacionDAO, FlujoAprobacionDAO>();
+            services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
