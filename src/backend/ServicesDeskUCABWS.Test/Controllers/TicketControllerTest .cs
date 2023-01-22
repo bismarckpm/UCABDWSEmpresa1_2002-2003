@@ -302,6 +302,92 @@ namespace ServicesDeskUCABWS.Test.Controllers
             return Task.CompletedTask;
         }
 
+        [Fact(DisplayName = "Exception: Agregar ticket")]
+        public Task CreateTicketExcepcion()
+        {
+
+            var dto = new TickectCreateDTO();
+
+            _servicesMock.Setup(t => t.AgregarTicketDAO(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.CreateTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Update ticket")]
+        public Task UpdateTicketExcepcion()
+        {
+
+            var dto = new TickectEstadoDTO();
+
+            _servicesMock.Setup(t => t.CambiarEstado(dto))
+            .Throws(new Exception());
+
+            var result = _controller.UpdateTickect(dto.idticket, dto);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            //Assert.Throws<NullReferenceException>(() => _controller.UpdateTickect(dto.idticket, dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Merge ticket")]
+        public Task MergeTicketExcepcion()
+        {
+
+            var dto = new TicketsRelacionadosDTO();
+
+            _servicesMock.Setup(t => t.TikcetsRelacionados(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.MergeTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Eliminar Merge ticket")]
+        public Task EliminarMergeTicketExcepcion()
+        {
+
+            var dto = new TicketsRelacionadosDTO();
+
+            _servicesMock.Setup(t => t.EliminarRelacionMerge(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.EliminarMerge(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Asignar ticket")]
+        public Task AsignarTicketExcepcion()
+        {
+
+            var dto = new AsignarTicketDTO();
+
+            _servicesMock.Setup(t => t.AsignarTicket(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.AsignarTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Delegar ticket")]
+        public Task DelegarTicketExcepcion()
+        {
+
+            var dto = new TickectDelegadoDTO();
+
+            _servicesMock.Setup(t => t.DelegarTicket(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.DelegarTIcket(It.IsAny<int>(), dto));
+            return Task.CompletedTask;
+        }
 
         #endregion
     }
