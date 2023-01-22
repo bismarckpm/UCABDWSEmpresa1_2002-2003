@@ -60,7 +60,7 @@
     <div id="PlaceHolderEditar"></div>
 
     @* Boton para abrir el modal*@
-    <button id=btnAgregarTc type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarModeloParalelo")">
+    <button id=btnAgregarMP type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarModeloParalelo")>
         Crear Modelo Paralelo
     </button>
     <br />
@@ -95,10 +95,10 @@
                 @Html.DisplayFor(i => item.cantidaddeaprobacion)
             </td>
             <td>
-                <button id=btnMjEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarModeloParalelo","ModeloParalelo",new {id = "idModeloParalelo"})">
+                <button id=btnMpEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarModeloParalelo","ModeloParalelo",new {id = "idModeloParalelo"})">
                     Editar
                 </button>
-                <button id=btnMjEliminar type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarModeloParalelo","ModeloParalelo",new {id = "idModeloParalelo"})">
+                <button id=btnMpEliminar type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarModeloParalelo","ModeloParalelo",new {id = "idModeloParalelo"})">
                         Eliminar
                 </button>
             </td>

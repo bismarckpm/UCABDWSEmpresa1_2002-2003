@@ -27,6 +27,15 @@
                     @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
                     <br />
                 </div>
+                <div class="form-group">
+                        <span>Categoria: </span> @Html.TextBoxFor(m => m.categoriaId, new {@Value = Model.categoriaId})
+                        @Html.ValidationMessageFor(m => m.categoriaId, null, new {@Class = "text-danger"})
+                </div>  
+                <div class="form-group">
+                    <span>Cantidad de Aprobacion: </span> @Html.TextBoxFor(m => m.cantidaddeaprobacion, new { @Value = Model.cantidaddeaprobacion})
+                    @Html.ValidationMessageFor(m => m.nombre ,null, new { @class = "text-danger" })
+                    <br />
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionMParalelo", "ModeloParalelo")'">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Editar</button>
