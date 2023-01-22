@@ -1,10 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Controllers;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
 using ServicesDeskUCABWS.Persistence.Entity;
@@ -17,130 +19,173 @@ public class ModeloParaleloControllerTest : BasePrueba
     private readonly ModeloParaleloController _controller;
     private readonly Mock<IModeloParaleloDAO> _servicesMock;
     public ModeloParaleloDTO modeloParaleloDTO = It.IsAny<ModeloParaleloDTO>();
-    //public ModeloParaleloCreateDTO modeloParaleloCreateDTO = It.IsAny<ModeloParaleloCreateDTO>();
+    public ModeloParaleloCreateDTO modeloParaleloCreateDTO = It.IsAny<ModeloParaleloCreateDTO>();
     public ModeloParalelo modeloParalelo = It.IsAny<ModeloParalelo>();
     private readonly Mock<IMigrationDbContext> _contextMock;
+    private readonly Mock<ILogger<ModeloParaleloController>>? _logger;
+    private readonly Mock<IMapper>? _mapper;
     public ModeloParaleloControllerTest()
     {
         _contextMock = new Mock<IMigrationDbContext>();
-        var _logger = new NullLogger<ModeloParaleloController>();
-        var _mapper = ConfigurarAutoMapper();
+        var _logger = new Mock<ILogger<ModeloParaleloController>>();
+        var _mapper = new Mock<IMapper>();
         _servicesMock = new Mock<IModeloParaleloDAO>();
-        //_controller = new ModeloParaleloController( _servicesMock.Object, _mapper);
+        _controller = new ModeloParaleloController(_logger.Object, _servicesMock.Object, _mapper.Object);
         _controller.ControllerContext = new ControllerContext();
         _controller.ControllerContext.HttpContext = new DefaultHttpContext();
         _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
     }
 
-    // [Fact(DisplayName = "Agregar una Modelo Paralelo")]
-    // public async void CreateModeloParaleloControllerTest()
-    // {
-    //     var dto = new ModeloParaleloCreateDTO() { nombre = "ModeloParalelo1", cantidadAprobaciones = 3, categoriaId = 1 };
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.AgregarModeloParaleloDAO(new ModeloParalelo())).ReturnsAsync(new ModeloParaleloDTO() { paraid = 1, nombre = "Paralelo1", cantidadAprobaciones = 3, categoriaId = 1 });
-    //     //probar metodo post
-    //     var result = await _controller.Crear(dto);
-    //     Assert.IsType<OkObjectResult>(result);
-    // }
+    private ModeloParalelo ModelModeloParaleloTest()
+        {
+            return new ModeloParalelo()
+            {
+                id = 1,
+                        nombre = "Prueba Modelo",
+                        categoriaid = 1,
+                        categoria = new Categoria()
+                        {
+                            id = 1,
+                            nombre = "Guardado"
+                        },
+                        cantidaddeaprobacion = 5
+            };
+        }
 
-    // [Fact(DisplayName = "Obtener lista de modelos paralelos")]
-    // public async void GetModelosParalelosControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.ConsultarModelosParalelosDAO()).ReturnsAsync(new List<ModeloParalelo> { new ModeloParalelo() { paraid = 1, nombre = "Paralelo1", cantidadAprobaciones = 3, categoria = null } });
-    //     //probar metodo get
-    //     var result = await _controller.ConsultarTodos();
-    //     // validar statusCode
+        private ModeloParaleloDTO ModelDTO()
+        {
+            return new ModeloParaleloDTO()
+            {
+                Id = 1,
+                nombre = "Prueba Modelo",
+                categoriaId = 1,
+                cantidaddeaprobacion = 5
+            };
+        }
 
-    //     Assert.IsType<OkObjectResult>(result.Result);
-    // }
+        private ModeloParaleloCreateDTO ModelCreateDTO()
+        {
+            return new ModeloParaleloCreateDTO()
+            {
+                nombre = "Prueba Modelo",
+                categoriaId = 1,
+                cantidaddeaprobacion = 5
+            };
+        }
 
-    // [Fact(DisplayName = "Id menor a 0 Obtener modelo paralelo")]
-    // public async void GetIdMenor0ModelosParalelosControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.ConsultaModeloParaleloDAO(0)).ReturnsAsync(new ModeloParalelo() { paraid = 0, nombre = "Paralelo1", cantidadAprobaciones = 3, categoria = null });
-    //     //probar metodo get
-    //     var result = await _controller.Consultar(0);
-    //     // validar statusCode
+        private ModeloParaleloDTO  ErrorModelDTO()
+        {
+            return new ModeloParaleloDTO();
+        }
 
-    //     Assert.IsType<BadRequestObjectResult>(result.Result);
-    // }
+    //Agregar un modelo Paralelo
+    [Fact(DisplayName = "Agrega un Modelo Paralelo")]
+    public Task CreateModeloParaleloControllerTest()
+    {
+        _servicesMock.Setup(m => m.AgregarModeloParaleloDAO(modeloParalelo))
+        .Returns(new ModeloParaleloCreateDTO());
+        var result = _controller.Post(ModelCreateDTO());
+        Assert.IsType<ModeloParaleloCreateDTO>(result);
+        return Task.CompletedTask;
+    }
 
-    // [Fact(DisplayName = "Obtener modelo paralelo")]
-    // public async void GetModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.ConsultaModeloParaleloDAO(1)).ReturnsAsync(new ModeloParalelo() { paraid = 1, nombre = "Paralelo1", cantidadAprobaciones = 3, categoria = null });
-    //     //probar metodo get
-    //     var result = await _controller.Consultar(1);
-    //     // validar statusCode
-    //     Assert.IsType<OkObjectResult>(result.Result);
-    // }
-    
-    // [Fact(DisplayName = "No existe modelo paralelo")]
-    // public async void GetNoExisteModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.ConsultaModeloParaleloDAO(5)).ReturnsAsync(new ModeloParalelo());
-    //     //probar metodo get
-    //     var result = await _controller.Consultar(5);
-    //     // validar statusCode
-    //     Assert.IsType<NotFoundObjectResult>(result.Result);
-    // }
+    //Consultar un modelo Paralelo por su id
+    [Fact(DisplayName = "Consulta de modelo paralelo por ID")]
+    public Task ConsultaModeloParaleloPorIdControllerTest()
+    {
+        _servicesMock.Setup(j => j.ObtenerModeloParaleloDAO(It.IsAny<int>()))
+        .Returns(ModelDTO());
+        var result = _controller.ConsultarMParaleloPorId(It.IsAny<int>());
+        Assert.IsType<ModeloParaleloDTO>(result);
+        return Task.CompletedTask;
+    }
 
-    // [Fact(DisplayName = "Id menor a 0 Actualiczar modelo paralelo")]
-    // public async void PutIdMenor0ModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     //probar metodo put
-    //     var result = await _controller.Actualizar(0, modeloParaleloCreateDTO);
-    //     // validar statusCode
-    //     Assert.IsType<BadRequestObjectResult>(result);
-    // }
+    //Consulta una lista de objetos de Modelo Paralelo
+    [Fact(DisplayName = "Consulta lista de modelos paralelos")]
+    public Task GetModeloParaleloControllerTest()
+    {
+        _servicesMock.Setup(j => j.ConsultarModelosParalelosDAO())
+        .Returns(new List<ModeloParaleloDTO>());
+        var result = _controller.GetModeloParalelo();
+        Assert.IsType<List<ModeloParaleloDTO>>(result);
+        return Task.CompletedTask;
+    }
 
-    // /* No pasa porque no esta encuentra nada en el include con categoria
-    // [Fact(DisplayName = "Actualizar modelo paralelo")]
-    // public async void PutModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     var cat = new Categoria(){ id = 1, nombre = "Prueba"};
-    //     _servicesMock.Setup(x => x.ActualizarModeloParaleloDAO(1, modeloParaleloCreateDTO)).ReturnsAsync(new OkObjectResult(new ModeloParalelo() { paraid = 1, nombre = "Paralelo2", cantidadAprobaciones = 3, categoriaId = 1 , categoria = cat}));
-    //     //probar metodo put
-    //     var result = await _controller.Actualizar(1, modeloParaleloCreateDTO);
-    //     // validar statusCode
-    //     Assert.IsType<OkObjectResult>(result);
-    // }*/
+    //Actualiza el modelo Paralelo
+    [Fact(DisplayName = "Actualiza un Modelo Paralelo")]
+    public Task ActualizarModeloParaleloControllerTest()
+    {
+        _servicesMock.Setup(m =>m.ActualizarModeloParaleloDAO(modeloParalelo))
+        .Returns(new ModeloParaleloDTO());
+        var result = _controller.ActualizarModeloParalelo(ModelDTO());
+        Assert.IsType<ModeloParaleloDTO>(result);
+        return Task.CompletedTask;
+    }
 
-    // [Fact(DisplayName = "No existe modelo paralelo Actualizar")]
-    // public async void PutNoExisteModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.ActualizarModeloParaleloDAO(5, modeloParaleloCreateDTO)).ReturnsAsync(new ModeloParalelo());
-    //     //probar metodo put
-    //     var result = await _controller.Actualizar(5, modeloParaleloCreateDTO);
-    //     // validar statusCode
-    //     Assert.IsType<NotFoundObjectResult>(result);
-    // }
-    
-    // [Fact(DisplayName = "Id menor a 0 Eliminar modelo paralelo")]
-    // public async void DeleteIdMenor0ModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     //probar metodo delete
-    //     var result = await _controller.Eliminar(-1);
-    //     // validar statusCode
-    //     Assert.IsType<BadRequestObjectResult>(result);
-    // }
+    //Elimina un modelo Paralelo
+    [Fact(DisplayName = "Elimina un modelo Paralelo")]
+    public Task EliminarModeloParaleloControllerTest()
+    {
+        _servicesMock.Setup(j => j.EliminarModeloParaleloDAO(It.IsAny<int>()))
+        .Returns(new ModeloParaleloDTO());
+        var result = _controller.EliminarModeloParalelo(It.IsAny<int>());
+        Assert.IsType<ModeloParaleloDTO>(result);
+        return Task.CompletedTask;
+    }
 
-    // [Fact(DisplayName = "No existe modelo paraleol Eliminar")]
-    // public async void DeleteNoExisteModeloParaleloControllerTest()
-    // {
-    //     // preparacion de los datos
-    //     _servicesMock.Setup(x => x.EliminarModeloParaleloDAO(5)).ReturnsAsync(new NotFoundResult());
-    //     //probar metodo delete
-    //     var result = await _controller.Eliminar(5);
-    //     // validar statusCode
-    //     Assert.IsType<NotFoundResult>(result);
-    // }
+    //Agregar un modelo paralelo con excepcion
+    [Fact(DisplayName = "Agregar modelo paralelo con Excepcion")]
+    public Task CreateModeloParaleloControllerExceptionTest()
+    {
+        _servicesMock.Setup(e => e.AgregarModeloParaleloDAO(modeloParalelo))
+            .Throws(new Exception());
+            var dto = new ModeloParaleloCreateDTO()
+                        {
+                            nombre = "Prueba de excepcion",
+                        };
+        Assert.Throws<Exception>(() => _controller.Post(dto));
+        return Task.CompletedTask;
+    }
+
+
+    //Consulta un listado de modelo paralelo con excepcion
+    [Fact(DisplayName = "Consulta listado de modelo paralelo con excepcion")]
+    public Task ConsultarModeloParaleloControllerExceptionTest()
+    {
+        _servicesMock.Setup(e => e.ConsultarModelosParalelosDAO())
+        .Throws(new Exception("",new ArgumentOutOfRangeException()));
+        Assert.Throws<Exception>(() => _controller.GetModeloParalelo());
+        return Task.CompletedTask;
+    }
+
+    //Consulta un modelo paralelo por id con excepcion
+    [Fact(DisplayName = "Consultar Modelo Paralelo por Id con excepcion")]
+    public Task ConsultarModeloParaleloIdControllerExceptionTest()
+    {
+        _servicesMock.Setup(e => e.ObtenerModeloParaleloDAO(It.IsAny<int>()))
+                    .Throws(new ServicesDeskUcabWsException("", new Exception()));
+        var buscarModelo = -1;
+        Assert.Throws<ServicesDeskUcabWsException>(() => _controller.ConsultarMParaleloPorId(buscarModelo));
+        return Task.CompletedTask;
+    }
+
+    //Actualiza un modelo paralelo con excepcion
+    [Fact(DisplayName = "Actualizar modelo jerarquico con excepcion")]
+    public Task ActualizarModeloParaleloControllerExceptionTest()
+    {
+        _servicesMock.Setup(e => e.ActualizarModeloParaleloDAO(modeloParalelo))
+                    .Throws(new Exception());
+        Assert.Throws<Exception>(() => _controller.ActualizarModeloParalelo(ErrorModelDTO()));
+        return Task.CompletedTask;
+    }
+
+    //Elimina un modelo paralelo con excepcion
+    [Fact(DisplayName = "Eliminar un modelo jerarquico con excepcion")]
+    public Task EliminarModeloParaleloExceptionControllerTest()
+    {
+        _servicesMock.Setup(e => e.EliminarModeloParaleloDAO(It.IsAny<int>()))
+        .Throws(new ServicesDeskUcabWsException("", new Exception()));
+        Assert.Throws<ServicesDeskUcabWsException>(() => _controller.EliminarModeloParalelo(-1));
+        return Task.CompletedTask;
+    }
 }

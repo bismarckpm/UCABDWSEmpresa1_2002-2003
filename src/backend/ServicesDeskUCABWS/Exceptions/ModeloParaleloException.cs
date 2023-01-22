@@ -4,7 +4,7 @@ namespace ServicesDeskUCABWS.Exceptions
     {
         public ModeloParaleloException(string message, Exception innerException) : base(message, innerException)
         {
-            Console.WriteLine(message, innerException);
+            Console.WriteLine(innerException);
         }
     }
 }
