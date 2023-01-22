@@ -36,8 +36,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect creado " + Plantilla.titulo;
+                email.Cuerpo = Plantilla.cuerpo + "\n" + "Creado por: " + ticket.creadopor.nombre + "\n" + ticket.departamento.nombre;
+                email.asunto = "Tickect creado: " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Add(ticket);
                 _context.DbContext.SaveChanges();
@@ -85,7 +85,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo;
+                email.Cuerpo = Plantilla.cuerpo + "\n" + "Asignado a: " + ticket.asginadoa + "\n Prioridad: " + ticket.prioridad.nombre;
                 email.asunto = "Tickect asginado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
