@@ -37,7 +37,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
                 email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect creado" + Plantilla.titulo;
+                email.asunto = "Tickect creado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Add(ticket);
                 _context.DbContext.SaveChanges();
@@ -61,7 +61,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
                 email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect cambio de estado" + Plantilla.titulo;
+                email.asunto = "Tickect cambio de estado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
@@ -86,7 +86,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
                 email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect asginado" + Plantilla.titulo;
+                email.asunto = "Tickect asginado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
@@ -118,7 +118,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
                 email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect delegado" + Plantilla.titulo;
+                email.asunto = "Tickect delegado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
