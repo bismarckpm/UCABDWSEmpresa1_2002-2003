@@ -75,7 +75,7 @@
             Modelo Jerarquico
         </th>
         <th>
-            Orden
+            categoria
         </th>
         <th>
             Acciones
@@ -92,10 +92,7 @@
                 @Html.DisplayFor(i => item.nombre)
             </td>
             <td>
-                @foreach (var orde in item.orden!)
-                {
-                    @Html.DisplayFor(i => orde.orden)
-                }
+                @* Aqui Va Categoria *@
             </td>
             <td>
                 <button id=btnMjEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarModeloJerarquico","ModeloJerarquico",new {id = "idModeloJerarquico"})">

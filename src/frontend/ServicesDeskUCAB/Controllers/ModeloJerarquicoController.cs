@@ -42,6 +42,7 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
+                 AplicationResponseHandler<List<CategoriaDTO>> ApiResponse = new AplicationResponseHandler<List<CategoriaDTO>>();
                 AplicationResponseHandler<List<TipoCargoDTO>> ApiResponseH = new AplicationResponseHandler<List<TipoCargoDTO>>();
                 List<CategoriaDTO> categorias = new List<CategoriaDTO>();
                 List<TipoCargoDTO> tipoCargos = new List<TipoCargoDTO>();
@@ -54,11 +55,11 @@ namespace ServicesDeskUCAB.Controllers
                         string response = await categoria.Content.ReadAsStringAsync();
                         string response2 = await tipoCargo.Content.ReadAsStringAsync();
 
-                        categorias = JsonConvert.DeserializeObject<List<CategoriaDTO>>(value: response);
+                       ApiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response);
                         ApiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<List<TipoCargoDTO>>>(value: response2);
                         tipoCargos = ApiResponseH!.Data;
                         dynamic model = new ExpandoObject();
-                        model.Categorias = categorias;
+                        model.Categorias = ApiResponse!.Data;
                         model.TipoCargos = tipoCargos;
 
                         return View(model);
