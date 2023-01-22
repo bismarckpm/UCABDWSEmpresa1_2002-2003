@@ -48,10 +48,12 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
         [Fact(DisplayName = "Agregar Ticket")]
         public Task AgregarTicketDAOTest()
-        {           
+        {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-            
-            
+            _emailMock.Setup(x => x.SendEmail(It.IsAny<EmailDTO>()));
+            _contextMock.Setup(x => x.Estados.Where(e => e.nombre == "En espera")).Returns(new List<Estado>() { new Estado() { id = 1, nombre = "En espera" } }.AsQueryable());
+            _contextMock.Setup(x => x.Plantillas.Find()).Returns(new Plantilla() { id = 1, titulo = "Plantilla 1", cuerpo = "Cuerpo de la plantilla 1" });
+
             var tk = new TickectCreateDTO()
             {
                 nombre = "nombre",
@@ -134,7 +136,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
 
             // var result = _dao.GetTicketporestado(1);
-            
+
             // Assert.IsType<List<TicketCDTO>>(result);
             return Task.CompletedTask;
         }

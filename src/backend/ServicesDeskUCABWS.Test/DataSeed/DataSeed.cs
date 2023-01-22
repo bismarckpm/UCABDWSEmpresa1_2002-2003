@@ -444,10 +444,11 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Estados).Returns(requestsEstado.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEstado.Where(x => x.id == i).Single());
-            //     //Tickets DataSeed
-            //     _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
+            //Tickets DataSeed
+            _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.Tickets.Find(It.IsAny<int>())).Returns((int i) => requestsTickets.Where(x => x.id == i).Single());
             //     //ModeloJerarquico DataSeed
             _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
