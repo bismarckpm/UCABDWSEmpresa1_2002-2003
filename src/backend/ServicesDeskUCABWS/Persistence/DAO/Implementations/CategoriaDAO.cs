@@ -18,6 +18,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this._context = context;
         }
 
+
+        //          SERVICIO DE CREAR CATEGORIA
         public CategoriaDTO AgregarCategoriaDAO(Categoria categ)
         {
             try
@@ -31,7 +33,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                         {
                             Id = a.id,
                             Nombre = a.nombre
-                            //FlujoAprobacion = a.flujoaprobacion
                         }
                     );
 
@@ -40,10 +41,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                throw new ServicesDeskUcabWsException("Ha ocurrido un error al agregar una categoria.", ex);
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al crear categoria.", ex);
             }
         }
 
+
+        //          SERVICIO DE CONSULTAR CATEGORIA
         public List<CategoriaDTO> ConsultarTodosCategoriasDAO()
         {
             try
@@ -66,6 +70,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+
+        //          SERVICIO DE ACTUALIZAR CATEGORIA
         public CategoriaDTO ActualizarCategoriaDAO(Categoria categ)
         {
             try
@@ -82,6 +88,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+
+        //          SERVICIO DE ELIMINAR CATEGORIA
         public CategoriaDTO EliminarCategoriaDAO(int id)
         {
             try
@@ -100,6 +108,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+
+        //          SERVICIO DE CONSULTAR CATEGORIA
         public CategoriaDTO ConsultaCategoriaDAO(int id)
         {
             try
