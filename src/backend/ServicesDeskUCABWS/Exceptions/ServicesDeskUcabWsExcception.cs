@@ -35,5 +35,10 @@ namespace ServicesDeskUCABWS.Exceptions
         {
             Mensaje = mensaje;
         }
+
+        public ServicesDeskUcabWsException()
+        {
+            
+        }
     }
 }
