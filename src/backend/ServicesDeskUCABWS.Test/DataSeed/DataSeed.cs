@@ -24,6 +24,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<ModeloJerarquico>> mockSetModeloJerarquico = new Mock<DbSet<ModeloJerarquico>>();
         public static Mock<DbSet<FlujoAprobacion>> mockSetFlujoAprobacion = new Mock<DbSet<FlujoAprobacion>>();
         public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
+        public static Mock<DbSet<TickectsRelacionados>> mockSetRelacionados = new Mock<DbSet<TickectsRelacionados>>();
+
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
             var hash = new HMACSHA512();
@@ -33,15 +35,18 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new TipoCargo
                 {
                     id = 1,
-                    nombre = "Prueba"
+                    nombre = "Prueba",
+                    Jeraruia = new List<ModeloJerarquicoCargos>()
                 }, new TipoCargo
                 {
                     id = 2,
-                    nombre = "prueba"
+                    nombre = "prueba",
+                    Jeraruia = new List<ModeloJerarquicoCargos>()
                 }, new TipoCargo
                 {
                     id = 3,
-                    nombre = "Junior"
+                    nombre = "Junior",
+                    Jeraruia = new List<ModeloJerarquicoCargos>()
                 }
             };
             //ListCategoria
@@ -288,7 +293,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Estado
                 {
                     id=1,
-                    nombre="Estado1",
+                    nombre="En espera",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
                     plantillas = new List<Plantilla>(),
@@ -297,7 +302,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Estado
                 {
                     id=2,
-                    nombre="Estado2",
+                    nombre="En proceso",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
                     plantillas = new List<Plantilla>(),
@@ -318,7 +323,9 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Estado = new Estado(),
                     prioridad = new Prioridad(),
                     categoria = new Categoria(),
-                    FlujoAprobacion = new FlujoAprobacion()
+                    FlujoAprobacion = new FlujoAprobacion(),
+                    TickectsRelacionadosPadre = new List<TickectsRelacionados>(),
+                    TickectsRelacionadosHijos = new List<TickectsRelacionados>()
                 },
                 new Ticket
                 {
@@ -331,9 +338,26 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Estado = new Estado(),
                     prioridad = new Prioridad(),
                     categoria = new Categoria(),
-                    FlujoAprobacion = new FlujoAprobacion()
+                    FlujoAprobacion = new FlujoAprobacion(),
+                    TickectsRelacionadosPadre = new List<TickectsRelacionados>(),
+                    TickectsRelacionadosHijos = new List<TickectsRelacionados>()
                 }
             };
+
+            //TicketsRelacionados
+            var requestsRelacionados = new List<TickectsRelacionados>
+            {
+                new TickectsRelacionados
+                {
+                    Ticketid = It.IsAny<int>(),
+                    TicketRelacionadoid = It.IsAny<int>()
+                }, new TickectsRelacionados
+                {
+                    Ticketid = It.IsAny<int>(),
+                    TicketRelacionadoid = It.IsAny<int>()
+                }
+            };
+
             //ModeloJerarquico
             var requestsModeloJerarquico = new List<ModeloJerarquico>
             {
@@ -360,6 +384,18 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                      nombre = "Rechazado"
                    },
                    Jeraruia = new List<ModeloJerarquicoCargos>()
+                   {
+                       new ModeloJerarquicoCargos
+                       {
+                           Id = It.IsAny<int>(),
+                           orden = It.IsAny<int>(),
+                           modelojerarquicoid = It.IsAny<int>(),
+                           jerarquico = new ModeloJerarquico(),
+                           TipoCargoid = It.IsAny<int>(),
+                           TipoCargo = new TipoCargo()
+                       }
+
+                   }
                 }
             };
             // //ModeloJerarquico
@@ -444,11 +480,18 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Estados).Returns(requestsEstado.AsQueryable().BuildMockDbSet().Object);
             _mockContext.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsEstado.Where(x => x.id == i).Single());
-            //     //Tickets DataSeed
-            //     _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
-            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            //     _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
-            //     //ModeloJerarquico DataSeed
+            //Tickets DataSeed
+            _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.Tickets.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsTickets.Where(x => x.id == i).Single());
+            //TicketsRelacionados DataSeed
+            _mockContext.Setup(t => t.TickectsRelacionados).Returns(mockSetRelacionados.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.TickectsRelacionados).Returns(requestsRelacionados.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.TickectsRelacionados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsRelacionados.Where(x => x.Ticketid == i).Single());
+
+            //ModeloJerarquico DataSeed
             _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);

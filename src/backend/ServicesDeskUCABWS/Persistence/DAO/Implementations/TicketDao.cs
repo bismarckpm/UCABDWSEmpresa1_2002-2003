@@ -33,11 +33,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 ticket.descripcion = newTickect.descripcion;
                 ticket.fecha = newTickect.fecha;
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
-                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == ticket.Estado.id).FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect creado" + Plantilla.titulo;
+                email.Cuerpo = Plantilla.cuerpo + "\n" + "Creado por: " + ticket.creadopor.nombre + "\n" + ticket.departamento.nombre;
+                email.asunto = "Tickect creado: " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Add(ticket);
                 _context.DbContext.SaveChanges();
@@ -57,11 +57,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                 var ticket = _context.Tickets.Where(c => c.id == tickectEstadoDTO.idticket).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.id == tickectEstadoDTO.idestado).FirstOrDefault();
-                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == tickectEstadoDTO.idestado).FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c => c.EstadoId == tickectEstadoDTO.idestado).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
                 email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect cambio de estado" + Plantilla.titulo;
+                email.asunto = "Tickect cambio de estado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
@@ -82,11 +82,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 ticket.asginadoa = _context.Usuario.Where(c => c.id == asignarTicket.asginadoa).FirstOrDefault();
                 ticket.prioridad = _context.Prioridades.Where(c => c.id == asignarTicket.prioridadid).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En proceso").FirstOrDefault();
-                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == ticket.Estado.id).FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect asginado" + Plantilla.titulo;
+                email.Cuerpo = Plantilla.cuerpo + "\n" + "Asignado a: " + ticket.asginadoa + "\n Prioridad: " + ticket.prioridad.nombre;
+                email.asunto = "Tickect asginado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
@@ -104,21 +104,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             try
             {
                 var ticket = _context.Tickets.Where(c => c.id == delegadoDTO.idticket).FirstOrDefault();
-                ticket.asginadoa =  _context.Usuario.Where(c => c.id == delegadoDTO.idAsignadoa).FirstOrDefault();
+                ticket.asginadoa = _context.Usuario.Where(c => c.id == delegadoDTO.idAsignadoa).FirstOrDefault();
                 var dep = (from usua in _context.Usuario
-                join dep2 in _context.Departamentos on usua.Grupo.departamento equals dep2
-                where usua.id == delegadoDTO.idAsignadoa
-                     select new UsuarioDTO()
-                     {
-                        iddept = dep2.id,
-                      }).FirstOrDefault();
-                ticket.departamento =  _context.Departamentos.Where(c => c.id == dep.iddept).FirstOrDefault();
+                           join dep2 in _context.Departamentos on usua.Grupo.departamento equals dep2
+                           where usua.id == delegadoDTO.idAsignadoa
+                           select new UsuarioDTO()
+                           {
+                               iddept = dep2.id,
+                           }).FirstOrDefault();
+                ticket.departamento = _context.Departamentos.Where(c => c.id == dep.iddept).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En espera").FirstOrDefault();
-                var Plantilla = _context.Plantillas.Where(c=> c.EstadoId == ticket.Estado.id).FirstOrDefault();
+                var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
                 email.Cuerpo = Plantilla.cuerpo;
-                email.asunto = "Tickect delegado" + Plantilla.titulo;
+                email.asunto = "Tickect delegado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
                 _context.DbContext.SaveChanges();
@@ -167,8 +167,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
-    
-        
+
+
 
 
         public ICollection<TicketCDTO> GetTickets()
@@ -212,25 +212,25 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
               , ex.Message, ex);
             }
         }
-         public ICollection<TicketCDTO> GetTicketsDept(int idusu)
+        public ICollection<TicketCDTO> GetTicketsDept(int idusu)
         {
             try
             {
                 var q2 = (from tk in _context.Usuario
-                         join gp in _context.Grupo on tk.Grupo equals gp
-                         join dept in _context.Departamentos on gp.departamento equals dept
-                         where tk.id == idusu
-                         select new UsuarioLogeadoDTO()
-                         {
-                            id = tk.id,
-                            departamento = dept.id,
-                            nombre = tk.nombre,
-                            email =tk.email,
-                            grupo = gp.id,
-                            VerifiedAt = tk.VerifiedAt,
-                            passwordHash = tk.passwordHash,
-                            passwordSalt = tk.passwordSalt
-                         }).FirstOrDefault();
+                          join gp in _context.Grupo on tk.Grupo equals gp
+                          join dept in _context.Departamentos on gp.departamento equals dept
+                          where tk.id == idusu
+                          select new UsuarioLogeadoDTO()
+                          {
+                              id = tk.id,
+                              departamento = dept.id,
+                              nombre = tk.nombre,
+                              email = tk.email,
+                              grupo = gp.id,
+                              VerifiedAt = tk.VerifiedAt,
+                              passwordHash = tk.passwordHash,
+                              passwordSalt = tk.passwordSalt
+                          }).FirstOrDefault();
 
                 var q = (from tk in _context.Tickets
                          join us in _context.Usuario on tk.creadopor equals us
@@ -259,7 +259,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                              idcategoria = ca.id,
                              categoria = ca.nombre,
                              departamento = dept.nombre,
-                             departamentoid= dept.id
+                             departamentoid = dept.id
 
                          }).ToList();
                 return q;
@@ -270,13 +270,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
               , ex.Message, ex);
             }
         }
-        
+
 
         public ICollection<TicketCDTO> TicketsMergeados(int ticketid)
         {
             try
             {
-                      var q = (from trk in _context.TickectsRelacionados
+                var q = (from trk in _context.TickectsRelacionados
                          join tk in _context.Tickets on trk.Ticketid equals tk.id
                          join tkrelacion in _context.Tickets on trk.TicketRelacionadoid equals tkrelacion.id
                          join us in _context.Usuario on tk.creadopor equals us
@@ -288,7 +288,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                          from pr in ljprioridad.DefaultIfEmpty() // LEFT JOIN
                          join ca in _context.Categorias on tk.categoria equals ca
                          join dept in _context.Departamentos on tk.departamento equals dept
-                         
+
                          where trk.Ticketid == ticketid
                          select new TicketCDTO()
                          {
@@ -385,7 +385,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                              idcategoria = ca.id,
                              categoria = ca.nombre,
                              departamento = dept.nombre,
-                             departamentoid= dept.id
+                             departamentoid = dept.id
 
                          }).ToList();
                 return q;
@@ -398,7 +398,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-         public ICollection<TicketCDTO> GetTicketCreadopor(int usuarioasignado)
+        public ICollection<TicketCDTO> GetTicketCreadopor(int usuarioasignado)
         {
             try
             {
@@ -431,7 +431,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                              idcategoria = ca.id,
                              categoria = ca.nombre,
                              departamento = dept.nombre,
-                             departamentoid= dept.id
+                             departamentoid = dept.id
 
                          }).ToList();
                 return q;
