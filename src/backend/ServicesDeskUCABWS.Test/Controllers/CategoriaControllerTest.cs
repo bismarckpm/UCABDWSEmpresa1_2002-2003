@@ -132,7 +132,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             _servicesMock
                 .Setup(t => t.ConsultarTodosCategoriasDAO())
-                .Throws(new ServicesDeskUcabWsException("", new Exception()));
+                .Throws(new ServicesDeskUcabWsException("", null, new Exception()));
 
             var result = _controller.ConsultaCategorias();
 
@@ -175,7 +175,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task ConsultarCategoriaIdControllerTestException()
         {
             _servicesMock.Setup(t => t.ConsultaCategoriaDAO(It.IsAny<int>()))
-            .Throws(new ServicesDeskUcabWsException("", new Exception()));
+            .Throws(new ServicesDeskUcabWsException("", new Exception(), null, null));
 
             var result = _controller.ConsultaCategoria(It.IsAny<int>());
 

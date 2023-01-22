@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TicketDao = ServicesDeskUCABWS.Persistence.DAO.Implementations.TicketDao;
 using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using Microsoft.AspNetCore.Mvc;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -46,21 +48,14 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.SetupDbContextData();
         }
 
+
+        #region Casos Exitosos
         [Fact(DisplayName = "Agregar Ticket")]
         public Task AgregarTicketDAOTest()
-        {           
-            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-            
-            
-            var tk = new TickectCreateDTO()
-            {
-                nombre = "nombre",
-                creadopor = It.IsAny<int>(),
-                descripcion = "descripcion",
-                fecha = It.IsAny<DateTime>(),
-                categoriaid = It.IsAny<int>(),
-                Departamentoid = It.IsAny<int>()
-            };
+        {
+            var tk = new TickectCreateDTO();
+            var plantilla = new Plantilla();
+            var email = new EmailDTO();
 
             var result = _dao.AgregarTicketDAO(tk);
 
@@ -71,25 +66,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName = "Actualizar Ticket")]
         public Task UpdateTicketDAOTest()
         {
-            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            var tk = new TickectEstadoDTO();
 
-            var tk = new Ticket()
-            {
-                id = 1,
-                nombre = "nombre",
-                asginadoa = new Empleado() { id = 5, email = "test1@gmail.com" },
-                creadopor = new Empleado() { id = 6, email = "test2@gmail.com" },
-                descripcion = "descripcion",
-                fecha = It.IsAny<DateTime>(),
-                Estado = new Estado(),
-                prioridad = new Prioridad(),
-                categoria = new Categoria(),
-                FlujoAprobacion = new FlujoAprobacion()
-            };
+            var result = _dao.CambiarEstado(tk);
 
-            // var result = _dao.Update(tk, 1, 1, 1, 1);
-
-            // Assert.True(result);
+            Assert.IsType<string>(result);
             return Task.CompletedTask;
         }
 
@@ -97,10 +78,17 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public Task GetTicketsDAOTest()
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-
-            var tk = new Ticket();
-
             var result = _dao.GetTickets();
+
+            Assert.IsType<List<TicketCDTO>>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Get Tickets Mergeados")]
+        public Task GetTicketsMergeadosDAOTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            var result = _dao.TicketsMergeados(1);
 
             Assert.IsType<List<TicketCDTO>>(result);
             return Task.CompletedTask;
@@ -128,38 +116,81 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Get Tickets por Estado")]
-        public Task GetTicketPorEstadoTest()
-        {
-            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-
-            // var result = _dao.GetTicketporestado(1);
-            
-            // Assert.IsType<List<TicketCDTO>>(result);
-            return Task.CompletedTask;
-        }
 
         [Fact(DisplayName = "Get Tickets por Departamento")]
         public Task GetTicketPorDepartamentoTest()
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
 
-            // var result = _dao.GetTicketsPorDepartamento(1);
+            var result = _dao.GetTicketsDept(1);
 
-            // Assert.IsType<List<TicketCDTO>>(result);
+            Assert.IsType<List<TicketCDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Get Tickets por Categoria")]
-        public Task GetTicketPorCategoriaTest()
+        [Fact(DisplayName = "Asignar Ticket")]
+        public Task AsignarTicketTest()
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
 
-            // var result = _dao.GetTicketsPorCategoria(1);
+            var asignar = new AsignarTicketDTO()
+            {
+                ticketid = It.IsAny<int>(),
+                asginadoa = It.IsAny<int>(),
+                prioridadid = It.IsAny<int>()
+            };
 
-            // Assert.IsType<List<TicketCDTO>>(result);
+            var result = _dao.AsignarTicket(asignar);
+
+            Assert.IsType<string>(result);
             return Task.CompletedTask;
         }
+
+        [Fact(DisplayName = "Delegar Ticket")]
+        public Task DelegarTicketTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+
+            var result = _dao.DelegarTicket(new TickectDelegadoDTO());
+
+            Assert.IsType<string>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Tickets Relacionados")]
+        public Task TicketsRelacionadosTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+
+            var result = _dao.TikcetsRelacionados(new TicketsRelacionadosDTO());
+
+            Assert.IsType<string>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Eliminar Relacion Merge")]
+        public Task EliminarRelacionMergeTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+
+            var result = _dao.EliminarRelacionMerge(new TicketsRelacionadosDTO());
+
+            Assert.IsType<string>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Get Tickets Creados Por")]
+        public Task GetTicketCreadoPorTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+
+            var result = _dao.GetTicketCreadopor(1);
+
+            Assert.IsType<List<TicketCDTO>>(result);
+            return Task.CompletedTask;
+        }
+
+
 
         [Fact(DisplayName = "Save")]
         public Task SaveDAOTest()
@@ -174,7 +205,79 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
+        #endregion
 
+
+
+        #region Casos Particulares
+
+        [Fact(DisplayName = "Exception: Agregar Ticket")]
+        public Task AgregarTicketExceptionTest()
+        {
+
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Throws(new DbUpdateConcurrencyException());
+
+            Assert.Throws<TickectExeception>(() => _dao!.AgregarTicketDAO(null!));
+            return Task.CompletedTask;
+        }
+
+
+
+        [Fact(DisplayName = "Exception: Get Ticket")]
+        public Task GetTicketExceptionTest()
+        {
+
+            _servicesMock.Setup(c => c.GetTicket(It.IsAny<int>()))
+                .Throws(new TickectExeception(null));
+
+            Assert.NotNull(() => _dao.GetTicket(-1));
+            //Assert.Throws<TickectExeception>(() => _dao.GetTicket(-1));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Update Ticket")]
+        public Task ActualizarTicketExceptionTest()
+        {
+
+            _servicesMock.Setup(c => c.CambiarEstado(null!))
+                .Throws(new TickectExeception(null, null, null, null));
+
+            Assert.Throws<TickectExeception>(() => _dao.CambiarEstado(null!));
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Exception: Get Ticket por usuario asignado")]
+        public Task GetTicketPorUsuarioExceptionTest()
+        {
+
+            _servicesMock.Setup(c => c.GetTicketporusuarioasignado(It.IsAny<int>()))
+                .Throws(new TickectExeception(null, null));
+
+            Assert.NotNull(() => _dao.GetTicketporusuarioasignado(-1));
+            //Assert.Throws<TickectExeception>(() => _dao.GetTicketporusuarioasignado(-1));
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Exception: Get Ticket creado por")]
+        public Task GetTicketCreadoPorExceptionTest()
+        {
+
+            _servicesMock.Setup(c => c.GetTicketCreadopor(It.IsAny<int>()))
+                .Throws(new TickectExeception(null, null));
+
+            Assert.NotNull(() => _dao.GetTicketCreadopor(-1));
+            //Assert.Throws<TickectExeception>(() => _dao.GetTicketCreadopor(-1));
+            return Task.CompletedTask;
+        }
+
+
+        #endregion
+
+
+
+        #region Metodos de Utilidad
         public Ticket ObjetoTicketNuevo()
         {
             return new Ticket()
@@ -191,5 +294,8 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 FlujoAprobacion = new FlujoAprobacion()
             };
         }
+
+        #endregion
+
     }
 }

@@ -3,7 +3,7 @@
     ViewBag.Title = "Tickect Gestion";
    
 }
- @Html.Partial("_MenuTicket");
+ @Html.Partial("_MenuTicket")
  @if (Context.Session.GetString("rol").ToUpper() != "CLIENTE"){
 <div class="table-responsive">
 

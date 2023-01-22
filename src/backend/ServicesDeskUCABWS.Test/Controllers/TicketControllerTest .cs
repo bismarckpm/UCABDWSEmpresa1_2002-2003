@@ -21,6 +21,7 @@ using Org.BouncyCastle.Crypto.Fpe;
 using TicketDao = ServicesDeskUCABWS.Persistence.DAO.Implementations.TicketDao;
 using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 using ServicesDeskUCABWS.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -130,7 +131,24 @@ namespace ServicesDeskUCABWS.Test.Controllers
             public Task GetTicketControllerTest()
             {
                 _servicesMock.Setup(t => t.GetTicket(1))
-                .Returns(new TicketCDTO());
+                .Returns(new TicketCDTO()
+                {
+                    id = It.IsAny<int>(),
+                    idasignad = It.IsAny<int>(),
+                    idestado = It.IsAny<int>(),
+                    idprioridad = It.IsAny<int>(),
+                    idcategoria = It.IsAny<int>(),
+                    nombre = It.IsAny<string>(),
+                    fecha = It.IsAny<DateTime>(),
+                    descripcion = It.IsAny<string>(),
+                    creadopor = It.IsAny<string>(),
+                    asginadoa = It.IsAny<string>(),
+                    prioridad = It.IsAny<string>(),
+                    estado = It.IsAny<string>(),
+                    categoria = It.IsAny<string>(),
+                    departamento = It.IsAny<string>(),
+                    departamentoid = It.IsAny<int>(),
+                });
 
                 var result = _controller.GetTicket(1);
 
@@ -145,25 +163,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 _servicesMock.Setup(t => t.CambiarEstado(It.IsAny<TickectEstadoDTO>()))
                 .Returns(It.IsAny<string>());
 
-                var tk = new TickeUDTO() {
-                    
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
-                
                 var result = _controller.UpdateTickect(1, new TickectEstadoDTO());
-
-                // _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                // .Returns(new Ticket());
-
-                // _servicesMock.Setup(r => r.GetTicket(It.IsAny<int>()))
-                // .Returns(new TicketCDTO());
-
-                // _servicesMock.Setup(t => t.Update(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                // .Returns(true);
-                
-                // var result = _controller.UpdateTickect(2, It.IsAny<int>(), It.IsAny<int>(), tk, It.IsAny<int>(), It.IsAny<int>());
 
                 Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
@@ -290,7 +290,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         }
 
         [Fact(DisplayName = "Exception: Get tickets creado por")]
-        public Task GetTicketCreadoControllerTestException()
+        public Task CrearTicketTestException()
         {
             _servicesMock.Setup(t => t.GetTicketCreadopor(1))
             .Throws(new TickectExeception("", new Exception()));
@@ -299,6 +299,93 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             Assert.NotNull(result);
             Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Agregar ticket")]
+        public Task CreateTicketExcepcion()
+        {
+
+            var dto = new TickectCreateDTO();
+
+            _servicesMock.Setup(t => t.AgregarTicketDAO(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.CreateTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Update ticket")]
+        public Task UpdateTicketExcepcion()
+        {
+
+            var dto = new TickectEstadoDTO();
+
+            _servicesMock.Setup(t => t.CambiarEstado(dto))
+            .Throws(new Exception());
+
+            var result = _controller.UpdateTickect(dto.idticket, dto);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            //Assert.Throws<NullReferenceException>(() => _controller.UpdateTickect(dto.idticket, dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Merge ticket")]
+        public Task MergeTicketExcepcion()
+        {
+
+            var dto = new TicketsRelacionadosDTO();
+
+            _servicesMock.Setup(t => t.TikcetsRelacionados(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.MergeTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Eliminar Merge ticket")]
+        public Task EliminarMergeTicketExcepcion()
+        {
+
+            var dto = new TicketsRelacionadosDTO();
+
+            _servicesMock.Setup(t => t.EliminarRelacionMerge(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.EliminarMerge(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Asignar ticket")]
+        public Task AsignarTicketExcepcion()
+        {
+
+            var dto = new AsignarTicketDTO();
+
+            _servicesMock.Setup(t => t.AsignarTicket(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.AsignarTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Delegar ticket")]
+        public Task DelegarTicketExcepcion()
+        {
+
+            var dto = new TickectDelegadoDTO();
+
+            _servicesMock.Setup(t => t.DelegarTicket(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.DelegarTIcket(It.IsAny<int>(), dto));
             return Task.CompletedTask;
         }
 

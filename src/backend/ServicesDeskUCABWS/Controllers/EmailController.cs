@@ -16,17 +16,17 @@ namespace ServicesDeskUCABWS.Controllers
         {
             this._emailrepository = emailrepository;
         }
-         [HttpPost("Email")]
+        [HttpPost("Email")]
         public IActionResult SendEmail([FromBody] EmailDTO emailDTO)
         {
-            
-         _emailrepository.SendEmail(emailDTO);
+
+            _emailrepository.SendEmail(emailDTO);
 
             return Ok();
-            
-           
+
+
         }
 
-   
+
     }
 }

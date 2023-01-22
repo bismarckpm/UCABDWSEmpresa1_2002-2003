@@ -36,6 +36,8 @@ namespace ServicesDeskUCABWS.Test.DAOs
         public Task CrearCategoriaTest()
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            //_contextMock.Setup(x => x.Categorias.Add(It.IsAny<Categoria>()));
+            _contextMock.Setup(x => x.Categorias.Find(It.IsAny<int>())).Returns(It.IsAny<Categoria>());
 
             var categoria = new Categoria()
             {
@@ -43,10 +45,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 nombre = "Categoria1"
             };
 
-            //var result = _dao.AgregarCategoriaDAO(categoria);
+            var result = _dao.AgregarCategoriaDAO(categoria);
 
-            //Assert.IsType<CategoriaDTO>(result);
-            Assert.Throws<ServicesDeskUcabWsException>(() => _dao.AgregarCategoriaDAO(categoria));
+            Assert.IsType<CategoriaDTO>(result);
+            //Assert.Throws<ServicesDeskUcabWsException>(() => _dao.AgregarCategoriaDAO(categoria));
             return Task.CompletedTask;
         }
 
@@ -54,11 +56,11 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName = "Consultar lista Categorias")]
         public Task ConsultarListCategoriasTest()
         {
-            //List<CategoriaDTO> listaDto = _dao.ConsultarTodosCategoriasDAO();
-            //var result = listaDto;
+            List<CategoriaDTO> listaDto = _dao.ConsultarTodosCategoriasDAO();
+            var result = listaDto;
 
-            //Assert.IsType<List<CategoriaDTO>>(result);
-            Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ConsultarTodosCategoriasDAO());
+            Assert.IsType<List<CategoriaDTO>>(result);
+            //Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ConsultarTodosCategoriasDAO());
             return Task.CompletedTask;
         }
 
@@ -74,10 +76,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 nombre = nombre
             };
 
-            //var result = _dao.ActualizarCategoriaDAO(cat);
+            var result = _dao.ActualizarCategoriaDAO(cat);
 
-            //Assert.IsType<CategoriaDTO>(result);
-            Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ActualizarCategoriaDAO(cat));
+            Assert.IsType<CategoriaDTO>(result);
+            //Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ActualizarCategoriaDAO(cat));
             return Task.CompletedTask;
         }
 
@@ -87,21 +89,21 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
 
-            //var result = _dao.EliminarCategoriaDAO(id);
+            var result = _dao.EliminarCategoriaDAO(id);
 
-            //Assert.NotEqual(null, result);
-            Assert.Throws<ServicesDeskUcabWsException>(() => _dao.EliminarCategoriaDAO(id));
+            Assert.NotEqual(null, result);
+            //Assert.Throws<ServicesDeskUcabWsException>(() => _dao.EliminarCategoriaDAO(id));
             return Task.CompletedTask;
         }
 
         [Fact(DisplayName = "Consultar categoria por id")]
         public Task ConsultarCategoriaIdTest()
         {
-            //CategoriaDTO dto = _dao.ConsultaCategoriaDAO(1);
-            //var result = dto;
+            CategoriaDTO dto = _dao.ConsultaCategoriaDAO(1);
+            var result = dto;
 
-            //Assert.IsType<CategoriaDTO>(result);
-            Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ConsultaCategoriaDAO(1));
+            Assert.IsType<CategoriaDTO>(result);
+            //Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ConsultaCategoriaDAO(1));
             return Task.CompletedTask;
         }
 
@@ -122,7 +124,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        
+
 
         [Fact(DisplayName = "Exception: Consultar lista de categorias")]
         public Task ConsultarCategoriaExceptionTest()
@@ -133,7 +135,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        
+
 
         [Fact(DisplayName = "Exception: Actualizar categoria")]
         public Task ActualizarCategoriaTestException()
@@ -145,7 +147,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        
+
 
         [Fact(DisplayName = "Exception: Eliminar categoria")]
         public Task EliminarCategoriaTestException()
@@ -157,14 +159,13 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        
+
 
         [Fact(DisplayName = "Exception: Consultar categoria por ID")]
         public Task ConsultarCategoriaIdTestException()
         {
             _servicesMock.Setup(c => c.ConsultaCategoriaDAO(It.IsAny<int>()))
-                .Throws(new ServicesDeskUcabWsException(null, null));
-            //var result = _dao.ConsultarTodosCategoriasDAO();
+                .Throws(new ServicesDeskUcabWsException(null));
 
             Assert.Throws<ServicesDeskUcabWsException>(() => _dao.ConsultaCategoriaDAO(-1));
             return Task.CompletedTask;
