@@ -21,6 +21,7 @@ using Org.BouncyCastle.Crypto.Fpe;
 using TicketDao = ServicesDeskUCABWS.Persistence.DAO.Implementations.TicketDao;
 using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 using ServicesDeskUCABWS.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -130,7 +131,24 @@ namespace ServicesDeskUCABWS.Test.Controllers
             public Task GetTicketControllerTest()
             {
                 _servicesMock.Setup(t => t.GetTicket(1))
-                .Returns(new TicketCDTO());
+                .Returns(new TicketCDTO()
+                {
+                    id = It.IsAny<int>(),
+                    idasignad = It.IsAny<int>(),
+                    idestado = It.IsAny<int>(),
+                    idprioridad = It.IsAny<int>(),
+                    idcategoria = It.IsAny<int>(),
+                    nombre = It.IsAny<string>(),
+                    fecha = It.IsAny<DateTime>(),
+                    descripcion = It.IsAny<string>(),
+                    creadopor = It.IsAny<string>(),
+                    asginadoa = It.IsAny<string>(),
+                    prioridad = It.IsAny<string>(),
+                    estado = It.IsAny<string>(),
+                    categoria = It.IsAny<string>(),
+                    departamento = It.IsAny<string>(),
+                    departamentoid = It.IsAny<int>(),
+                });
 
                 var result = _controller.GetTicket(1);
 
@@ -145,25 +163,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 _servicesMock.Setup(t => t.CambiarEstado(It.IsAny<TickectEstadoDTO>()))
                 .Returns(It.IsAny<string>());
 
-                var tk = new TickeUDTO() {
-                    
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
-                
                 var result = _controller.UpdateTickect(1, new TickectEstadoDTO());
-
-                // _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                // .Returns(new Ticket());
-
-                // _servicesMock.Setup(r => r.GetTicket(It.IsAny<int>()))
-                // .Returns(new TicketCDTO());
-
-                // _servicesMock.Setup(t => t.Update(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                // .Returns(true);
-                
-                // var result = _controller.UpdateTickect(2, It.IsAny<int>(), It.IsAny<int>(), tk, It.IsAny<int>(), It.IsAny<int>());
 
                 Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
@@ -290,7 +290,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         }
 
         [Fact(DisplayName = "Exception: Get tickets creado por")]
-        public Task GetTicketCreadoControllerTestException()
+        public Task CrearTicketTestException()
         {
             _servicesMock.Setup(t => t.GetTicketCreadopor(1))
             .Throws(new TickectExeception("", new Exception()));
@@ -301,6 +301,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             Assert.False(result.Success);
             return Task.CompletedTask;
         }
+
 
         #endregion
     }

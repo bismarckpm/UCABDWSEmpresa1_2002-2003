@@ -144,11 +144,11 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Data= _ticketDao.CambiarEstado(tickectEstado);
             }
-            catch (TickectExeception ex)
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                response.Exception = ex.Excepcion.ToString();
+                response.Exception = ex.ToString();
             }
             return response;
         }
