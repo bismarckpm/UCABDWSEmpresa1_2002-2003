@@ -80,6 +80,8 @@ namespace ServicesDeskUCABWS.Controllers
             }
             return response;
         }
+
+
         [HttpGet("TickectMergeados/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Ticket>))]
         public ApplicationResponse<ICollection<TicketCDTO>> GetTicketMergeados([FromRoute] int id)

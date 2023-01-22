@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TicketDao = ServicesDeskUCABWS.Persistence.DAO.Implementations.TicketDao;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -51,24 +52,19 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
             
             
-
-            var tk = new Ticket()
+            var tk = new TickectCreateDTO()
             {
-                id = 1,
                 nombre = "nombre",
-                asginadoa = new Empleado() { id = 1, email = "prueba@gmail.com" },
-                creadopor = new Empleado() { id = 2, email = "prueba2@gmail.com" },
+                creadopor = It.IsAny<int>(),
                 descripcion = "descripcion",
                 fecha = It.IsAny<DateTime>(),
-                Estado = new Estado(),
-                prioridad = new Prioridad(),
-                categoria = new Categoria(),
-                FlujoAprobacion = new FlujoAprobacion()
+                categoriaid = It.IsAny<int>(),
+                Departamentoid = It.IsAny<int>()
             };
 
-            // var result = _dao.AgregarTicketDAO(tk,1, 1,1);
+            var result = _dao.AgregarTicketDAO(tk);
 
-            // Assert.True(result);
+            Assert.IsType<string>(result);
             return Task.CompletedTask;
         }
 
