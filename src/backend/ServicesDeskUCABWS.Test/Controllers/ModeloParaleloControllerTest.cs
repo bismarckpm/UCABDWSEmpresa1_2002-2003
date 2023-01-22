@@ -138,12 +138,12 @@ public class ModeloParaleloControllerTest : BasePrueba
     public Task CreateModeloParaleloControllerExceptionTest()
     {
         _servicesMock.Setup(e => e.AgregarModeloParaleloDAO(modeloParalelo))
-            .Throws(new Exception());
+            .Throws(new ServicesDeskUcabWsException());
             var dto = new ModeloParaleloCreateDTO()
                         {
                             nombre = "Prueba de excepcion",
                         };
-        Assert.Throws<Exception>(() => _controller.Post(dto));
+        Assert.Throws<ServicesDeskUcabWsException>(() => _controller.Post(dto));
         return Task.CompletedTask;
     }
 
@@ -153,8 +153,8 @@ public class ModeloParaleloControllerTest : BasePrueba
     public Task ConsultarModeloParaleloControllerExceptionTest()
     {
         _servicesMock.Setup(e => e.ConsultarModelosParalelosDAO())
-        .Throws(new Exception("",new ArgumentOutOfRangeException()));
-        Assert.Throws<Exception>(() => _controller.GetModeloParalelo());
+        .Throws(new ServicesDeskUcabWsException("",new ArgumentOutOfRangeException()));
+        Assert.Throws<ServicesDeskUcabWsException>(() => _controller.GetModeloParalelo());
         return Task.CompletedTask;
     }
 
@@ -174,8 +174,8 @@ public class ModeloParaleloControllerTest : BasePrueba
     public Task ActualizarModeloParaleloControllerExceptionTest()
     {
         _servicesMock.Setup(e => e.ActualizarModeloParaleloDAO(modeloParalelo))
-                    .Throws(new Exception());
-        Assert.Throws<Exception>(() => _controller.ActualizarModeloParalelo(ErrorModelDTO()));
+                    .Throws(new ServicesDeskUcabWsException());
+        Assert.Throws<ServicesDeskUcabWsException>(() => _controller.ActualizarModeloParalelo(ErrorModelDTO()));
         return Task.CompletedTask;
     }
 
