@@ -293,7 +293,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Estado
                 {
                     id=1,
-                    nombre="Estado1",
+                    nombre="En espera",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
                     plantillas = new List<Plantilla>(),
@@ -302,7 +302,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Estado
                 {
                     id=2,
-                    nombre="Estado2",
+                    nombre="En proceso",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
                     plantillas = new List<Plantilla>(),
