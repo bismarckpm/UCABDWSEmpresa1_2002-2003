@@ -28,8 +28,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         /// <param name="flujoAprobacion"></param>
         /// <returns></returns>
         /// <exception cref="FlujoAprobacionException"></exception>
-       
-
         public string AgregarFlujoAprobacionDAO(FlujoAprobacionDTO flujoAprobacion)
         {
             try
@@ -48,29 +46,33 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
                 if (Modelo.Discriminator == "ModeloJerarquico")
                 {
-                var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();    
-                                       
-                    foreach(ModeloJerarquicoCargos modelo in ModeloCargos)
+                var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();
+
+                    foreach (ModeloJerarquicoCargos modelo in ModeloCargos)
                     {
-                   var a = (from usua in _context.Usuario
-                     join dep in _context.Cargos on usua.cargo equals dep
-                     join tp in _context.TipoCargos on dep.tipoCargo equals tp
-                     where tp.id == modelo.TipoCargoid
-                     select new UsuarioDTO()
-                     {
-                        id = usua.id
-                      }).FirstOrDefault();
-                      var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
-                        FlujoAprobacion f = new FlujoAprobacion();
-                        f.empleadoid = a.id;
-                        f.modeloid = modelo.Id;
-                        f.ticketid = listaTickets.id;
-                        f.ModeloAprobacion = Modelo;
-                        f.estatus = 0;
-                        Console.WriteLine(f.ToString());
-                        
+                        var a = (from usua in _context.Usuario
+                                 join dep in _context.Cargos on usua.cargo equals dep
+                                 join tp in _context.TipoCargos on dep.tipoCargo equals tp
+                                 where tp.id == modelo.TipoCargoid
+                                 select new UsuarioDTO()
+                                 {
+                                     id = usua.id
+                                 }).FirstOrDefault();
+                        var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
+                        FlujoAprobacion f = new FlujoAprobacion
+                        {
+                            empleadoid = a.id,
+                            modeloid = modelo.Id,
+                            ticketid = listaTickets.id,
+                            ModeloAprobacion = Modelo,
+                            estatus = 0
+                        };
+                        _context.FlujoAprobaciones.AddRange(f);
+
                     }
-                  
+                    _context.DbContext.SaveChanges();
+
+
                 }
                 return "Flujo creado";
             }
