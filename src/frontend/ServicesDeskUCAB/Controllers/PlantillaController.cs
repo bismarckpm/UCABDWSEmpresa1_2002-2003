@@ -79,6 +79,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
+        // PARA EDUTAR LAS PLANTILLAS
         public async Task<IActionResult> EditarPlantilla(PlantillaDTO Plantilla)
         {
             try
@@ -105,6 +106,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
+        // PARA ELIMINAR PLANTILLAS
         public async Task<IActionResult> EliminarPlantilla(int id)
         {
             try

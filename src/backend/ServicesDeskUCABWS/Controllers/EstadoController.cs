@@ -17,10 +17,12 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("api/estados")]
     public class EstadoController : Controller
     {
+        //DECLARACION DE VARIABLES
         private readonly IEstadoDAO _dao_Estado;
         private readonly ILogger<EstadoController> _log;
         private readonly IMapper _mapper;
 
+        //CONSTRUCTOR
         public EstadoController(ILogger<EstadoController> logger, IEstadoDAO dao_Estado, IMapper mapper)
         {
             _log = logger;
@@ -28,7 +30,7 @@ namespace ServicesDeskUCABWS.Controllers
             _mapper = mapper;
         }
 
-
+        //ENDPOINT PARA CONSULTAR LOS ESTADOS
         [HttpGet]
         public async Task<ApplicationResponse<List<EstadoResponseDTO>>> Get()
         {
@@ -54,6 +56,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA CONSULTAR LOS ESTADOS POR ID
         [HttpGet("{id:int}")]
         public async Task<ApplicationResponse<EstadoResponseDTO>> Get([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
@@ -78,6 +81,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA ACTUALIZAR LOS ESTADOS POR ID
         [HttpPut("{id:int}")]
         public async Task<ApplicationResponse<EstadoDTO>> Put(
                                         [FromBody] EstadoCreateDTO dto,
@@ -105,6 +109,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA ELIMINAR LOS ESTADOS POR ID
         [HttpDelete("{id:int}")]
         public async Task<ApplicationResponse<ActionResult>> Delete([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
@@ -138,6 +143,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA CREAR LOS ESTADOS
         [HttpPost]
         public async Task<ApplicationResponse<EstadoDTO>> Post([FromBody] EstadoCreateDTO dto)
         {

@@ -16,6 +16,7 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("/Usuario")]
     public class UsuarioController : Controller
     {
+        //DECLARACION DE VARIABLES
         public readonly IUsuarioDao _UsuarioRepository;
 
         public readonly ICargoDAO _CargoRepository;
@@ -25,8 +26,8 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly IUsuarioDao _dao;
         public static Usuario mapeado;
 
-   
 
+        //CONSTRUCTOR
         public UsuarioController(ILogger<UsuarioController> log,IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper, IEmailDao emailRepository)
         {
             this._log = log;
@@ -37,6 +38,7 @@ namespace ServicesDeskUCABWS.Controllers
         }
 
 
+        // ACÁ SE BUSCAN TODOS LOS EMPLEADOS QUE TENGA UN DEPARTAMENTO
         [HttpGet("Empleados/Departamento/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
         public ApplicationResponse<ICollection<UsuarioDTO>> GetUsuarioDepartamento([FromRoute] int id)
@@ -54,7 +56,8 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
            
         }
-       
+
+        //ENDPOINT PARA CREAR UN EMPLEADO
         [HttpPost("Registrar")]
         public ApplicationResponse<string> CreateUsuario([FromBody] RegistroDTO usuario)
         {
@@ -83,6 +86,7 @@ namespace ServicesDeskUCABWS.Controllers
             email.Cuerpo = mapeado.VerificationToken;
             email.asunto = "Token de verificacion";
             _emailRepository.SendEmail(email);
+                //ACÁ SE ENVÍA UN TOKEN AL CORREO CON EL QUE SE ESTÁ REGISTRANDO EL USUARIO PARA CONFIRMAR EL REGISTRO
             }
             catch (UsuarioExepcion ex)
             {
@@ -93,6 +97,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
+        //ENDPOINT PARA QUE UN EMPLEADO PUEDA LOGGEARSE AL SISTEMA
         [HttpPost("Login")]
         public ApplicationResponse<UsuarioDTO> Login([FromBody] UserLoginDTO usuario)
         {
@@ -123,6 +128,7 @@ namespace ServicesDeskUCABWS.Controllers
            return response;
         }
 
+        //ENDPOINT PARA VALIDAR QUE EL TOKEN INGRESADO POR  UN EMPLEADO AL MOMENTO DE REGISTRARSE ES CORRECTO
         [HttpGet("Verificar")]
         public ApplicationResponse<string> Verificar([FromQuery] string token)
         {
@@ -146,6 +152,7 @@ namespace ServicesDeskUCABWS.Controllers
 
 
         }
+        //ENDPOINT PARA QUE UN USUARIO PUEDA REESTABLACER SU CONTRASEÑA DE ACCESO EN CASO DE QUE NO RECUERDE SU CONTRASEÑA
         [HttpGet("olvido-contrasena")]
         public ApplicationResponse<string> olvidoContrasena([FromQuery] string email)
         {
@@ -164,13 +171,15 @@ namespace ServicesDeskUCABWS.Controllers
             emailsend.Cuerpo = usuariocreated.PasswordResetToken;
             emailsend.asunto = "Token de reseteo de clave";
             _emailRepository.SendEmail(emailsend);
+                // SE ENVÍA UN NUEVO TOKEN AL CORREO DEL USUARIO PARA QUE SEA CON ESTE QUE SE CONFIRME EL CAMBIO DE CONTRASEÑA
            } catch(UsuarioExepcion ex){
                 response.Success = false;
                 response.Message = ex.Mensaje;
            }
            return response;
             }
-        
+
+        //ENDPOINT PARA QUE UN USUARIO PUEDA REESTABLACER SU CONTRASEÑA DE ACCESO EN CASO DE QUE NO RECUERDE SU CONTRASEÑA
         [HttpPost("Reset-Password")]
         public ApplicationResponse<string> ResetPassword([FromBody] ResetPasswordDTO usuario)
         {   
@@ -193,6 +202,7 @@ namespace ServicesDeskUCABWS.Controllers
            return response;
             }
            
+        // ACÁ SE CREA RL TOKEN ALEATOREAMENTE A LOS USUARIOS CUANDO SE REGISTRAN 
         private string? CreateRamdonToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));

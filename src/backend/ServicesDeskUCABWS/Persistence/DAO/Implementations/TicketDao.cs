@@ -36,7 +36,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo + "\n" + "Creado por: " + ticket.creadopor.nombre + "\n" + ticket.departamento.nombre;
+                email.Cuerpo = Plantilla.cuerpo + "<br>" + "Creado por: " + ticket.creadopor.nombre + "<br>" + ticket.departamento.nombre + "<br>" + "Fecha: " + ticket.fecha + "<br>" + "Categoria: " + ticket.categoria.nombre;
                 email.asunto = "Tickect creado: " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Add(ticket);
@@ -55,7 +55,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ticket = _context.Tickets.Where(c => c.id == tickectEstadoDTO.idticket).FirstOrDefault();
+                var ticket = _context.Tickets.Where(c => c.id == tickectEstadoDTO.idticket)
+                                    .Include(c => c.creadopor)
+                                    .FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.id == tickectEstadoDTO.idestado).FirstOrDefault();
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == tickectEstadoDTO.idestado).FirstOrDefault();
                 var email = new EmailDTO();
@@ -78,14 +80,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ticket = _context.Tickets.Where(c => c.id == asignarTicket.ticketid).FirstOrDefault();
+                var ticket = _context.Tickets.Where(c => c.id == asignarTicket.ticketid)
+                            .Include(c => c.creadopor)
+                            .Include(c => c.categoria)
+                            .FirstOrDefault();
                 ticket.asginadoa = _context.Usuario.Where(c => c.id == asignarTicket.asginadoa).FirstOrDefault();
                 ticket.prioridad = _context.Prioridades.Where(c => c.id == asignarTicket.prioridadid).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En proceso").FirstOrDefault();
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo + "\n" + "Asignado a: " + ticket.asginadoa + "\n Prioridad: " + ticket.prioridad.nombre;
+                email.Cuerpo = Plantilla.cuerpo + "<br>" + ticket.asginadoa.nombre + "<br> Prioridad: " + ticket.prioridad.nombre;
                 email.asunto = "Tickect asginado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
@@ -103,7 +108,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ticket = _context.Tickets.Where(c => c.id == delegadoDTO.idticket).FirstOrDefault();
+                var ticket = _context.Tickets.Where(c => c.id == delegadoDTO.idticket).Include(c => c.creadopor)
+                            .Include(c => c.categoria).FirstOrDefault();
+                
                 ticket.asginadoa = _context.Usuario.Where(c => c.id == delegadoDTO.idAsignadoa).FirstOrDefault();
                 var dep = (from usua in _context.Usuario
                            join dep2 in _context.Departamentos on usua.Grupo.departamento equals dep2

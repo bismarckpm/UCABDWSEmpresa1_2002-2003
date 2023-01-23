@@ -44,7 +44,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al crear departamento", ex, _log);
+                throw new ServicesDeskUcabWsException();
             }
             return response;
         }
@@ -72,7 +72,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al consultar departamentos", ex, _log);
+                throw new ServicesDeskUcabWsException();
             }
             return response;
         }
@@ -93,7 +93,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al buscar el departamento de id: " + id, ex, _log);
+                throw new ServicesDeskUcabWsException();
             }
             return response;
         }
@@ -135,7 +135,7 @@ namespace ServicesDeskUCABWS.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                throw new PlantillaException("Error al eliminar el departamento de id: " + id, ex, _log);
+                throw new ServicesDeskUcabWsException();
             }
             return response;
         }

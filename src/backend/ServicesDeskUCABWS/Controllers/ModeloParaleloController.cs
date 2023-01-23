@@ -10,7 +10,7 @@ using ServicesDeskUCABWS.Exceptions;
 namespace ServicesDeskUCABWS.Controllers;
 
 [ApiController]
-[Route("ModeloParalelo/")]
+[Route("ModeloAprobacion/")]
 
 public class ModeloParaleloController : Controller
 {

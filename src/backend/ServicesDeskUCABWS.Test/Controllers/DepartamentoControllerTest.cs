@@ -5,8 +5,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Controllers;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -32,14 +34,14 @@ namespace ServicesDeskUCABWS.Test.Controllers
         [Fact(DisplayName = "Agregar Departamento")]
         public Task CreateDepartamentoControllerTest()
         {
-            var dto = new DepartamentoDTO() { Id = 3, Nombre = "departamento3" };
+            var dto = new DepartamentoDTO() { Id = 1, Nombre = "Departamento de Finanzas" };
 
             _servicesMock.Setup(t => t.AgregarDepartamentoDAO(departamento))
             .Returns(departamentoDto);
 
             var result = _controller.CreateDepartamento(dto);
 
-            Assert.IsType<ActionResult<DepartamentoDTO>>(result);
+            Assert.IsType<ApplicationResponse<DepartamentoDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -47,9 +49,21 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task CreateDepartamentoControllerTestException()
         {
             _servicesMock.Setup(t => t.AgregarDepartamentoDAO(departamento))
-            .Throws(new NullReferenceException());
+            .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.CreateDepartamento(departamentoDto));
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.CreateDepartamento(departamentoDto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Consultar Lista Departamento Vacia")]
+        public Task ConsultarDepartamentoVaciaControllerTest()
+        {
+            _servicesMock.Setup(t => t.ConsultarDepartamentosDAO())
+            .Returns(new List<DepartamentoDTO>());
+
+            var result = _controller.ConsultaDepartamentos();
+
+            Assert.IsType<ApplicationResponse<List<DepartamentoDTO>>>(result);
             return Task.CompletedTask;
         }
 
@@ -57,40 +71,40 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task ConsultarDepartamentoControllerTest()
         {
             _servicesMock.Setup(t => t.ConsultarDepartamentosDAO())
-            .Returns(new List<DepartamentoDTO>());
+            .Returns(new List<DepartamentoDTO>() { new DepartamentoDTO() });
 
             var result = _controller.ConsultaDepartamentos();
 
-            Assert.IsType<ActionResult<List<DepartamentoDTO>>>(result);
+            Assert.IsType<ApplicationResponse<List<DepartamentoDTO>>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Valida consulta lista departamentos Excepcion")]
+        [Fact(DisplayName = "Valida consulta lista departamento Excepcion")]
         public Task ConsultarDepartamentoControllerTestException()
         {
             _servicesMock
                 .Setup(t => t.ConsultarDepartamentosDAO())
-                .Throws(new Exception("", new NullReferenceException()));
+                .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultaDepartamentos());
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.ConsultaDepartamentos()); 
             return Task.CompletedTask;
         }
 
         [Fact(DisplayName = "Actualizar Departamento")]
         public Task ActualizarDepartamentoControllerTest()
         {
-            var dep = new DepartamentoDTO(){ Id =1, Nombre = "departamento1" };
+            var dep = new DepartamentoDTO() { Id = 1, Nombre = "Departamento de Finanzas" };
 
             _servicesMock.Setup(t => t.ModificarDepartamentoDAO(departamento))
                 .Returns(departamentoDto);
 
             var result = _controller.ActualizarDepartamento(dep);
-            Assert.IsType<ActionResult<DepartamentoDTO>>(result);
+            Assert.IsType<ApplicationResponse<DepartamentoDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Valida actualizar departamento excepcion")]
-        public Task ModificarDepartamentoControllerTestException()
+        [Fact(DisplayName = "Valida actualizar Departamento excepcion")]
+        public Task ActualizarDepartamentoControllerTestException()
         {
             _servicesMock.Setup(t => t.ModificarDepartamentoDAO(departamento)).Throws(new Exception("", new NullReferenceException()));
 
@@ -106,17 +120,17 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.EliminarDepartamento(1);
 
-            Assert.IsType<ActionResult<DepartamentoDTO>>(result);
+            Assert.IsType<ApplicationResponse<DepartamentoDTO>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Valida eliminacion departamento excepcion")]
+        [Fact(DisplayName = "Valida eliminacion Departamento excepcion")]
         public Task EliminarDepartamentoControllerTestException()
         {
             _servicesMock.Setup(t => t.EliminarDepartamentoDAO(It.IsAny<int>()))
-            .Throws(new Exception("", new NullReferenceException()));
+            .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.EliminarDepartamento(It.IsAny<int>()));
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.EliminarDepartamento(It.IsAny<int>()));
             return Task.CompletedTask;
         }
 
@@ -128,7 +142,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaDepartamento(1);
 
-            Assert.IsType<ActionResult<DepartamentoDTO>>(result);
+            Assert.IsType<ApplicationResponse<DepartamentoDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -136,9 +150,9 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task ConsultarDepartamentoIdControllerTestException()
         {
             _servicesMock.Setup(t => t.ConsultaUnDepartamentoDAO(It.IsAny<int>()))
-            .Throws((new Exception("", new NullReferenceException())));
+            .Throws(new Exception());
 
-            Assert.Throws<NullReferenceException>(() => _controller.ConsultaDepartamento(It.IsAny<int>())); ;
+            Assert.Throws<ServicesDeskUcabWsException>(() => _controller.ConsultaDepartamento(It.IsAny<int>())); ;
             return Task.CompletedTask;
         }
 
