@@ -1,3 +1,4 @@
+using System.Data;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
@@ -19,100 +20,93 @@ public class ModeloParaleloDAO : IModeloParaleloDAO
         this.mapper = map;
     }
 
-    public async Task<ActionResult<ModeloParaleloDTO>> AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
+    /*Agrega objeto a la Entidad de base de datos ModeloParalelo y retorna un objeto ModeloParaleloDTO que sera usado por el controlador*/
+    public ModeloParaleloCreateDTO AgregarModeloParaleloDAO(ModeloParalelo modeloParalelo)
     {
         try
         {
-            var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
-            if (categoria == null)
-            {
-                throw new Exception("No existe el registro de la categoria para el modelo paralelo");
-            }
-            modeloParalelo.categoria = categoria;
             context.ModeloParalelos.Add(modeloParalelo);
-            await context.DbContext.SaveChangesAsync();
-            return mapper.Map<ModeloParaleloDTO>(modeloParalelo);
+            context.DbContext.SaveChanges();
+            return mapper.Map<ModeloParaleloCreateDTO>(modeloParalelo);
         }
         catch (DbUpdateException ex)
         {
+            Console.WriteLine(ex.InnerException!.Message);
             throw new ModeloParaleloException("Error al agregar el Modelo Paralelo", ex);
         }       
     }
 
-    public Task<List<ModeloParalelo>> ConsultarModelosParalelosDAO()
+    /*Consulta la entidad de base de datos ModeloParalelo y retorna una lista de objetos ModeloParaleloDTO que sera usado por el controlador*/
+    public List<ModeloParaleloDTO> ConsultarModelosParalelosDAO()
     {
         try
         {
-            return context.ModeloParalelos.ToListAsync();
+            var data = context.ModeloParalelos.Select(j => new ModeloParaleloDTO() 
+                                                    {
+                                                        Id = j.id,
+                                                        nombre = j.nombre,
+                                                        categoriaId = j.categoriaid,
+                                                        cantidaddeaprobacion = j.cantidaddeaprobacion
+                                                    });
+            return data.ToList();
         }
         catch (Exception ex)
         {
-            throw new ModeloParaleloException("Error al consultar los modelos paralelos", ex); 
+            throw new ModeloParaleloException("Error al consultar los modelos paralelos", ex.InnerException!); 
         } 
     }
 
-    public async Task<ActionResult<ModeloParalelo>> ConsultaModeloParaleloDAO(int id)
+    /*Consulta la Entidad de base de datos ModeloParalelo y retorna un objeto ModeloParaleloDTO que sera usado por el controlador*/
+    public ModeloParaleloDTO ObtenerModeloParaleloDAO(int id)
     {
         try
         {
-            var consulta = await context.ModeloParalelos
-                                        .Include(cat => cat.categoria)
-                                        .FirstOrDefaultAsync(p => p.paraid == id);
-            if (consulta == null)
-            {
-            throw new Exception("Error al consultar el modelo paralelo");
-            }
-            return consulta;                
+            var data = context.ModeloParalelos.Select(j => new ModeloParaleloDTO()
+                                                    {
+                                                        Id = j.id,
+                                                        nombre = j.nombre,
+                                                        categoriaId = j.categoriaid,
+                                                        cantidaddeaprobacion = j.cantidaddeaprobacion
+                                                    }).Where(j => j.Id == id);    
+            return data.First();            
         }                          
         catch (Exception ex)
         {
-            throw new ModeloParaleloException("Error al consultar el modelo paralelo", ex);
+            throw new ModeloParaleloException("Error al consultar el modelo paralelo", ex.InnerException!);
         } 
     } 
 
-    public async Task<ActionResult<ModeloParalelo>> ActualizarModeloParaleloDAO(int id, ModeloParaleloCreateDTO modeloParalelo)
+
+    /*Actualiza un objeto de la Entidad de base de datos ModeloParalelo y retorna un objeto ModeloParaleloDTO que sera usado por el controlador*/
+    public ModeloParaleloDTO ActualizarModeloParaleloDAO(ModeloParalelo modeloParalelo)
     {
         try
         {
-            var modeloActual = await context.ModeloParalelos.FindAsync(id);
-            if (modeloActual == null)
-            {
-                throw new NullReferenceException("No existe el modelo paralelo a actualizar");
-            }
-            // Validar categoria 
-            var categoria = await context.Categorias.FirstOrDefaultAsync(c => c.id == modeloParalelo.categoriaId);
-            if (categoria == null)
-            {
-                throw new NullReferenceException("No existe en el modelo paralelo la categoria a actualizar");
-            }
-            modeloActual.nombre = modeloParalelo.nombre;
-            modeloActual.cantidadAprobaciones = modeloParalelo.cantidadAprobaciones;
-            modeloActual.categoriaId = modeloParalelo.categoriaId;
-            await context.DbContext.SaveChangesAsync();
-            return modeloActual;
+            context.ModeloParalelos.Update(modeloParalelo);
+            context.DbContext.SaveChanges();
+            return mapper.Map<ModeloParaleloDTO>(modeloParalelo);
         }
         catch (Exception ex)
         {
-            throw new ModeloParaleloException("Error al actualizar el modelo paralelo", ex);
+            throw new ModeloParaleloException("Error al actualizar el modelo paralelo ", ex.InnerException!);
         }
     }
 
-    public async Task<ActionResult> EliminarModeloParaleloDAO(int id)
+    /*Elimina un objeto de la Entidad de base de datos ModeloParalelo y retorna un objeto ModeloParaleloDTO que sera usado por el controlador*/
+    public ModeloParaleloDTO EliminarModeloParaleloDAO(int id)
     {
         try
         {
-            var modeloActual = await context.ModeloParalelos.FindAsync(id);
-            if(modeloActual == null)
-            {
-                return new NotFoundResult();    
-            }
-            context.ModeloParalelos.Remove(modeloActual);
-            await context.DbContext.SaveChangesAsync(); 
-            return new OkResult();
+            var modeloActual = context.ModeloParalelos
+                                                .Where(mj => mj.id == id)
+                                                .First();
+            context.DbContext.Remove(modeloActual);  
+            context.DbContext.SaveChanges();
+            return mapper.Map<ModeloParaleloDTO>(modeloActual);                                 
         }
-        catch (Exception ex)
+        catch (Exception ex)    
         {
-            throw new ModeloParaleloException("Error al actualizar el modelo paralelo", ex);
+            throw new ModeloParaleloException("Error al eliminar el modelo paralelo", ex.InnerException!);
         }
     }
 }

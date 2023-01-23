@@ -11,6 +11,7 @@ using Bogus;
 using Xunit;
 using Moq;
 using TipoCargoDAO = ServicesDeskUCABWS.Persistence.DAO.Implementations.TipoCargoDAO;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -28,32 +29,24 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 _contextMock.SetupDbContextData();
             }
 
-        [Fact (DisplayName ="Crear un Tipo de Cargo")]
-        public Task CrearTipoCargoTest()
-        {
-            _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
-            
-            var tipocargo = new TipoCargo()
-            {
-                id = 1,
-                nombre = "Carlos"
-            };
-            
-            var result = _dao.AgregarTipoCargoDAO(tipocargo);
-           
-            Assert.IsType<TipoCargoDTO>(result);
-            return Task.CompletedTask;
-        }
+        #region Casos Existosos
 
-        [Fact(DisplayName ="Valida una excepcion CrearTipoCargo")]
-        public Task CrearTipoCargoExceptionTest()
-        {
-            _contextMock.Setup(x=>x.DbContext.SaveChanges()).Throws(new DbUpdateConcurrencyException());
-            var tipo = new TipoCargo();
+            [Fact (DisplayName ="Crear un Tipo de Cargo")]
+            public Task CrearTipoCargoTest()
+            {
+                _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
+                
+                var tipocargo = new TipoCargo()
+                {
+                    id = 1,
+                    nombre = "Carlos"
+                };
+                
+                var result = _dao.AgregarTipoCargoDAO(tipocargo);
             
-            Assert.Throws<Exception>(()=> _dao!.AgregarTipoCargoDAO(tipo));
-            return Task.CompletedTask;
-        }
+                Assert.IsType<TipoCargoDTO>(result);
+                return Task.CompletedTask;
+            }
 
          [Fact(DisplayName= "Consultar lista Tipo de Cargos")]
          public Task ConsultarListTipoCargoTest()
@@ -64,15 +57,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
                  Assert.IsType<List<TipoCargoDTO>>(result);
                  return Task.CompletedTask;
          }
-
-        [Fact(DisplayName= "Validar lista excepcion")]
-         public Task ConsultarListTipoCargoExceptionTest()
-         {
-            _contextMock.Setup(c => c.TipoCargos).Throws(new Exception());
-
-            Assert.Throws<Exception>(() => _dao!.ConsultarTipoCargoDAO());
-            return Task.CompletedTask;
-        }
 
         [Fact(DisplayName = "Valida Actualizar Tipo Cargo")]
          public Task ActualizarTipoCargoTest()
@@ -91,17 +75,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
          }
 
-        [Fact(DisplayName="Valida no Actualizar Tipo Cargo")]
-         public Task ActualizarTipoCargoTestException()
-         {
-             _servicesMock.Setup(c=>c.ActualizarTipoCargoDAO(It.IsAny<TipoCargo>()))
-             .Throws(new Exception());
-           
-            Assert.Throws<NullReferenceException>(()=>_dao.ActualizarTipoCargoDAO(null!));
-            return Task.CompletedTask;
-         }
-
-        [Fact(DisplayName = "Valida Eliminar Tipo Cargo")]
+        [Fact(DisplayName = "Eliminar Tipo Cargo")]
         public Task EliminarTipoCargoTest()
         {
             _contextMock.Setup(x=>x.DbContext.SaveChanges()).Returns(1);
@@ -110,7 +84,41 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
             Assert.IsType<TipoCargoDTO>(result);
             return Task.CompletedTask;
-        } 
+        }         
+
+        #endregion
+
+        #region  Casos Particulares
+
+        [Fact(DisplayName ="Valida una excepcion CrearTipoCargo")]
+        public Task CrearTipoCargoExceptionTest()
+        {
+            _contextMock.Setup(x=>x.DbContext.SaveChanges())
+                            .Throws(new Exception());
+            var tipo = new TipoCargo();
+            
+            Assert.Throws<ServicesDeskUcabWsException>(()=> _dao!.AgregarTipoCargoDAO(tipo));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName= "Validar lista excepcion")]
+         public Task ConsultarListTipoCargoExceptionTest()
+         {
+            _contextMock.Setup(c => c.TipoCargos).Throws(new Exception());
+
+            Assert.Throws<ServicesDeskUcabWsException>(() => _dao!.ConsultarTipoCargoDAO());
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName="Actualizar Tipo Cargo con excepcion")]
+         public Task ActualizarTipoCargoTestException()
+         {
+             _contextMock.Setup(e =>e.DbContext.SaveChanges())
+                .Throws(new Exception("", new NullReferenceException()));
+           
+            Assert.Throws<NullReferenceException>(()=>_dao.ActualizarTipoCargoDAO(It.IsAny<TipoCargo>()));
+            return Task.CompletedTask;
+         }
 
         [Fact(DisplayName="Valida no Eliminar Tipo Cargo")]
         public Task EliminarTipoCargoTestException()
@@ -118,8 +126,14 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _servicesMock.Setup(c=>c.EliminarTipoCargoDAO(It.IsAny<int>()))
              .Throws(new Exception());
 
-            Assert.Throws<Exception>(()=>_dao.EliminarTipoCargoDAO(-1));
+            Assert.Throws<ServicesDeskUcabWsException>(()=>_dao.EliminarTipoCargoDAO(-1));
             return Task.CompletedTask;
         }
+
+        #endregion
+
+
+
+
     }
 }

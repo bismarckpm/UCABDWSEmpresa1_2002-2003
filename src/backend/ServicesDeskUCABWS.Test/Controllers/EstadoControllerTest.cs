@@ -7,11 +7,12 @@ using Moq;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
 using ServicesDeskUCABWS.Controllers;
 using ServicesDeskUCABWS.Exceptions;
+using ServicesDeskUCABWS.Persistence.DAO.Implementations;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
 using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.Test.Configuraciones;
-
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -24,6 +25,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
         public EstadoCreateDTO estadoCreateDto = It.IsAny<EstadoCreateDTO>();
         public Estado estado = It.IsAny<Estado>();
+        public ILogger<EstadoDAO> loggerDAO = new NullLogger<EstadoDAO>();
 
         private readonly Mock<IMigrationDbContext> _contextMock;
 
@@ -34,148 +36,154 @@ namespace ServicesDeskUCABWS.Test.Controllers
             var _mapper = ConfigurarAutoMapper();
             _servicesMock = new Mock<IEstadoDAO>();
             _controller = new EstadoController(_logger, _servicesMock.Object, _mapper);
-            _controller.ControllerContext = new ControllerContext();
-            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
-            _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
         }
 
         [Fact(DisplayName = "Agregar un Estado")]
         public async void CreateEstadoControllerTest()
         {
             var dto = new EstadoCreateDTO() { Nombre = "Estado 1", EtiquetaId = 1 };
+            var response = new ApplicationResponse<EstadoDTO>();
             // preparacion de los datos
             _servicesMock.Setup(x => x.AgregarEstadoDAO(It.IsAny<Estado>())).ReturnsAsync(new EstadoDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 });
+            Boolean expected = true;
             //probar metodo post
-            var result = await _controller.Post(dto);
+            response = await _controller.Post(dto);
             //verificar 
-            Assert.IsType<OkObjectResult>(result.Result);
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
-        [Fact(DisplayName = "Agregar Estado con Etiqueta inexistente")]
-        public async void CreateEstadoControllerBadRequest()
+        [Fact(DisplayName = "Agregar Estado con Exception")]
+        public async void CreateEstadoControllerException()
         {
             var dto = new EstadoCreateDTO() { Nombre = "Estado 1", EtiquetaId = 1 };
+            var response = new ApplicationResponse<EstadoDTO>();
             // preparacion de los datos
-            // return not found object result
-            _servicesMock.Setup(x => x.AgregarEstadoDAO(It.IsAny<Estado>())).ReturnsAsync(new NotFoundObjectResult("Etiqueta no encontrada"));
-            //probar metodo post - catch EstadoException
-            var result = await _controller.Post(dto);
-            var estadoResult = result.Result;
-
-            //verificar
-            Assert.IsType<NotFoundObjectResult>(estadoResult);
-
+            _servicesMock.Setup(x => x.AgregarEstadoDAO(It.IsAny<Estado>())).Throws(new EstadoException("Error al agregar Estado", new System.Exception(), loggerDAO));
+            Boolean expected = false;
+            //probar metodo post
+            response = await _controller.Post(dto);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
-
-
 
         [Fact(DisplayName = "Obtener lista de Estados")]
         public async void GetEstadosControllerTest()
         {
+            var response = new ApplicationResponse<List<EstadoResponseDTO>>();
             // preparacion de los datos
-            _servicesMock.Setup(x => x.GetEstadosDAO()).ReturnsAsync(new List<EstadoDTO> { new EstadoDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 } });
+            _servicesMock.Setup(x => x.GetEstadosDAO()).ReturnsAsync(new List<EstadoResponseDTO> { new EstadoResponseDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 } });
+            Boolean expected = true;
             //probar metodo get
-            var result = await _controller.Get();
-            var listEstados = result.Result;
-            // validar cantidad de elementos
-            Assert.IsType<OkObjectResult>(listEstados);
+            response = await _controller.Get();
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
-        [Fact(DisplayName = "Id menor a 0 Obtener Estado")]
-        public async void GetIdMenor0EstadoControllerTest()
+        [Fact(DisplayName = "Obtener lista de Estados con Exception")]
+        public async void GetEstadosControllerException()
         {
+            var response = new ApplicationResponse<List<EstadoResponseDTO>>();
             // preparacion de los datos
-            _servicesMock.Setup(x => x.GetEstadoDAO(0)).ReturnsAsync(new EstadoDTO());
+            _servicesMock.Setup(x => x.GetEstadosDAO()).Throws(new EstadoException("Error al obtener Estados", new System.Exception(), loggerDAO));
+            Boolean expected = false;
             //probar metodo get
-            var result = await _controller.Get(0);
-            // validar statusCode
-
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            response = await _controller.Get();
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
-        [Fact(DisplayName = "Obtener Estado")]
-        public async void GetEstadoControllerTest()
+        [Fact(DisplayName = "Obtener Estado por Id")]
+        public async void GetEstadoByIdControllerTest()
         {
+            var response = new ApplicationResponse<EstadoResponseDTO>();
             // preparacion de los datos
-            _servicesMock.Setup(x => x.GetEstadoDAO(1)).ReturnsAsync(new EstadoDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 });
+            _servicesMock.Setup(x => x.GetEstadoDAO(It.IsAny<int>())).ReturnsAsync(new EstadoResponseDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 });
+            Boolean expected = true;
             //probar metodo get
-            var result = await _controller.Get(1);
-            // validar statusCode
-
-            Assert.IsType<OkObjectResult>(result.Result);
+            response = await _controller.Get(1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
-        [Fact(DisplayName = "No existe Estado")]
-        public async void GetNoExisteEstadoControllerTest()
+        [Fact(DisplayName = "Obtener Estado por Id con Exception")]
+        public async void GetEstadoByIdControllerException()
         {
+            var response = new ApplicationResponse<EstadoResponseDTO>();
             // preparacion de los datos
-            _servicesMock.Setup(x => x.GetEstadoDAO(It.IsAny<int>())).ReturnsAsync(new NotFoundObjectResult("Estado no encontrado"));
+            _servicesMock.Setup(x => x.GetEstadoDAO(It.IsAny<int>())).Throws(new EstadoException("Error al obtener Estado", new System.Exception(), loggerDAO));
+            Boolean expected = false;
             //probar metodo get
-            var result = await _controller.Get(5);
-            // validar statusCode
-
-            Assert.IsType<NotFoundObjectResult>(result.Result);
+            response = await _controller.Get(1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
         [Fact(DisplayName = "Actualizar Estado")]
-        public async void PutEstadoControllerTest()
+        public async void UpdateEstadoControllerTest()
         {
+            var dto = new EstadoCreateDTO() { Nombre = "Estado 1", EtiquetaId = 1 };
+            var response = new ApplicationResponse<EstadoDTO>();
             // preparacion de los datos
-            _servicesMock.Setup(x => x.ActualizarEstadoDAO(It.IsAny<Estado>(), 1)).ReturnsAsync(new OkResult());
+            _servicesMock.Setup(x => x.ActualizarEstadoDAO(It.IsAny<Estado>(), 1)).ReturnsAsync(new EstadoDTO() { id = 1, Nombre = "Estado 1", EtiquetaId = 1 });
+            Boolean expected = true;
             //probar metodo put
-            var result = await _controller.Put(new EstadoCreateDTO() { }, 1);
-            // validar statusCode
-
-            Assert.IsType<OkResult>(result);
+            response = await _controller.Put(dto, 1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
-        [Fact(DisplayName = "Id menor a 0 Actualizar Estado")]
-        public async void PutIdMenor0EstadoControllerTest()
+        [Fact(DisplayName = "Actualizar Estado con Exception")]
+        public async void UpdateEstadoControllerException()
         {
+            var dto = new EstadoCreateDTO() { Nombre = "Estado 1", EtiquetaId = 1 };
+            var response = new ApplicationResponse<EstadoDTO>();
             // preparacion de los datos
+            _servicesMock.Setup(x => x.ActualizarEstadoDAO(It.IsAny<Estado>(), 1)).Throws(new EstadoException("Error al actualizar Estado", new System.Exception(), loggerDAO));
+            Boolean expected = false;
             //probar metodo put
-            var result = await _controller.Put(estadoCreateDto, 0);
-            // validar statusCode
-
-            Assert.IsType<BadRequestObjectResult>(result);
-        }
-
-
-        [Fact(DisplayName = "Id menor a 0 Eliminar Estado")]
-        public async void DeleteIdMenor0EstadoControllerTest()
-        {
-            // preparacion de los datos
-            //probar metodo delete
-            var result = await _controller.Delete(0);
-            // validar statusCode
-
-            Assert.IsType<BadRequestObjectResult>(result);
+            response = await _controller.Put(dto, 1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
         [Fact(DisplayName = "Eliminar Estado")]
         public async void DeleteEstadoControllerTest()
         {
+            var response = new ApplicationResponse<ActionResult>();
             // preparacion de los datos
-            _servicesMock.Setup(x => x.EliminarEstadoDAO(1)).ReturnsAsync(new OkResult());
+            _servicesMock.Setup(x => x.EliminarEstadoDAO(It.IsAny<int>())).ReturnsAsync(true);
+            Boolean expected = true;
             //probar metodo delete
-            var result = await _controller.Delete(1);
-            // validar statusCode
-
-            Assert.IsType<OkResult>(result);
+            response = await _controller.Delete(1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
         }
 
-        // [Fact(DisplayName = "No existe Estado Eliminar")]
-        // public async void DeleteNoExisteEstadoControllerTest()
-        // {
-        //     // preparacion de los datos
-        //     _servicesMock.Setup(x => x.EliminarEstadoDAO(5)).ReturnsAsync(new NotFoundResult());
-        //     //probar metodo delete
-        //     var result = await _controller.EliminarEstado(5);
-        //     // validar statusCode
+        [Fact(DisplayName = "Estado no encontrado para eliminar")]
+        public async void DeleteEstadoControllerNotFound()
+        {
+            var response = new ApplicationResponse<ActionResult>();
+            // preparacion de los datos
+            _servicesMock.Setup(x => x.EliminarEstadoDAO(It.IsAny<int>())).ReturnsAsync(false);
+            Boolean expected = false;
+            //probar metodo delete
+            response = await _controller.Delete(1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
+        }
 
-        //     Assert.IsType<NotFoundResult>(result);
-        // }
-
+        [Fact(DisplayName = "Eliminar Estado con Exception")]
+        public async void DeleteEstadoControllerException()
+        {
+            var response = new ApplicationResponse<ActionResult>();
+            // preparacion de los datos
+            _servicesMock.Setup(x => x.EliminarEstadoDAO(It.IsAny<int>())).Throws(new EstadoException("Error al eliminar Estado", new System.Exception(), loggerDAO));
+            Boolean expected = false;
+            //probar metodo delete
+            response = await _controller.Delete(1);
+            //verificar 
+            Assert.Equal<Boolean>(expected, response.Success);
+        }
 
     }
 }

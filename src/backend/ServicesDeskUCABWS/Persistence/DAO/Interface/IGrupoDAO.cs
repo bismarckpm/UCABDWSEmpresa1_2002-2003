@@ -1,17 +1,18 @@
 ﻿using ServicesDeskUCABWS.Persistence.Entity;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IGrupoDAO
     {
-        public List<GrupoDTO> ConsultarGrupo();
+        public Task<List<GrupoResponseDTO>> ObtenerGruposDAO();
+        public Task<GrupoResponseDTO> ObtenerGrupoByIdDAO(int id);
+        public Task<GrupoDTO> AgregarGrupoDAO(Grupo Grupo);
+        public Task<GrupoDTO> ActualizarGrupoDAO(Grupo Grupo, int id);
+        public Task<Boolean> EliminarGrupoDAO(int id);
 
-        public GrupoDTO ActualizarGrupo(Grupo grupo);
 
-        public GrupoDTO EliminarGrupo(int id);
 
-        public GrupoDTO AgregarGrupo(Grupo grupo);
     }
 }

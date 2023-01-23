@@ -1,130 +1,280 @@
-﻿using Bogus;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using ServicesDeskUCABWS.BussinessLogic.DTO;
-using ServicesDeskUCABWS.Persistence.DAO.Implementations;
+﻿using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
 using ServicesDeskUCABWS.Persistence.Entity;
-using ServicesDeskUCABWS.Test.DataSeed;
+using ServicesDeskUCABWS.BussinessLogic.DTO;
+using Bogus;
+using Moq;
 using GrupoDAO = ServicesDeskUCABWS.Persistence.DAO.Implementations.GrupoDAO;
+using Microsoft.Extensions.Logging.Abstractions;
+using ServicesDeskUCABWS.Test.Configuraciones;
+using Microsoft.AspNetCore.Mvc;
+using ServicesDeskUCABWS.Exceptions;
+using ServicesDeskUCABWS.Test.DataSeed;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
-   public class GrupoDAOTest
+
+    public class GrupoDAOTest : BasePrueba
     {
         private readonly GrupoDAO _dao;
         private readonly Mock<IMigrationDbContext> _contextMock;
-        private readonly Mock<IGrupoDAO> _serviceMock;
+        private readonly Mock<IGrupoDAO> _servicesMock;
+
+
+
 
         public GrupoDAOTest()
         {
             var faker = new Faker();
             _contextMock = new Mock<IMigrationDbContext>();
-            _dao = new GrupoDAO(_contextMock.Object);
-            _serviceMock = new Mock<IGrupoDAO>();
+            var _logger = new NullLogger<GrupoDAO>();
+            var _mapper = ConfigurarAutoMapper();
+            _dao = new GrupoDAO(_mapper, _contextMock.Object, _logger);
+            _servicesMock = new Mock<IGrupoDAO>();
             _contextMock.SetupDbContextData();
         }
 
-        [Fact(DisplayName ="Crear Grupo")]
-        public Task CrearGrupoTest()
+        //Test para crear un grupo
+        [Fact(DisplayName = "Crear un Grupo")]
+        public async Task CrearGrupoTest()
         {
+            
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-
-            var grupo = new Grupo()
+            _contextMock.Setup(e => e.Departamentos.FindAsync(It.IsAny<int>()))
+            .ReturnsAsync(new Departamento()
             {
                 id = 1,
-                nombre = "Grupo5",
+                nombre = "Prueba",
+            });
+            var Grupo = new Grupo()
+            {
+                id = 1,
+                nombre = "Nueva",
                 departamentoid = 1
             };
 
-            var result = _dao.AgregarGrupo(grupo);
+            var result = await _dao.AgregarGrupoDAO(Grupo);
 
-           Assert.IsType<GrupoDTO>(result);
-            return Task.CompletedTask;
-        }
-        [Fact(DisplayName ="Valida create Grupo con excepcion")]
-
-        public Task CrearGrupoExceptionTest()
-        {
-            _contextMock.Setup(x => x.DbContext.SaveChanges()).Throws(new DbUpdateConcurrencyException());
-            var grupo = new Grupo();
-
-            Assert.Throws<NullReferenceException>(() => _dao.ActualizarGrupo(null!));
-            return Task.CompletedTask;                        
+            Assert.IsType<GrupoDTO>(result);
         }
 
-         [Fact(DisplayName ="Consultar Lista de Grupo")]
-        public Task ConsultarGrupoTest()
+        //Test para cuando el departamento del grupo no existe
+        [Fact(DisplayName = "El departamento no existe")]
+        public async Task DepartamentoNoExisteTest()
         {
-            List<GrupoDTO> listaDto = _dao.ConsultarGrupo();
-                
-                var result = listaDto;
-
-            Assert.IsType<List<GrupoDTO>>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Validar consulta lista Grupo excepcion")]
-        public Task ConsultarGrupoExceptionTest()
-        {
-            _contextMock.Setup(c => c.Grupo).Throws(new Exception());
-
-            Assert.Throws<Exception>(() => _dao!.ConsultarGrupo());
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Valida modificacion Grupo")]
-        public Task ActualizarGrupoTest()
-        {
+            
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-
-            var grupo = new Grupo()
+            _contextMock.Setup(e => e.Departamentos.FindAsync(It.IsAny<int>()))
+            .ReturnsAsync(null as Departamento);
+            var Grupo = new Grupo()
             {
                 id = 1,
-                nombre = "Grupo5",
-                departamentoid = 1                
+                nombre = "Nueva",
+                departamentoid = 4
             };
 
-            var result = _dao.ActualizarGrupo(grupo);
-
-            Assert.IsType<GrupoDTO>(result);
-            return Task.CompletedTask;
+            await Assert.ThrowsAsync<GrupoException>(() => _dao.AgregarGrupoDAO(Grupo));
         }
 
-        [Fact(DisplayName = "Valida Actualizar Grupo excepcion")]
-        public Task ActualizarGrupoTestException()
+        //Test para crear un grupo con Exception
+        [Fact(DisplayName = "Crear Grupo con excepcion")]
+        public async Task CrearGrupoExcepcionTest()
         {
-            _serviceMock.Setup(c => c.ActualizarGrupo(It.IsAny<Grupo>()))
-            .Throws(new Exception());
+            
+            _contextMock.Setup(e => e.Departamentos.FindAsync(It.IsAny<int>()))
+            .ReturnsAsync(new Departamento()
+            {
+                id = 1,
+                nombre = "Prueba"
+            });
+            
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new DbUpdateException());
 
-
-            Assert.Throws<NullReferenceException>(() => _dao.ActualizarGrupo(null!));
-            return Task.CompletedTask;
+            await Assert.ThrowsAsync<GrupoException>(() => _dao!.AgregarGrupoDAO(new Grupo()));
         }
 
-        [Fact(DisplayName = "Valida Eliminar Grupo")]
-        public Task EliminarGrupoTest()
+        //Test para consultar todos los grupos
+        [Fact(DisplayName = "Consultar lista Grupos")]
+        public async Task ConsultarListGruposTest()
         {
+
+            var result = await _dao.ObtenerGruposDAO();
+
+            Assert.IsType<List<GrupoResponseDTO>>(result);
+        }
+
+        //Test para consultar todos los grupos con Exception
+        [Fact(DisplayName = "Consultar lista Grupos con Excepcion")]
+        public async Task ConsultarListGruposTestException()
+        {
+            
+            _contextMock.Setup(c => c.Grupo).Throws(new Exception());
+
+            await Assert.ThrowsAsync<GrupoException>(() => _dao.ObtenerGruposDAO());
+        }
+
+        //Test para consultar un grupo mediante su ID
+        [Fact(DisplayName = "Consultar Grupo por Id")]
+        public async Task ConsultarGrupoIdTest()
+        {
+            
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>()))
+            .ReturnsAsync(It.IsAny<Grupo>());
+
+
+            var id = 1;
+            
+            var result = await _dao.ObtenerGrupoByIdDAO(id);
+
+
+            Assert.IsType<GrupoResponseDTO>(result);
+            Assert.Equal(id, result.id);
+        }
+
+        //Test para cuando el Grupo al que buscamos mediante su ID no existe
+        [Fact(DisplayName = "Consultar Grupo por Id que no existe")]
+        public async Task ConsultarGrupoIdNoExisteTest()
+        {
+            
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Grupo);
+            var id = 4;
+            
+            await Assert.ThrowsAsync<GrupoException>(() => _dao.ObtenerGrupoByIdDAO(id));
+        }
+
+        //Test para consultar un grupo mediante su ID con exception
+        [Fact(DisplayName = "Consultar Grupo por Id con Excepcion")]
+        public async Task ConsultarGrupoIdExcepcionTest()
+        {
+           
+            _servicesMock.Setup(c => c.ObtenerGrupoByIdDAO(It.IsAny<int>()))
+                 .Throws(new Exception());
+
+
+            await Assert.ThrowsAsync<GrupoException>(() => _dao.ObtenerGrupoByIdDAO(-1));
+        }
+
+        //Test para actualizar un grupo
+        [Fact(DisplayName = "Actualizar un Grupo")]
+        public async Task ActualizarGrupoTest()
+        {
+            
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
-
-            var result = _dao.EliminarGrupo(1);
-
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(new Grupo()
+            {
+                id = 1,
+                nombre = "Prueba",
+                departamentoid = 1
+            });
+            _contextMock.Setup(e => e.Departamentos.FindAsync(It.IsAny<int>())).ReturnsAsync(new Departamento()
+            {
+                id = 1,
+                nombre = "Prueba"
+            });
+            var Grupo = new Grupo()
+            {
+                id = 1,
+                nombre = "Test",
+                departamentoid = 1
+            };
+            
+            var result = await _dao.ActualizarGrupoDAO(Grupo, Grupo.id);
+            
             Assert.IsType<GrupoDTO>(result);
-            return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Valida eliminar Grupo excepcion")]
-        public Task EliminarGrupoTestException()
+        //Test para actualizar un grupo con exception
+        [Fact(DisplayName = "Actualizar Grupo con excepcion")]
+        public async Task ActualizarGrupoExcepcionTest()
         {
-            _serviceMock.Setup(c => c.EliminarGrupo(It.IsAny<int>()))
-             .Throws(new Exception());
+            
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(new Grupo()
+            {
+                id = 1,
+                nombre = "Prueba",
+                departamentoid = 1
+            });
+            _contextMock.Setup(e => e.Departamentos.FindAsync(It.IsAny<int>())).ReturnsAsync(new Departamento()
+            {
+                id = 1,
+                nombre = "Prueba"
+            });
+            
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new DbUpdateException());
 
-            Assert.Throws<Exception>(() => _dao.EliminarGrupo(-1));
-            return Task.CompletedTask;
+            await Assert.ThrowsAsync<GrupoException>(() => _dao!.ActualizarGrupoDAO(new Grupo(), 1));
         }
 
-       
+        //Test para cuando no se encuentra el grupo que se desea actualizar
+        [Fact(DisplayName = "Grupo no encontrado para actualizar")]
+        public async Task ActualizarGrupoNoEncontradoTest()
+        {
+            
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Grupo);
+            Grupo grupo = new Grupo();
+            
+            //var result = await _dao.ActualizarGrupoDAO(grupo, grupo.id);
+            
+            await Assert.ThrowsAsync<GrupoException>(() => _dao.ActualizarGrupoDAO(grupo, grupo.id));
+        }
+
+        //Test para eliminar un grupo
+        [Fact(DisplayName = "Eliminar Grupo")]
+        public async Task EliminarGrupoTest()
+        {
+            
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(new Grupo()
+            {
+                id = 1,
+                nombre = "Prueba",
+                departamentoid = 1
+            });
+            Boolean expected = true;
+            var id = 1;
+            
+            Boolean result = await _dao.EliminarGrupoDAO(id);
+            
+            Assert.Equal<Boolean>(expected, result);
+        }
+
+        //Test para eliminar un grupo con exception
+        [Fact(DisplayName = "Eliminar Grupo con excepcion")]
+        public async Task EliminarGrupoExcepcionTest()
+        {
+            
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(new Grupo()
+            {
+                id = 1,
+                nombre = "Prueba",
+                departamentoid = 1
+            });
+            
+            _contextMock.Setup(x => x.DbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new DbUpdateException());
+
+            
+            await Assert.ThrowsAsync<GrupoException>(() => _dao!.EliminarGrupoDAO(1));
+        }
+
+        //Test para cuando no se encuentra el grupo que se desea eliminar
+        [Fact(DisplayName = "Grupo no encontrado para eliminar")]
+        public async Task EliminarGrupoNoEncontradoTest()
+        {
+            
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Grupo);
+            var id = 4;
+            Boolean expected = false;
+            Boolean result = await _dao.EliminarGrupoDAO(id);
+            
+            Assert.Equal<Boolean>(expected, result);
+        }
+
+
+
     }
 }

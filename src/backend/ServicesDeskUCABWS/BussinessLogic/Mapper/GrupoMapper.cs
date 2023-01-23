@@ -1,29 +1,16 @@
-﻿using ServicesDeskUCABWS.Persistence.Entity;
+﻿using AutoMapper;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
-
+using ServicesDeskUCABWS.Persistence.Entity;
 
 namespace ServicesDeskUCABWS.BussinessLogic.Mapper
 {
-    public class GrupoMapper
+    public class GrupoMapper : Profile
     {
-        public static GrupoDTO EnityToDto(Grupo grupo)
+        public GrupoMapper()
         {
-            return new GrupoDTO()
-            {
-                id = grupo.id,
-                nombre = grupo.nombre,  
-                departamentoid = grupo.departamentoid
-            };
+            CreateMap<Grupo, GrupoDTO>();
+            CreateMap<GrupoDTO, Grupo>();
+            CreateMap<GrupoCreateDTO, Grupo>();
         }
-        public static Grupo DtoToEntity(GrupoDTO dto)
-        {
-            return new Grupo()
-            {
-                id = dto.id,
-                nombre = dto.nombre,
-                departamentoid = dto.departamentoid
-            };
-        }
-
     }
 }

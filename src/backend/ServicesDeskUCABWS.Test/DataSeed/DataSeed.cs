@@ -14,7 +14,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<Categoria>> mockSetCategorias = new Mock<DbSet<Categoria>>();
         public static Mock<DbSet<Prioridad>> mockSetPrioridades = new Mock<DbSet<Prioridad>>();
         public static Mock<DbSet<Departamento>> mockSetDepartamentos = new Mock<DbSet<Departamento>>();
-        public static Mock<DbSet<Grupo>>mockSetGrupo = new Mock<DbSet<Grupo>>();
+        public static Mock<DbSet<Grupo>> mockSetGrupo = new Mock<DbSet<Grupo>>();
         public static Mock<DbSet<Usuario>> mockSetUsuarios = new Mock<DbSet<Usuario>>();
         public static Mock<DbSet<Cargo>> mockSetCargos = new Mock<DbSet<Cargo>>();
         public static Mock<DbSet<Etiqueta>> mockSetEtiquetas = new Mock<DbSet<Etiqueta>>();
@@ -24,6 +24,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
         public static Mock<DbSet<ModeloJerarquico>> mockSetModeloJerarquico = new Mock<DbSet<ModeloJerarquico>>();
         public static Mock<DbSet<FlujoAprobacion>> mockSetFlujoAprobacion = new Mock<DbSet<FlujoAprobacion>>();
         public static Mock<DbSet<Estado>> mockSetEstados = new Mock<DbSet<Estado>>();
+        public static Mock<DbSet<TickectsRelacionados>> mockSetRelacionados = new Mock<DbSet<TickectsRelacionados>>();
+
         public static void SetupDbContextData(this Mock<IMigrationDbContext> _mockContext)
         {
             var hash = new HMACSHA512();
@@ -33,15 +35,18 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new TipoCargo
                 {
                     id = 1,
-                    nombre = "Prueba"
+                    nombre = "Prueba",
+                    Jeraruia = new List<ModeloJerarquicoCargos>()
                 }, new TipoCargo
                 {
                     id = 2,
-                    nombre = "prueba"
+                    nombre = "prueba",
+                    Jeraruia = new List<ModeloJerarquicoCargos>()
                 }, new TipoCargo
                 {
                     id = 3,
-                    nombre = "Junior"
+                    nombre = "Junior",
+                    Jeraruia = new List<ModeloJerarquicoCargos>()
                 }
             };
             //ListCategoria
@@ -86,132 +91,114 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             };
             //Departamento
             var requestsDepartamentos = new List<Departamento>
-            {
-                new Departamento
-                {
-                    id = 1,
-                    nombre = "departamento1",
-                    Usuarios = new List<Usuario>()
-                }, new Departamento
-                {
-                    id = 2,
-                    nombre = "departamento2",
-                    Usuarios = new List<Usuario>()
-                }, new Departamento
-                {
-                    id = 3,
-                    nombre = "departamento3",
-                    Usuarios = new List<Usuario>()
-                }
-            };
+             {
+                 new Departamento
+                 {
+                     id = 1,
+                     nombre = "departamento1",
+                     Tickets = new List<Ticket>(),
+                     Grupos = new List<Grupo>()
+                 }, new Departamento
+                 {
+                     id = 2,
+                     nombre = "departamento2",
+                     Tickets = new List<Ticket>(),
+                     Grupos = new List<Grupo>()
+                 }, new Departamento
+                 {
+                     id = 3,
+                     nombre = "departamento3",
+                     Tickets = new List<Ticket>(),
+                     Grupos = new List<Grupo>()
+                 }
+             };
             //Grupo
             var requestsGrupo = new List<Grupo>
-            {
-                new Grupo
-                {
-                    id=1,
-                    nombre = "Grupo1",
-                    departamentoid =1,
-                },
-                new Grupo
-                {
-                    id=2,
-                    nombre = "Grupo2",
-                    departamentoid =2,
-                },
-                new Grupo
-                {
-                    id=3,
-                    nombre = "Grupo3",
-                    departamentoid =3,
-                }
-            };
-            //Usuario
-            var requestsUsuarios = new List<Usuario>
-            {
-                new Cliente
-                {
-                    id=1,
-                    email="prueba@gmail.com",
-                    cargo= new Cargo{ id=1 },
-                    Departamento = new Departamento { id=1 },
-                    VerificationToken = "prueba",
-                    VerifiedAt = new DateTime(),
-                    PasswordResetToken=Guid.NewGuid().ToString(),
-                    ResetTokenExpires= new DateTime(),
-                    ticketsasignados = new List<Ticket>(),
-                    ticketscreados= new List<Ticket>(),
-                    Flujo = new List<FlujoAprobacion>()
-                }
-            };
-            //Empleados
-            var requestsEmpleados = new List<Empleado>
-            {
-                new Empleado
-                {
-                    id=1,
-                    email="prueba@gmail.com",
-                    cargo= new Cargo{ id=1 },
-                    Departamento = new Departamento { id=1 },
-                    VerificationToken = "prueba",
-                    VerifiedAt = new DateTime(),
-                    PasswordResetToken=Guid.NewGuid().ToString(),
-                    ResetTokenExpires= new DateTime(),
-                    ticketsasignados = new List<Ticket>(),
-                    ticketscreados= new List<Ticket>(),
-                    Flujo = new List<FlujoAprobacion>()
-                },
-                new Empleado
-                {
-                    id=2,
-                    email="prueba2@gmail.com",
-                    cargo= new Cargo{ id=1 },
-                    Departamento = new Departamento { id=1 },
-                    VerificationToken = "prueba",
-                    VerifiedAt = new DateTime(),
-                    PasswordResetToken=Guid.NewGuid().ToString(),
-                    ResetTokenExpires= new DateTime(),
-                    ticketsasignados = new List<Ticket>(),
-                    ticketscreados= new List<Ticket>(),
-                    Flujo = new List<FlujoAprobacion>()
-                }
-            };
-            //Administradores
-            var requestsAdmins = new List<administrador>
-            {
-                new administrador
-                {
-                    id=1,
-                    email="prueba@gmail.com",
-                    cargo= new Cargo{ id=1 },
-                    Departamento = new Departamento { id=1 },
-                    VerificationToken = "prueba",
-                    VerifiedAt = new DateTime(),
-                    PasswordResetToken=Guid.NewGuid().ToString(),
-                    ResetTokenExpires= new DateTime(),
-                    ticketsasignados = new List<Ticket>(),
-                    ticketscreados= new List<Ticket>(),
-                    Flujo = new List<FlujoAprobacion>()
-                }
-            };
-            //Clientes
-            var requestsClientes = new List<Cliente>
-            {
-                new Cliente
-                {
-                    id=1,
-                    email="prueba@gmail.com",
-                    cargo= new Cargo{ id=1 },
-                    Departamento = new Departamento { id=1 },
-                    VerificationToken = "prueba",
-                    VerifiedAt = new DateTime(),
-                    PasswordResetToken=Guid.NewGuid().ToString(),
-                    ResetTokenExpires= new DateTime(),
-                    ticketsasignados = new List<Ticket>(),
-                    ticketscreados= new List<Ticket>(),
-                    Flujo = new List<FlujoAprobacion>()
-                }
-            };
+             {
+                 new Grupo
+                 {
+                     id=1,
+                     nombre = "grupo1",
+                     departamentoid = 1,
+                     departamento = requestsDepartamentos[0],
+                     usuarios = new List<Usuario>()
+                 },
+                 new Grupo
+                 {
+                     id=2,
+                     nombre = "grupo2",
+                     departamentoid = 2,
+                     departamento = new Departamento(),
+                     usuarios = new List<Usuario>()
+                 },
+                 new Grupo
+                 {
+                     id=3,
+                     nombre = "grupo3",
+                     departamentoid = 3,
+                     departamento = new Departamento(),
+                     usuarios = new List<Usuario>()
+                 }
+             };
+            //usuario
+            var requestsusuarios = new List<Usuario>
+             {
+                 new Cliente
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                     Grupo = requestsGrupo[0],
+                 }
+             };
+            //empleados
+            var requestsempleados = new List<Empleado>
+             {
+                 new Empleado
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                 },
+                 new Empleado
+                 {
+                     id=2,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                 }
+             };
+            //administradores
+            var requestsadmins = new List<administrador>
+             {
+                 new administrador
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                 }
+             };
+            //clientes
+            var requestsclientes = new List<Cliente>
+             {
+                 new Cliente
+                 {
+                     id=1,
+                     email="prueba@gmail.com",
+                     cargo= new Cargo{ id=1 },
+                     ticketsasignados = new List<Ticket>(),
+                     ticketscreados= new List<Ticket>(),
+                     nombre="Prueba",
+                     Flujo = new List<FlujoAprobacion>()
+                 }
+             };
             //Cargos
             var requestsCargos = new List<Cargo>
             {
@@ -258,7 +245,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     id = 1,
                     titulo = "Plantilla1",
                     cuerpo = "Cuerpo1",
-                    tipo = "Tipo1",
+                    EstadoId = 1,
+                    estado = new Estado()
                     //notifications = new List<Notification>()
                 },
                 new Plantilla
@@ -266,7 +254,8 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     id = 2,
                     titulo = "Plantilla2",
                     cuerpo = "Cuerpo2",
-                    tipo = "Tipo2",
+                    EstadoId = 2,
+                    estado = new Estado()
                     //notifications = new List<Notification>()
                 }
             };
@@ -275,19 +264,27 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             {
                 new ModeloParalelo
                 {
-                    paraid=1,
-                    cantidadAprobaciones=2,
-                    categoriaId=1,
-                    nombre="prueba",
-                    categoria= new Categoria()
+                    id = 1,
+                    nombre = "Prueba Modelo",
+                    categoriaid = 1,
+                    categoria = new Categoria()
+                    {
+                        id = 1,
+                        nombre = "Guardado"
+                    },
+                    cantidaddeaprobacion = 5
                 },
                 new ModeloParalelo
                 {
-                    paraid=2,
-                    cantidadAprobaciones=3,
-                    categoriaId=1,
-                    nombre="prueba2",
-                    categoria= new Categoria()
+                    id = 2,
+                    nombre = "Prueba Modelo",
+                    categoriaid = 3,
+                    categoria = new Categoria()
+                    {
+                        id = 4,
+                        nombre = "Rechazado"
+                    },
+                    cantidaddeaprobacion = 5
                 }
             };
             //Estado
@@ -296,19 +293,19 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                 new Estado
                 {
                     id=1,
-                    nombre="Estado1",
+                    nombre="En espera",
                     EtiquetaId=1,
                     etiqueta= new Etiqueta(),
-                    //notification = new Notification(),
+                    plantillas = new List<Plantilla>(),
                     tickets = new List<Ticket>()
                 },
                 new Estado
                 {
                     id=2,
-                    nombre="Estado2",
-                    EtiquetaId=2,
+                    nombre="En proceso",
+                    EtiquetaId=1,
                     etiqueta= new Etiqueta(),
-                    //notification = new Notification(),
+                    plantillas = new List<Plantilla>(),
                     tickets = new List<Ticket>()
                 }
             };
@@ -326,7 +323,9 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Estado = new Estado(),
                     prioridad = new Prioridad(),
                     categoria = new Categoria(),
-                    FlujoAprobacion = new FlujoAprobacion()
+                    FlujoAprobacion = new FlujoAprobacion(),
+                    TickectsRelacionadosPadre = new List<TickectsRelacionados>(),
+                    TickectsRelacionadosHijos = new List<TickectsRelacionados>()
                 },
                 new Ticket
                 {
@@ -339,63 +338,98 @@ namespace ServicesDeskUCABWS.Test.DataSeed
                     Estado = new Estado(),
                     prioridad = new Prioridad(),
                     categoria = new Categoria(),
-                    FlujoAprobacion = new FlujoAprobacion()
+                    FlujoAprobacion = new FlujoAprobacion(),
+                    TickectsRelacionadosPadre = new List<TickectsRelacionados>(),
+                    TickectsRelacionadosHijos = new List<TickectsRelacionados>()
                 }
             };
+
+            //TicketsRelacionados
+            var requestsRelacionados = new List<TickectsRelacionados>
+            {
+                new TickectsRelacionados
+                {
+                    Ticketid = It.IsAny<int>(),
+                    TicketRelacionadoid = It.IsAny<int>()
+                }, new TickectsRelacionados
+                {
+                    Ticketid = It.IsAny<int>(),
+                    TicketRelacionadoid = It.IsAny<int>()
+                }
+            };
+
             //ModeloJerarquico
             var requestsModeloJerarquico = new List<ModeloJerarquico>
             {
                 new ModeloJerarquico
                 {
-                    Id=1,
-                    Nombre = "paralelo1",
-                    orden = new List<TipoCargo>(),
-                    CategoriaId = 1,
-                    categoria= new Categoria(),
-                    flujoAprobacion = new FlujoAprobacion()
+                   id = 1,
+                   nombre = "Prueba Modelo",
+                   categoriaid = 1,
+                   categoria = new Categoria()
+                   {
+                     id = 1,
+                     nombre = "Guardado"
+                   },
+                   Jeraruia = new List<ModeloJerarquicoCargos>()
                 },
                 new ModeloJerarquico
                 {
-                    Id=2,
-                    Nombre = "paralelo1",
-                    orden = new List<TipoCargo>(),
-                    CategoriaId = 2,
-                    categoria= new Categoria(),
-                    flujoAprobacion = new FlujoAprobacion()
-                }
-            };
-            //ModeloJerarquico
-            var requestsFlujoAprobacion = new List<FlujoAprobacion>
-            {
-                new FlujoAprobacion
-                {
-                    id = 1,
-                    ticketid = 1,
-                    modelojerarquicoid = 1,
-                    paraleloid = 1,
-                    usuario = It.IsAny<Usuario>(),
-                    secuencia = 1,
-                    status = Status.Pendiente,
-                    modeloJerarquico = new ModeloJerarquico(),
-                    modeloParalelo = new ModeloParalelo(),
-                    ticket = new Ticket()
-                },
-                new FlujoAprobacion
-                {
-                    id = 2,
-                    ticketid = 2,
-                    modelojerarquicoid = 2,
-                    paraleloid = 2,
-                    usuario = It.IsAny<Usuario>(),
-                    secuencia = 1,
-                    status = Status.Aprobado,
-                    modeloJerarquico = new ModeloJerarquico(),
-                    modeloParalelo = new ModeloParalelo(),
-                    ticket = new Ticket()
-                }
-            };
+                   id = 2,
+                   nombre = "Prueba Modelo",
+                   categoriaid = 3,
+                   categoria = new Categoria()
+                   {
+                     id = 4,
+                     nombre = "Rechazado"
+                   },
+                   Jeraruia = new List<ModeloJerarquicoCargos>()
+                   {
+                       new ModeloJerarquicoCargos
+                       {
+                           Id = It.IsAny<int>(),
+                           orden = It.IsAny<int>(),
+                           modelojerarquicoid = It.IsAny<int>(),
+                           jerarquico = new ModeloJerarquico(),
+                           TipoCargoid = It.IsAny<int>(),
+                           TipoCargo = new TipoCargo()
+                       }
 
-            //TipoCargo DataSeed
+                   }
+                }
+            };
+            // //ModeloJerarquico
+            // var requestsFlujoAprobacion = new List<FlujoAprobacion>
+            // {
+            //     new FlujoAprobacion
+            //     {
+            //         id = 1,
+            //         ticketid = 1,
+            //         modelojerarquicoid = 1,
+            //         paraleloid = 1,
+            //         usuario = It.IsAny<Usuario>(),
+            //         secuencia = 1,
+            //         status = Status.Pendiente,
+            //         modeloJerarquico = new ModeloJerarquico(),
+            //         modeloParalelo = new ModeloParalelo(),
+            //         ticket = new Ticket()
+            //     },
+            //     new FlujoAprobacion
+            //     {
+            //         id = 2,
+            //         ticketid = 2,
+            //         modelojerarquicoid = 2,
+            //         paraleloid = 2,
+            //         usuario = It.IsAny<Usuario>(),
+            //         secuencia = 1,
+            //         status = Status.Aprobado,
+            //         modeloJerarquico = new ModeloJerarquico(),
+            //         modeloParalelo = new ModeloParalelo(),
+            //         ticket = new Ticket()
+            //     }
+            // };
+
+            //     //TipoCargo DataSeed
             _mockContext.Setup(t => t.TipoCargos).Returns(mockSetTCargo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.TipoCargos).Returns(requests.AsQueryable().BuildMockDbSet().Object);
@@ -416,12 +450,12 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Grupo).Returns(requestsGrupo.AsQueryable().BuildMockDbSet().Object);
             //Usuario DataSeed
-            _mockContext.Setup(t => t.Usuario).Returns(mockSetUsuarios.Object);
-            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            _mockContext.Setup(c => c.Usuario).Returns(requestsUsuarios.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(c => c.Empleados).Returns(requestsEmpleados.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(c => c.Administradores).Returns(requestsAdmins.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(c => c.clientes).Returns(requestsClientes.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(T => T.Usuario).Returns(mockSetUsuarios.Object);
+            _mockContext.Setup(T => T.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(C => C.Usuario).Returns(requestsusuarios.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(C => C.Empleados).Returns(requestsempleados.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(C => C.Administradores).Returns(requestsadmins.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(c => c.clientes).Returns(requestsclientes.AsQueryable().BuildMockDbSet().Object);
             //Cargos DataSeed
             _mockContext.Setup(t => t.Cargos).Returns(mockSetCargos.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -440,7 +474,7 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.ModeloParalelos).Returns(mockSetModeloParalelo.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloParalelos).Returns(requestsModeloParalelo.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(e => e.ModeloParalelos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloParalelo.Where(x => x.paraid == i).Single());
+            _mockContext.Setup(e => e.ModeloParalelos.Find(It.IsAny<int>())).Returns((int i) => requestsModeloParalelo.Where(x => x.id == i).Single());
             //Estados DataSeed
             _mockContext.Setup(t => t.Estados).Returns(mockSetEstados.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
@@ -450,17 +484,25 @@ namespace ServicesDeskUCABWS.Test.DataSeed
             _mockContext.Setup(t => t.Tickets).Returns(mockSetTicket.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.Tickets).Returns(requestsTickets.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.Tickets.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsTickets.Where(x => x.id == i).Single());
+            //TicketsRelacionados DataSeed
+            _mockContext.Setup(t => t.TickectsRelacionados).Returns(mockSetRelacionados.Object);
+            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            _mockContext.Setup(c => c.TickectsRelacionados).Returns(requestsRelacionados.AsQueryable().BuildMockDbSet().Object);
+            _mockContext.Setup(e => e.TickectsRelacionados.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsRelacionados.Where(x => x.Ticketid == i).Single());
+
             //ModeloJerarquico DataSeed
-            _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);            
+            _mockContext.Setup(t => t.ModeloJerarquicos).Returns(mockSetModeloJerarquico.Object);
             _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
             _mockContext.Setup(c => c.ModeloJerarquicos).Returns(requestsModeloJerarquico.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.Id == i).Single());
-            
-            _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
-            _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
-            _mockContext.Setup(c => c.FlujoAprobaciones).Returns(requestsFlujoAprobacion.AsQueryable().BuildMockDbSet().Object);
-            _mockContext.Setup(e => e.FlujoAprobaciones.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsFlujoAprobacion.Where(x => x.id == i).Single());
+            _mockContext.Setup(e => e.ModeloJerarquicos.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsModeloJerarquico.Where(x => x.id == i).Single());
 
+            //     _mockContext.Setup(t => t.FlujoAprobaciones).Returns(mockSetFlujoAprobacion.Object);
+            //     _mockContext.Setup(t => t.DbContext.SaveChanges()).Returns(1);
+            //     _mockContext.Setup(c => c.FlujoAprobaciones).Returns(requestsFlujoAprobacion.AsQueryable().BuildMockDbSet().Object);
+            //     _mockContext.Setup(e => e.FlujoAprobaciones.FindAsync(It.IsAny<int>())).ReturnsAsync((int i) => requestsFlujoAprobacion.Where(x => x.id == i).Single());
+
+            // }
         }
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Security.Cryptography;
 using ServicesDeskUCABWS.Persistence.DAO.Implementations;
+using ServicesDeskUCABWS.Exceptions;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
 
 namespace ServicesDeskUCABWS.Controllers
 {
@@ -14,6 +16,7 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("/Usuario")]
     public class UsuarioController : Controller
     {
+        //DECLARACION DE VARIABLES
         public readonly IUsuarioDao _UsuarioRepository;
 
         public readonly ICargoDAO _CargoRepository;
@@ -23,8 +26,8 @@ namespace ServicesDeskUCABWS.Controllers
         private readonly IUsuarioDao _dao;
         public static Usuario mapeado;
 
-   
 
+        //CONSTRUCTOR
         public UsuarioController(ILogger<UsuarioController> log,IUsuarioDao usuarioRepository, ICargoDAO cargoRepository, IMapper mapper, IEmailDao emailRepository)
         {
             this._log = log;
@@ -34,234 +37,172 @@ namespace ServicesDeskUCABWS.Controllers
             _CargoRepository = cargoRepository;
         }
 
-        [HttpGet]
+
+        // ACÁ SE BUSCAN TODOS LOS EMPLEADOS QUE TENGA UN DEPARTAMENTO
+        [HttpGet("Empleados/Departamento/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
-        public IActionResult GetCollection()
+        public ApplicationResponse<ICollection<UsuarioDTO>> GetUsuarioDepartamento([FromRoute] int id)
         {
-            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetUsuarios());
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(usuarios);
-        }
-
-     
-
-        [HttpGet("Administradores")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
-        public IActionResult GetCollectionA()
-        {
-            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetAdministradores());
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(usuarios);
-        }
-         [HttpGet("Empleados")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
-        public IActionResult GetCollectionE()
-        {
-            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetEmpleados());
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(usuarios);
-        }
-           [HttpGet("Clientes")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
-        public IActionResult GetCollectionC()
-        {
-            var usuarios = _mapper.Map<List<UsuarioDTO>>(_UsuarioRepository.GetClientes());
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(usuarios);
-        }
-
-         [HttpGet("Empleados/Departamento/{id}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UsuarioDTO>))]
-        public IActionResult GetUsuarioDepartamento([FromRoute] int id)
-        {
-            var usuarios = _UsuarioRepository.GetUsuariosPorDepartamento(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(usuarios);
-        }
-
-       
-        [HttpPost("Registrar")]
-        public IActionResult CreateUsuario([FromQuery] int cargoid,[FromQuery] int Departamentoid, [FromBody] RegistroDTO usuario, [FromQuery] int tipousuario)
-        {
-            if (usuario == null)
-                return BadRequest(ModelState);
-
-            var usuariocreate = _UsuarioRepository.GetUsuarioTrimToUpper(usuario);
-            if (usuariocreate != null)
+            var response = new ApplicationResponse<ICollection<UsuarioDTO>>();
+             try{
+             response.Data =_UsuarioRepository.GetUsuariosPorDepartamento(id);
+           
+             } catch (UsuarioExepcion ex)
             {
-                ModelState.AddModelError("", "Usuario ya exite");
-                return StatusCode(422, ModelState);
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString();
             }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            //administrador
-            if (tipousuario == 1)
+            return response;
+           
+        }
+
+        //ENDPOINT PARA CREAR UN EMPLEADO
+        [HttpPost("Registrar")]
+        public ApplicationResponse<string> CreateUsuario([FromBody] RegistroDTO usuario)
+        {
+            var response = new ApplicationResponse<string>();
+             try
             {
-                 var clave = usuario.Password;
-                 var usuarioMap = _mapper.Map<administrador>(usuario);
-                 mapeado = _UsuarioRepository.CreatePasswordHash(usuarioMap, clave);
-                 
+            if (usuario.tipousuario == 1)
+            {
+                 mapeado = _UsuarioRepository.CreatePasswordHash(_mapper.Map<administrador>(usuario), usuario.Password);
             }
             //empleado
-            else if (tipousuario == 2)
+            else if (usuario.tipousuario == 2)
             {
-                var clave = usuario.Password;
-                var usuarioMap = _mapper.Map<Empleado>(usuario);
-                mapeado = _UsuarioRepository.CreatePasswordHash(usuarioMap, clave);
+              mapeado = _UsuarioRepository.CreatePasswordHash(_mapper.Map<Empleado>(usuario), usuario.Password);
 
             }
-            else if (tipousuario == 3)
+            else if (usuario.tipousuario == 3)
             {
-                var clave = usuario.Password;
-                var usuarioMap = _mapper.Map<Cliente>(usuario);
-                mapeado = _UsuarioRepository.CreatePasswordHash(usuarioMap, clave);
-                cargoid = 0;
-            }
-            else
-            {
-                ModelState.AddModelError("", "Tipo de usuario no existe");
-                return StatusCode(422, ModelState);
-            }
+                mapeado = _UsuarioRepository.CreatePasswordHash(_mapper.Map<Cliente>(usuario), usuario.Password);
 
-
+            }
             mapeado.VerificationToken = CreateRamdonToken();
-
-
-
-            if (!_UsuarioRepository.CreateUsuario(mapeado, cargoid, Departamentoid))
-            {
-                ModelState.AddModelError("", "Error al guardar");
-                return StatusCode(500, ModelState);
-            }
+            response.Data = _UsuarioRepository.CreateUsuario(mapeado,usuario.cargoid,usuario.GrupoId);
             var email = new EmailDTO();
             email.para = mapeado.email;
             email.Cuerpo = mapeado.VerificationToken;
             email.asunto = "Token de verificacion";
             _emailRepository.SendEmail(email);
-            return Ok("Usuario Creado");
+                //ACÁ SE ENVÍA UN TOKEN AL CORREO CON EL QUE SE ESTÁ REGISTRANDO EL USUARIO PARA CONFIRMAR EL REGISTRO
+            }
+            catch (UsuarioExepcion ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.Excepcion.ToString() ;
+            }
+            return response;
         }
 
+        //ENDPOINT PARA QUE UN EMPLEADO PUEDA LOGGEARSE AL SISTEMA
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] UserLoginDTO usuario)
+        public ApplicationResponse<UsuarioDTO> Login([FromBody] UserLoginDTO usuario)
         {
-            if (usuario == null)
-                return BadRequest(ModelState);
-
-            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.email!.Trim().ToUpper() == usuario.Email!.Trim().ToUpper()).FirstOrDefault();
-            if (usuariocreated == null)
+            var response = new ApplicationResponse<UsuarioDTO>();
+           try{
+           
+            var usuariocreated =_UsuarioRepository.GetUsuario().Where(c => c.email == usuario.Email).FirstOrDefault();
+            if ( usuariocreated ==  null)
             {
-                ModelState.AddModelError("", "Usuario no existe");
-                return StatusCode(422, ModelState);
+                throw new UsuarioExepcion("Ha ocurrido un error el Usuario no existe");
             }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (usuariocreated.VerifiedAt == null)
             {
-                ModelState.AddModelError("", "Usuario no Verificado");
-                return StatusCode(422, ModelState);
+                throw new UsuarioExepcion("Ha ocurrido un error usuario no verificado ");
             }
 
             if (!_UsuarioRepository.VerifyPasswordHash(usuario.Password!, usuariocreated.passwordHash, usuariocreated.passwordSalt))
             {
-                ModelState.AddModelError("", "Contrasena incorrecta");
-                return StatusCode(422, ModelState);
+                throw new UsuarioExepcion("Ha ocurrido un error Contrasena incorrecta ");
             }
-            return Ok(usuariocreated);
+                response.Data = _UsuarioRepository.GetUsuarioPorEmail(usuario.Email);
+            }
+           catch(UsuarioExepcion ex){
+                response.Success = false;
+                response.Message = ex.Mensaje;
+               
+           }
+           return response;
         }
+
+        //ENDPOINT PARA VALIDAR QUE EL TOKEN INGRESADO POR  UN EMPLEADO AL MOMENTO DE REGISTRARSE ES CORRECTO
         [HttpGet("Verificar")]
-        public IActionResult Verificar([FromQuery] string token)
+        public ApplicationResponse<string> Verificar([FromQuery] string token)
         {
-
-
-            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.VerificationToken!.Trim().ToUpper() == token.Trim().ToUpper()).FirstOrDefault();
+            var response = new ApplicationResponse<string>();
+           try{
+           
+            var usuariocreated = _UsuarioRepository.GetUsuario().Where(c => c.VerificationToken == token).FirstOrDefault();
             if (usuariocreated == null)
             {
-                ModelState.AddModelError("", "Token invalido");
-                return StatusCode(422, ModelState);
+                 throw new UsuarioExepcion("Ha ocurrido un error Token Invalido ");
             }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
             usuariocreated.VerifiedAt = DateTime.Now;
-            if (_UsuarioRepository.Save())
-            {
-                return Ok("Usuario Verificado");
-            }
-            return BadRequest(ModelState);
+            response.Data =_UsuarioRepository.UpdateU(usuariocreated);
+           }
+             catch(UsuarioExepcion ex){
+                response.Success = false;
+                response.Message = ex.Mensaje;
+                
+           }
+           return response;
+
 
         }
+        //ENDPOINT PARA QUE UN USUARIO PUEDA REESTABLACER SU CONTRASEÑA DE ACCESO EN CASO DE QUE NO RECUERDE SU CONTRASEÑA
         [HttpGet("olvido-contrasena")]
-        public IActionResult olvidoContrasena([FromQuery] string email)
+        public ApplicationResponse<string> olvidoContrasena([FromQuery] string email)
         {
-
-
-            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(c => c.email == email).FirstOrDefault();
+            var response = new ApplicationResponse<string>();
+           try{
+            var usuariocreated = _UsuarioRepository.GetUsuario().Where(c => c.email == email).FirstOrDefault();
             if (usuariocreated == null)
             {
-                ModelState.AddModelError("", "Usuario no encontrado");
-                return StatusCode(422, ModelState);
+                  throw new UsuarioExepcion("Ha ocurrido un error Usuario no encontrado ");
             }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             usuariocreated.PasswordResetToken = CreateRamdonToken();
             usuariocreated.ResetTokenExpires = DateTime.Now.AddDays(1);
-            if (_UsuarioRepository.Save())
-            {
+            response.Data =_UsuarioRepository.UpdateU(usuariocreated);
             var emailsend = new EmailDTO();
             emailsend.para = usuariocreated.email;
             emailsend.Cuerpo = usuariocreated.PasswordResetToken;
             emailsend.asunto = "Token de reseteo de clave";
             _emailRepository.SendEmail(emailsend);
-                return Ok("Token enviado a su correo");
+                // SE ENVÍA UN NUEVO TOKEN AL CORREO DEL USUARIO PARA QUE SEA CON ESTE QUE SE CONFIRME EL CAMBIO DE CONTRASEÑA
+           } catch(UsuarioExepcion ex){
+                response.Success = false;
+                response.Message = ex.Mensaje;
+           }
+           return response;
             }
-            return BadRequest(ModelState);
-        }
+
+        //ENDPOINT PARA QUE UN USUARIO PUEDA REESTABLACER SU CONTRASEÑA DE ACCESO EN CASO DE QUE NO RECUERDE SU CONTRASEÑA
         [HttpPost("Reset-Password")]
-        public IActionResult ResetPassword([FromBody] ResetPasswordDTO usuario)
-        {
-            if (usuario == null )
-                return BadRequest(ModelState);
-            
-            var usuariocreated = _UsuarioRepository.GetUsuarios().Where(u => u.PasswordResetToken == usuario.token).FirstOrDefault();
-           
+        public ApplicationResponse<string> ResetPassword([FromBody] ResetPasswordDTO usuario)
+        {   
+        var response = new ApplicationResponse<string>();
+           try{       
+            var usuariocreated = _UsuarioRepository.GetUsuario().Where(u => u.PasswordResetToken == usuario.token).FirstOrDefault();
             if (usuariocreated == null || usuariocreated.ResetTokenExpires < DateTime.Now )
             {
-                ModelState.AddModelError("", "Token invalido");
-                return StatusCode(422, ModelState);
+                   throw new UsuarioExepcion("Ha ocurrido un error Token invalido");
             }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             usuariocreated =  _UsuarioRepository.CreatePasswordHash(usuariocreated, usuario.Password);
-           
             usuariocreated.ResetTokenExpires = null;
             usuariocreated.PasswordResetToken = null;
-
-
-            if (_UsuarioRepository.Save())
-            {
-                return Ok("Contrasena cambiada con exito");
-            }else{
-            return BadRequest("ModelState");
+            response.Data =_UsuarioRepository.UpdateU(usuariocreated);
+            }
+            catch(UsuarioExepcion ex){
+                response.Success = false;
+                response.Message =ex.Mensaje;
+           }
+           return response;
             }
            
-        }
-
-  
-
-
+        // ACÁ SE CREA RL TOKEN ALEATOREAMENTE A LOS USUARIOS CUANDO SE REGISTRAN 
         private string? CreateRamdonToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
@@ -269,5 +210,4 @@ namespace ServicesDeskUCABWS.Controllers
 
        
     }
-       
-}
+    }

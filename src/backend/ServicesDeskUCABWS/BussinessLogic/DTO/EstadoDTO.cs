@@ -30,6 +30,15 @@ namespace ServicesDeskUCABWS.BussinessLogic.DTO
     }
 
 
+    public class EstadoResponseDTO
+    {
+        public int id { get; set; }
+        public string? Nombre { get; set; }
+        public int EtiquetaId { get; set; }
+        public string? Etiqueta { get; set; }
+    }
+
+
 
 
 }

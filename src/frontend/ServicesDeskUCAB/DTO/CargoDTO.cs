@@ -7,7 +7,7 @@ namespace ServicesDeskUCAB.DTO
 
         public int id { get; set; }
         [Required(ErrorMessage = "Ingrese un Cargo")]
-        public string? nombre { get; set; }
+        public string nombre { get; set; }
         public int tipoCargoId { get; set; }
     }
 }

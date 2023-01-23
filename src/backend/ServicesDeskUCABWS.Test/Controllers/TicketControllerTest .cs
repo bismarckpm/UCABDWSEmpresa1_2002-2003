@@ -19,6 +19,9 @@ using ServicesDeskUCABWS.Persistence.Database;
 using ServicesDeskUCABWS.Test.DataSeed;
 using Org.BouncyCastle.Crypto.Fpe;
 using TicketDao = ServicesDeskUCABWS.Persistence.DAO.Implementations.TicketDao;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using ServicesDeskUCABWS.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -46,7 +49,48 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor();
         }
 
-            [Fact(DisplayName = "Get Collection Ticket")]
+
+        #region Casos Exitosos
+        [Fact(DisplayName = "Create Ticket")]
+        public Task CreateTicketTest()
+        {
+            _servicesMock.Setup(t => t.AgregarTicketDAO(new TickectCreateDTO()))
+            .Returns(It.IsAny<string>());
+
+            var result = _controller.CreateTicket(new TickectCreateDTO());
+
+            Assert.IsType<ApplicationResponse<string>>(result);
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Get Tickets Mergeados")]
+        public Task GetTicketsMergeadosTest()
+        {
+            _servicesMock.Setup(t => t.TicketsMergeados(1))
+            .Returns(new List<TicketCDTO>());
+
+            var result = _controller.GetTicketMergeados(1);
+
+            Assert.IsType<ApplicationResponse<ICollection<TicketCDTO>>>(result);
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Get Tickets Mergeados")]
+        public Task GetTicketCreadoPorTest()
+        {
+            _servicesMock.Setup(t => t.GetTicketCreadopor(1))
+            .Returns(new List<TicketCDTO>());
+
+            var result = _controller.GetTicketCreado(1);
+
+            Assert.IsType<ApplicationResponse<ICollection<TicketCDTO>>>(result);
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Get Collection Ticket")]
             public Task GetCollectionTicketControllerTest()
             {
                 _servicesMock.Setup(t=>t.GetTickets())
@@ -54,7 +98,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
                 
                 var result = _controller.GetCollection();
                 
-                Assert.IsType<OkObjectResult>(result);
+                Assert.IsType<ApplicationResponse<ICollection<TicketCDTO>>>(result);
                 return Task.CompletedTask;
             }
 
@@ -66,43 +110,20 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
                 var result = _controller.GetTicketasignados(1);
 
-                Assert.IsType<OkObjectResult>(result);
+                Assert.IsType<ApplicationResponse<ICollection<TicketCDTO>>>(result);
                 return Task.CompletedTask;
             }
-
-            [Fact(DisplayName = "Get Tickets por Estado")]
-            public Task GetTicketsPorEstadosControllerTest()
-            {
-                _servicesMock.Setup(t => t.GetTicketporestado(1))
-                .Returns(new List<TicketCDTO>());
-
-                var result = _controller.GetTicketEstados(1);
-
-                Assert.IsType<OkObjectResult>(result);
-                return Task.CompletedTask;
-            }
+        
 
             [Fact(DisplayName = "Get Tickets por Departamento")]
             public Task GetTicketsPorDepartamentoControllerTest()
             {
-                _servicesMock.Setup(t => t.GetTicketsPorDepartamento(1))
-                .Returns(new List<TicketCDTO>());
+                _servicesMock.Setup(t => t.GetTicketsDept(1))
+                 .Returns(new List<TicketCDTO>());
 
-                var result = _controller.GetTicketDepartamento(1);
+                var result = _controller.GetTicketsPorDept(1);
 
-                Assert.IsType<OkObjectResult>(result);
-                return Task.CompletedTask;
-            }
-
-            [Fact(DisplayName = "Get Tickets por Categoria")]
-            public Task GetTicketsPorCategoriaControllerTest()
-            {
-                _servicesMock.Setup(t => t.GetTicketsPorCategoria(1))
-                .Returns(new List<TicketCDTO>());
-
-                var result = _controller.GetTicketPorCategoria(1);
-
-                Assert.IsType<OkObjectResult>(result);
+                Assert.IsType<ApplicationResponse<ICollection<TicketCDTO>>>(result);
                 return Task.CompletedTask;
             }
 
@@ -110,188 +131,264 @@ namespace ServicesDeskUCABWS.Test.Controllers
             public Task GetTicketControllerTest()
             {
                 _servicesMock.Setup(t => t.GetTicket(1))
-                .Returns(new TicketCDTO());
+                .Returns(new TicketCDTO()
+                {
+                    id = It.IsAny<int>(),
+                    idasignad = It.IsAny<int>(),
+                    idestado = It.IsAny<int>(),
+                    idprioridad = It.IsAny<int>(),
+                    idcategoria = It.IsAny<int>(),
+                    nombre = It.IsAny<string>(),
+                    fecha = It.IsAny<DateTime>(),
+                    descripcion = It.IsAny<string>(),
+                    creadopor = It.IsAny<string>(),
+                    asginadoa = It.IsAny<string>(),
+                    prioridad = It.IsAny<string>(),
+                    estado = It.IsAny<string>(),
+                    categoria = It.IsAny<string>(),
+                    departamento = It.IsAny<string>(),
+                    departamentoid = It.IsAny<int>(),
+                });
 
                 var result = _controller.GetTicket(1);
 
-                Assert.IsType<OkObjectResult>(result);
+                Assert.IsType<ApplicationResponse<TicketCDTO>>(result);
                 return Task.CompletedTask;
             }
 
             [Fact(DisplayName = "Update Ticket")]
             public Task UpdateTicketControllerTest()
             {
-                var tk = new TickeUDTO() {
-                    Id = 2,
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
 
+                _servicesMock.Setup(t => t.CambiarEstado(It.IsAny<TickectEstadoDTO>()))
+                .Returns(It.IsAny<string>());
 
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+                var result = _controller.UpdateTickect(1, new TickectEstadoDTO());
 
-                _servicesMock.Setup(r => r.GetTicket(It.IsAny<int>()))
-                .Returns(new TicketCDTO());
-
-                _servicesMock.Setup(t => t.Update(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(true);
-                
-                var result = _controller.UpdateTickect(2, It.IsAny<int>(), It.IsAny<int>(), tk, It.IsAny<int>(), It.IsAny<int>());
-
-                Assert.IsType<OkObjectResult>(result);
+                Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
             }
 
-            [Fact(DisplayName = "Update Ticket Nulo")]
-            public Task UpdateTicketNullControllerTest()
+            [Fact(DisplayName = "Merge Tickets")]
+            public Task MergeTicketsTest()
             {
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+                _servicesMock.Setup(t => t.TikcetsRelacionados(It.IsAny<TicketsRelacionadosDTO>()))
+                .Returns(It.IsAny<string>());
 
-                _servicesMock.Setup(r => r.GetTicket(It.IsAny<int>()))
-                .Returns(new TicketCDTO());
+                var result = _controller.MergeTicket(It.IsAny<TicketsRelacionadosDTO>());
 
-                _servicesMock.Setup(t => t.Update(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(true);
-
-                var result = _controller.UpdateTickect(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), null, It.IsAny<int>(), It.IsAny<int>());
-
-                Assert.IsType<BadRequestObjectResult>(result);
+                Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
             }
 
-        //        PENDING: FORZAR UN VALOR NULO EN GETTICKET(ID)
-            [Fact(DisplayName = "Update Ticket No Existe")]
-            public Task UpdateTicketNoExisteControllerTest()
+            [Fact(DisplayName = "Eliminar Merge Tickets")]
+            public Task EliminarMergeTicketsTest()
             {
-                var tk = new TickeUDTO()
-                {
-                    Id = 3,
-                    nombre = "nombre3",
-                    descripcion = "descripcion3",
-                    fecha = It.IsAny<DateTime>()
-                };  
+                _servicesMock.Setup(t => t.EliminarRelacionMerge(It.IsAny<TicketsRelacionadosDTO>()))
+                .Returns(It.IsAny<string>());
 
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+                var result = _controller.EliminarMerge(It.IsAny<TicketsRelacionadosDTO>());
 
-                _servicesMock.Setup(r => r.GetTicket(3))
-                .Returns<Ticket>(null);
-
-                var result = _controller.UpdateTickect(3, It.IsAny<int>(), It.IsAny<int>(), tk, It.IsAny<int>(), It.IsAny<int>());
-
-                Assert.IsType<NotFoundResult>(result);
+                Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
             }
 
-            [Fact(DisplayName = "Update Ticket Diferente a TicketU Id")]
-            public Task UpdateTicketErrorGuardarControllerTest()
+            [Fact(DisplayName = "Asignar Tickets")]
+            public Task AsignarTicketsTest()
             {
-                var ticke = new TickeUDTO()
-                {
-                    Id = 2,
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+                _servicesMock.Setup(t => t.AsignarTicket(It.IsAny<AsignarTicketDTO>()))
+                .Returns(It.IsAny<string>());
 
-                _servicesMock.Setup(r => r.GetTicket(It.IsAny<int>()))
-                .Returns(new TicketCDTO());
+                var result = _controller.AsignarTicket(It.IsAny<AsignarTicketDTO>());
 
-                _servicesMock.Setup(t => t.Update(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(false);
-
-                var result = _controller.UpdateTickect(2, It.IsAny<int>(), It.IsAny<int>(), ticke, It.IsAny<int>(), It.IsAny<int>());
-
-                Assert.IsType<ObjectResult>(result);
+                Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
             }
 
-            [Fact(DisplayName = "Update Ticket No se Guardo")]
-            public Task UpdateTicketDiferenteControllerTest()
+            [Fact(DisplayName = "Delegar Ticket")]
+            public Task DelegarTicketTest()
             {
-                var ticke = new TickeUDTO()
-                {
-                    Id = 2,
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+                _servicesMock.Setup(t => t.DelegarTicket(It.IsAny<TickectDelegadoDTO>()))
+                .Returns(It.IsAny<string>());
 
-                _servicesMock.Setup(r => r.GetTicket(It.IsAny<int>()))
-                .Returns(new TicketCDTO());
+                var result = _controller.DelegarTIcket(It.IsAny<int>(), It.IsAny<TickectDelegadoDTO>());
 
-                _servicesMock.Setup(t => t.Update(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(true);
-
-                var result = _controller.UpdateTickect(1, It.IsAny<int>(), It.IsAny<int>(), ticke, It.IsAny<int>(), It.IsAny<int>());
-
-                Assert.IsType<BadRequestObjectResult>(result);
+                Assert.IsType<ApplicationResponse<string>>(result);
                 return Task.CompletedTask;
             }
 
-            [Fact(DisplayName = "Crear Ticket")]
-            public Task CreateTicketControllerTest()
-            {
-                var ticke = new TicketDTO()
-                {
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+        #endregion
 
-                _servicesMock.Setup(r => r.AgregarTicketDAO(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(true);
 
-                var result = _controller.CreateTicket(It.IsAny<int>(), It.IsAny<int>(), ticke, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
-                Assert.IsType<OkObjectResult>(result);
-                return Task.CompletedTask;
-            }
 
-            [Fact(DisplayName = "Crear Ticket Nulo")]
-            public Task CreateTicketNullControllerTest()
-            {
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
 
-                _servicesMock.Setup(r => r.AgregarTicketDAO(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(true);
+        #region Casos Particulares
+        [Fact(DisplayName = "Exception: Get lista de tickets")]
+        public Task GetCollectionControllerTestException()
+        {
+            _servicesMock.Setup(t => t.GetTickets())
+            .Throws(new TickectExeception("", new Exception()));
 
-                var result = _controller.CreateTicket(It.IsAny<int>(), It.IsAny<int>(), ticket, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var result = _controller.GetCollection();
 
-                Assert.IsType<BadRequestObjectResult>(result);
-                return Task.CompletedTask;
-            }
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
 
-            [Fact(DisplayName = "Crear Ticket Error al guardar")]
-            public Task CreateTicketErrorGuardarControllerTest()
-            {
-                var ticke = new TicketDTO()
-                {
-                    nombre = "nombreticket",
-                    fecha = It.IsAny<DateTime>(),
-                    descripcion = "descripcion"
-                };
+        [Fact(DisplayName = "Exception: Get tickets por departamento")]
+        public Task GetTicketsDeptControllerTestException()
+        {
+            _servicesMock.Setup(t => t.GetTicketsDept(1))
+            .Throws(new TickectExeception("", new Exception()));
 
-                _mapper.Setup(m => m.Map<Ticket>(ticketU))
-                .Returns(new Ticket());
+            var result = _controller.GetTicketsPorDept(1);
 
-                _servicesMock.Setup(r => r.AgregarTicketDAO(tick, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(false);
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
 
-                var result = _controller.CreateTicket(It.IsAny<int>(), It.IsAny<int>(), ticke, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+        [Fact(DisplayName = "Exception: Get ticket")]
+        public Task GetTicketControllerTestException()
+        {
+            _servicesMock.Setup(t => t.GetTicket(1))
+            .Throws(new TickectExeception("", new Exception()));
 
-                Assert.IsType<ObjectResult>(result);
-                return Task.CompletedTask;
-            }
+            var result = _controller.GetTicket(1);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Get tickets mergeados")]
+        public Task GetTicketMergeadosControllerTestException()
+        {
+            _servicesMock.Setup(t => t.TicketsMergeados(1))
+            .Throws(new TickectExeception("", new Exception()));
+
+            var result = _controller.GetTicketMergeados(1);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Get tickets asignados")]
+        public Task GetTicketAsignadosControllerTestException()
+        {
+            _servicesMock.Setup(t => t.GetTicketporusuarioasignado(1))
+            .Throws(new TickectExeception("", new Exception()));
+
+            var result = _controller.GetTicketasignados(1);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Get tickets creado por")]
+        public Task CrearTicketTestException()
+        {
+            _servicesMock.Setup(t => t.GetTicketCreadopor(1))
+            .Throws(new TickectExeception("", new Exception()));
+
+            var result = _controller.GetTicketCreado(1);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Agregar ticket")]
+        public Task CreateTicketExcepcion()
+        {
+
+            var dto = new TickectCreateDTO();
+
+            _servicesMock.Setup(t => t.AgregarTicketDAO(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.CreateTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Update ticket")]
+        public Task UpdateTicketExcepcion()
+        {
+
+            var dto = new TickectEstadoDTO();
+
+            _servicesMock.Setup(t => t.CambiarEstado(dto))
+            .Throws(new Exception());
+
+            var result = _controller.UpdateTickect(dto.idticket, dto);
+
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            //Assert.Throws<NullReferenceException>(() => _controller.UpdateTickect(dto.idticket, dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Merge ticket")]
+        public Task MergeTicketExcepcion()
+        {
+
+            var dto = new TicketsRelacionadosDTO();
+
+            _servicesMock.Setup(t => t.TikcetsRelacionados(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.MergeTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Eliminar Merge ticket")]
+        public Task EliminarMergeTicketExcepcion()
+        {
+
+            var dto = new TicketsRelacionadosDTO();
+
+            _servicesMock.Setup(t => t.EliminarRelacionMerge(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.EliminarMerge(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Asignar ticket")]
+        public Task AsignarTicketExcepcion()
+        {
+
+            var dto = new AsignarTicketDTO();
+
+            _servicesMock.Setup(t => t.AsignarTicket(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.AsignarTicket(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Exception: Delegar ticket")]
+        public Task DelegarTicketExcepcion()
+        {
+
+            var dto = new TickectDelegadoDTO();
+
+            _servicesMock.Setup(t => t.DelegarTicket(dto))
+            .Throws(new TickectExeception(null!, null!, null!, null!));
+
+
+            Assert.Throws<NullReferenceException>(() => _controller.DelegarTIcket(It.IsAny<int>(), dto));
+            return Task.CompletedTask;
+        }
+
+        #endregion
     }
 }

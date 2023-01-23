@@ -1,0 +1,102 @@
+@model List<ServicesDeskUCAB.DTO.JerarquicoTCargoCDTO>
+@section scripts
+{
+    <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderJerarquicoTC');
+            $('#btnAgregarJTC').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script> 
+
+
+    <script>
+       $(function () {
+            var PlaceHolderElement = $('#PlaceHolderJTCEliminar');
+            $("#btnEliminarJTC, .btn-danger").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idJerarquicoTc", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+        <script>
+        $(function () {
+            var PlaceHolderElement = $('#PlaceHolderJTCEditar');
+            $("#btnEditarJTC, .btn-primary").click(function (event) {
+                var id = $(this).closest('tr').find('.id').text();
+                var url = $(this).data('url').replace("idJerarquicoTc", id);
+                $.get(url).done(function (data) {
+                    PlaceHolderElement.html(data);
+                    PlaceHolderElement.find('header').empty();
+                    PlaceHolderElement.find('footer').empty();
+                    PlaceHolderElement.find('.modal').modal('show');
+                })
+            })
+
+        })
+    </script>
+
+}
+
+@{
+    ViewData["Title"] = "Gestion Jerarquico Tipo Cargo";
+}
+
+<div id="PlaceHolderJerarquicoTC"></div>
+<div id="PlaceHolderJTCEliminar"></div>
+<div id="PlaceHolderJTCEditar"></div>
+
+<button id="btnAgregarJTC" type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#UpAgregar" data-url="@Url.Action("VentanaAgregarJerarquicoTCargo")">
+        Crear Jerarquico Tipo Cargo
+</button>
+
+<table class="table">
+    <tr>
+        <th>listado</th>
+        <th>Orden</th>
+        <th>Tipo de Cargo</th>
+        <th>Modelo Jerarquico</th>
+        <th>Acciones</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+           <td class="id">
+                @Html.DisplayFor(i => item.id)
+           </td>
+           <td>
+                @Html.DisplayFor(i => item.orden)
+           </td> 
+           <td>
+                @Html.DisplayFor(i => item.tipocargo)
+           </td>
+           <td>
+                @Html.DisplayFor(i => item.modelo)
+           </td>
+           <td>
+            <button id="btnEditarJTC" type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarJerarquicoTCargo","JerarquicoTipoCargo",new {id = "idJerarquicoTc"})">
+                Editar
+            </button>
+            <button id="btnEliminarJTC" type="button" class="btn btn-danger btn-sm" data-toggle="ajax-modal" data-target="#popUpEliminar" data-url="@Url.Action("VentanaEliminarJerarquicoTCargo","JerarquicoTipoCargo",new {id = "idJerarquicoTc"})">
+                Eliminar
+            </button>
+           </td>
+        </tr>
+    }
+</table>

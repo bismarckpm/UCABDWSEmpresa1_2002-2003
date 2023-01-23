@@ -17,6 +17,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this._context = context;
         }
 
+        //          SERVICIO DE AGREGAR PRIORIDADES
         public PrioridadDTO AgregarPrioridadDAO(Prioridad prioridad)
         {
             try
@@ -43,6 +44,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE CONSULTAR PRIORIDADES
         public List<PrioridadDTO> ConsultarTodosPrioridadesDAO()
         {
             try
@@ -65,6 +67,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE ACTUALIZAR PRIORIDADES
         public PrioridadDTO ActualizarPrioridadDAO(Prioridad prioridad)
         {
             try
@@ -82,6 +85,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE ELIMINAR PRIORIDADES
         public PrioridadDTO EliminarPrioridadDAO(int id)
         {
             try
@@ -100,14 +104,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new Exception("Fallo al Eliminar la id: " + id, ex);
             }
         }
-
+        //          SERVICIO DE CONSULTAR PRIORIDADES
         public PrioridadDTO ConsultaPrioridadDAO(int id)
         {
             try
             {
                 var prioridad = _context.Prioridades.Where(
                 p => p.id == id).First();
-                return PrioridadMapper.EntityToDto(prioridad); ;
+                return PrioridadMapper.EntityToDto(prioridad);
 
             }
             catch (Exception ex)

@@ -14,6 +14,9 @@ using System;
 using Moq;
 using Xunit;
 using ServicesDeskUCABWS.Test.Configuraciones;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using ServicesDeskUCABWS.Exceptions;
+using ServicesDeskUCABWS.Persistence.DAO.Implementations;
 
 namespace ServicesDeskUCABWS.Test.Controllers
 {
@@ -25,68 +28,21 @@ namespace ServicesDeskUCABWS.Test.Controllers
      //   private readonly Mock<IMapper>  _serMapper;
         private readonly Mock<IEmailDao> _emailMock;
         private readonly Mock<ILogger<UsuarioController>> _log;
-        public List<Usuario> lista = new List<Usuario>()
-            {
-                new Cliente()
-                {
-                    email = "prueba@gmail.com",
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerifiedAt = DateTime.Today,
-                    VerificationToken = "12Seso9#sassdKlOijm",
-                    PasswordResetToken = "12Seso9#sassdKlOijm"
-                    
-                },
-                new Cliente()
-                {
-                    email = "cosa", 
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerifiedAt = new DateTime(2022,11,15),
-                    VerificationToken = "lsers"
-                },
-                new Cliente()
-                {
-                    email = "cosa2", 
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerificationToken = "pwsoads"
-                },
-                new Cliente()
-                {
-                    email = "cosa2la@gmail.com",
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32], 
-                    VerificationToken= "eossa"
-                },
-                new Empleado()
-                {
-                    email = "empleado1@gmail.com",
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerificationToken = "l7s3oj4end21"
-                },
-                new administrador()
-                {
-                    email = "admin5421@gmail.com",
-                    passwordHash = new byte[32],
-                    passwordSalt = new byte[32],
-                    VerificationToken = "p2odju9ll2di4"                    
-                }
-            };
-            RegistroDTO _registro = new RegistroDTO(){Email = "creaUser@gmail.com", 
-                                             Password= "123osdaker*$5",
-                                             confirmationpassword="123osdaker*$5"};
-            Cliente _clienteNuevo = new Cliente()
-            {
-            email = "prueba@gmail.com", 
-            passwordHash = new byte[32],
-            passwordSalt = new byte[32], 
-            VerifiedAt = DateTime.Today,
-            VerificationToken = "12Seso9#sassdKlOijm", 
-            PasswordResetToken = "Lsp34mAv$le",
-            ResetTokenExpires = DateTime.Now
-            };
+        public List<Usuario> lista = new List<Usuario>();
+        public RegistroDTO dto = new RegistroDTO()
+        {
+            Email = "prueba@gmail.com",
+            Password = "12oasda*&qw2",
+            confirmationpassword = "12oasda*&qw2",
+            nombre = "hola",
+            cargoid = 1,
+            GrupoId = 1
+        };
+        public UserLoginDTO user = new UserLoginDTO()
+        {
+            Email = "cosa",
+            Password = "ssss"
+        };
 
         public UsuarioControllerTest()
         {
@@ -104,481 +60,703 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
         }
 
-//                  Pruebas de Consultas
-
-        [Fact(DisplayName="Obtener listado de usuarios")]
-        public Task GetUsuariosCollectionTest()
+        [Fact(DisplayName = "Consultar Usuario Departamento")]
+        public Task ConsultarPrioridadIdControllerTest()
         {
-                _servicesMock.Setup(u=>u.GetUsuarios())
-                .Returns(It.IsAny<ICollection<Usuario>>());
+            _servicesMock.Setup(t => t.GetUsuariosPorDepartamento(It.IsAny<int>()))
+            .Returns(new List<UsuarioDTO>());
 
-                var result = _controller.GetCollection();
+            var result = _controller.GetUsuarioDepartamento(1);
 
-                Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<ApplicationResponse<ICollection<UsuarioDTO>>>(result);
             return Task.CompletedTask;
         }
 
-         [Fact(DisplayName="Obtener listado Fallido")]
-         public Task GetUsuariosCollectionBadRequest()
-         {
-            _controller.ModelState.AddModelError("400","");
-             var result = _controller.GetCollection();
-                
-
-             Assert.False(_controller.ModelState.IsValid);
-             return Task.CompletedTask;
-         }
-
-        [Fact(DisplayName="Obtener Listado de Empleados")]
-        public Task GetEmpleadoCollectionTest()
+        [Fact(DisplayName = "Excepcion Consultar Usuario Departamento")]
+        public Task ConsultarPrioridadIdControllerExcepcionTest()
         {
-            _servicesMock.Setup(u=>u.GetEmpleados()).Returns(It.IsAny<ICollection<Empleado>>());
+            _servicesMock
+               .Setup(t => t.GetUsuariosPorDepartamento(-1))
+               .Throws(new UsuarioExepcion(null!,null!));
 
-                var result = _controller.GetCollectionE();
-
-            Assert.IsType<OkObjectResult>(result);
+            Assert.Throws<NullReferenceException>(() => _controller.GetUsuarioDepartamento(-1));
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Obtener listado Fallido")]
-        public Task GetEmpleadosCollectionBadRequest()
+        [Fact(DisplayName="Registrar Usuario - Tipo 1")]
+        public Task CreateUserTipo1()
         {
-            _controller.ModelState.AddModelError("400","");
 
-            var result = _controller.GetCollectionE();
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName="Obtener Listado de Clientes")]
-        public Task GetClienteCollectionTest()
-        {
-            _servicesMock.Setup(u=>u.GetClientes()).Returns(It.IsAny<ICollection<Cliente>>());
-
-            var result = _controller.GetCollectionC();
-
-            Assert.IsType<OkObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Fallo al obtener Listado de Clientes")]
-        public Task GetClienteCollectionBadRequest()
-        {
-             _controller.ModelState.AddModelError("400","");
-
-             var result = _controller.GetCollectionC();
-
-             Assert.False(_controller.ModelState.IsValid);
-             return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName="Obtener Listado de Administradores")]
-        public Task GetAdministradorCollectionTest()
-        {
-            _servicesMock.Setup(u=>u.GetAdministradores()).Returns(It.IsAny<ICollection<administrador>>());            
-
-            var result = _controller.GetCollectionA();
-
-            Assert.IsType<OkObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-       [Fact(DisplayName="Fallo al obtener Listado Administradores")]
-        public Task GetAdministradorCollectionBadRequest()
-        {
-              _controller.ModelState.AddModelError("400","");
-
-              var result = _controller.GetCollectionA();
-
-              Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
-//                    Pendiente
-    //    [Fact(DisplayName="Crear Usuario")]
-        public Task CreateUser()
-        {
-            
-            var cargoid = 0;
-            var depid = 0;
-            var dto = new RegistroDTO()
+            var user = new administrador
             {
-                Email = "prueba@gmail.com",
-                Password = "12oasda*&qw2",
-                confirmationpassword = "12oasda*&qw2"
+                VerificationToken = ""
             };
 
-            var registro = new RegistroDTO(){Email = "prueba@gmail.com"};
-            var tipoUser = 3;
+            dto.tipousuario = 1;
 
-            _servicesMock.Setup(u=>u.CreateUsuario(It.IsAny<Usuario>(),It.IsAny<int>(),It.IsAny<int>()))
-            .Returns(true);
-            _servicesMock.Setup(u=>u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
-            
-            var result = _controller.CreateUsuario(cargoid, depid, dto,tipoUser);
+            _servicesMock.Setup(u => u.CreateUsuario(It.IsAny<Usuario>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(It.IsAny<string>);
 
-            Assert.IsType<OkObjectResult>(result);
+            _servicesMock.Setup(u => u.CreatePasswordHash(It.IsAny<administrador>(), It.IsAny<string>()))
+                .Returns(user);
+
+            var result = _controller.CreateUsuario(dto);
+
+            Assert.IsType<ApplicationResponse<string>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Crear Usuario nulo")]
-        public Task CreateUserFailedNull()
+        [Fact(DisplayName = "Registrar Usuario - Tipo 2")]
+        public Task CreateUserTipo2()
         {
-            _servicesMock.Setup(u=>u.CreateUsuario(_clienteNuevo,It.IsAny<int>(),It.IsAny<int>()));
-              var tipoUser = 2;  
-            RegistroDTO usuarioNuevo = null!;    
 
-            var result = _controller.CreateUsuario(It.IsAny<int>(),It.IsAny<int>(),usuarioNuevo, tipoUser);
-
-            Assert.IsType<BadRequestObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName="Usuario ya Existe")]
-        public Task CreateUserAlreadyExists()
-        {
-            RegistroDTO registro = new RegistroDTO(){Email = "creaUser@gmail.com", 
-                                             Password= "123osdaker*$5",
-                                             confirmationpassword="123osdaker*$5"};
-
-            _servicesMock.Setup(u=>u.CreateUsuario(_clienteNuevo,It.IsAny<int>(),It.IsAny<int>()));
-            _servicesMock.Setup(u=>u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
-            var tipoUser = 3;
-
-            var result = _controller.CreateUsuario(It.IsAny<int>(),It.IsAny<int>(),registro, tipoUser);
-
-            Assert.IsType<ObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName= "Fallo al crear Usuario")]
-        public Task CreateUserBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-            var cargoid = 1;
-            var depid = 1;
-            var dto = new RegistroDTO()
+            var user = new Empleado
             {
-                Email = "prueba123@gmail.com",
-                Password = "12oasda*&qw2",
-                confirmationpassword = "12oasda*&qw2"
+                VerificationToken = ""
             };
 
-            var registro = new RegistroDTO(){Email = "creaUser@gmail.com", 
-                                             Password= "123osdaker*$5",
-                                             confirmationpassword="123osdaker*$5"};
-            var tipoUser = 3;
+            dto.tipousuario = 2;
 
-            _servicesMock.Setup(u=>u.CreateUsuario(It.IsAny<Usuario>(),It.IsAny<int>(),It.IsAny<int>()))
-            .Returns(true);
-            _servicesMock.Setup(u=>u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
+            _servicesMock.Setup(u => u.CreateUsuario(It.IsAny<Usuario>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(It.IsAny<string>);
 
-            var result = _controller.CreateUsuario(cargoid, depid, dto,tipoUser);
+            _servicesMock.Setup(u => u.CreatePasswordHash(It.IsAny<Empleado>(), It.IsAny<string>()))
+                .Returns(user);
 
-            Assert.False(_controller.ModelState.IsValid);
+            var result = _controller.CreateUsuario(dto);
+
+            Assert.IsType<ApplicationResponse<string>>(result);
             return Task.CompletedTask;
-        }   
+        }
 
 
+        [Fact(DisplayName = "Registrar Usuario - Tipo 3")]
+        public Task CreateUserTipo3()
+        {
 
-//              LOGIN
-        [Fact(DisplayName="Inicio de Sesion")]
+            var user = new Cliente
+            {
+                VerificationToken = ""
+            };
+
+            dto.tipousuario = 3;
+
+            _servicesMock.Setup(u => u.CreateUsuario(It.IsAny<Usuario>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(It.IsAny<string>);
+
+            _servicesMock.Setup(u => u.CreatePasswordHash(It.IsAny<Cliente>(), It.IsAny<string>()))
+                .Returns(user);
+
+            var result = _controller.CreateUsuario(dto);
+
+            Assert.IsType<ApplicationResponse<string>>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Excepcion Registrar Usuario")]
+        public Task CreateUserExcepcion()
+        {
+            dto.tipousuario = 1;
+
+            var user = new administrador
+            {
+                VerificationToken = ""
+            };
+
+            _servicesMock.Setup(u => u.CreatePasswordHash(It.IsAny<administrador>(), It.IsAny<string>()))
+                .Returns(user);
+
+            _servicesMock.Setup(u => u.CreateUsuario(It.IsAny<Usuario>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Throws(new UsuarioExepcion(null!, null!, null!, null!));
+
+            Assert.Throws<NullReferenceException>(() => _controller.CreateUsuario(dto));
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Login no existe usuario")]
+        public Task LoginNoExisteUserTest()
+        {
+            UserLoginDTO user = new UserLoginDTO()
+            {
+                Email = "No existo",
+                Password = ""
+            };
+
+
+            _servicesMock.Setup(u => u.GetUsuario())
+                .Returns(new List<Usuario>());
+
+            var resp = _controller.Login(user);
+
+            Assert.IsType<ApplicationResponse<UsuarioDTO>>(resp);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Login usuario no verificado")]
+        public Task LoginUsuarioNoVerificadoTest()
+        {
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "No estoy verif",
+                Password = ""
+            };
+
+            Usuario usuario = new Cliente()
+            {
+                email = userLogin.Email
+            };
+
+            _servicesMock.Setup(u => u.GetUsuario())
+                .Returns(new List<Usuario> { usuario });
+
+            var resp = _controller.Login(userLogin);
+
+            Assert.IsType<ApplicationResponse<UsuarioDTO>>(resp);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Login usuario hash invalido")]
+        public Task LoginUsuarioHashInvalidoTest()
+        {
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "Hash invalido",
+                Password = ""
+            };
+
+            Usuario usuario = new Cliente()
+            {
+                email = userLogin.Email,
+                VerifiedAt = DateTime.UtcNow
+            };
+
+            _servicesMock.Setup(u => u.GetUsuario())
+                .Returns(new List<Usuario> { usuario });
+
+            _servicesMock.Setup(u => u.VerifyPasswordHash("", new byte[32], new byte[32]))
+                .Returns(false);
+
+            var resp = _controller.Login(userLogin);
+
+            Assert.IsType<ApplicationResponse<UsuarioDTO>>(resp);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Login")]
         public Task LoginTest()
-        {              
-            _servicesMock.Setup(u=>u.VerifyPasswordHash(It.IsAny<string>(),It.IsAny<byte[]>(),It.IsAny<byte[]>()))
-            .Returns(true);
-             _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista); 
-
-            UserLoginDTO user = new UserLoginDTO(){
-                Email = "cosa",
-                Password = "ssss"
+        {
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "Hash invalido",
+                Password = ""
             };
 
-            var result = _controller.Login(user);
-
-            Assert.IsType<OkObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName="Inicio de Sesion Fallido Usuario esta vacio")]
-        public Task LoginFailedUserNullTest()
-        {    
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(It.IsAny<ICollection<Usuario>>());
-         
-            UserLoginDTO  user = null!;
-            var result = _controller.Login(user);
-
-            Assert.IsType<BadRequestObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName="Inicio Sesion Fallido por Usuario No Existe")]
-        public Task LoginFailedUserNotExistsTest()
-        {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-
-            var data =  new UserLoginDTO(){Email = "UserNull@gmail", Password = "*****"};
-
-            var result = _controller.Login(data);
-
-            Assert.IsType<ObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Fallo al Iniciar Sesion")]
-        public Task LoginFailedBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-            _servicesMock.Setup(u=>u.VerifyPasswordHash(It.IsAny<string>(),It.IsAny<byte[]>(),It.IsAny<byte[]>()))
-            .Returns(true);
-             _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista); 
-
-            UserLoginDTO user = new UserLoginDTO(){
-                Email = "cosa",
-                Password = "ssss"
+            Usuario usuario = new Cliente()
+            {
+                email = userLogin.Email,
+                VerifiedAt = DateTime.UtcNow
             };
 
-            var result = _controller.Login(user);
-            Assert.False(_controller.ModelState.IsValid);
+            _servicesMock.Setup(u => u.GetUsuario())
+                .Returns(new List<Usuario> { usuario });
+
+            _servicesMock.Setup(u => u.VerifyPasswordHash("", new byte[32], new byte[32]))
+                .Returns(true);
+
+            var resp = _controller.Login(userLogin);
+
+            Assert.IsType<ApplicationResponse<UsuarioDTO>>(resp);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Inicio de Sesion Fallido por Verificacion Contraseña")]
-        public Task LoginFailedByVerifyPasswordTest()
-        {              
-            _servicesMock.Setup(u=>u.VerifyPasswordHash(It.IsAny<string>(),It.IsAny<byte[]>(),It.IsAny<byte[]>()))
-            .Returns(false);
-             _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista); 
-
-            UserLoginDTO user = new UserLoginDTO(){
-                Email = "cosa",
-                Password = "ssss"
+        [Fact(DisplayName = "Verificar - Usuario no existe")]
+        public Task VerificarUsuarioNoExisteTest()
+        {
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "No existo",
+                Password = ""
             };
 
-            var result = _controller.Login(user);
+            _servicesMock.Setup(u => u.GetUsuario())
+               .Returns(new List<Usuario>());
 
-            Assert.IsType<ObjectResult>(result);
+            var resp = _controller.Verificar("prueba");
+
+            Assert.IsType<ApplicationResponse<string>>(resp);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Inicio de Sesion Fallido por Verificacion de Usuario")]
-        public Task LoginFailedByVerifyUserTest()
-        {
-         _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista); 
-            var user = new UserLoginDTO()
-                            {Email = "cosa2", Password = "1234567890"};  
-
-                var result = _controller.Login(user); 
-
-            Assert.IsType<ObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-//          VERIFICACION TOKEN     
-        [Fact(DisplayName="Verifica Token")]
+        [Fact(DisplayName = "Verificar")]
         public Task VerificarTest()
         {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            var token = "12Seso9#sassdKlOijm";
-                var result = _controller.Verificar(token);
 
-            Assert.IsType<OkObjectResult>(result);
+            var token = "prueba";
+
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "Existo",
+                Password = ""
+            };
+
+            Usuario usuario = new Cliente()
+            {
+                email = userLogin.Email,
+                VerifiedAt = DateTime.UtcNow,
+                VerificationToken = token,
+            };
+
+            _servicesMock.Setup(u => u.GetUsuario())
+                .Returns(new List<Usuario> { usuario });
+
+            var resp = _controller.Verificar(token);
+
+            Assert.IsType<ApplicationResponse<string>>(resp);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Token Invalido")]
-        public Task VerificarTokenInvalidTest()
+        [Fact(DisplayName = "Olvido Contraseña - no existe usuario")]
+        public Task OlvidoContrasenaNoExisteUsuarioTest()
         {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            var token = "";
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "No existo",
+                Password = ""
+            };
 
-            var result = _controller.Verificar(token);
+            _servicesMock.Setup(u => u.GetUsuario())
+               .Returns(new List<Usuario>());
 
-            Assert.IsType<ObjectResult>(result);
+            var result = _controller.olvidoContrasena("");
+
+            Assert.IsType<ApplicationResponse<string>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Falla al Verificar token")]
-        public Task VerificarBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            
-            var token = "12Seso9#sassdKlOijm";
-            var result = _controller.Verificar(token);
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Token fallo al Guardar")]
-        public Task VerificarFailedSaveTest()
-        {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(false);
-
-                var token = "eossa";
-
-                var result = _controller.Verificar(token);
-
-                Assert.IsType<BadRequestObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-//              CONTRASENA OLVIDADA
-        [Fact(DisplayName="Contraseña olvidada")]
+        [Fact(DisplayName = "Olvido Contraseña")]
         public Task OlvidoContrasenaTest()
         {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            var email = "cosa2la@gmail.com";
+            UserLoginDTO userLogin = new UserLoginDTO()
+            {
+                Email = "Existo",
+                Password = ""
+            };
 
-            var result = _controller.olvidoContrasena(email);
+            Usuario usuario = new Cliente()
+            {
+                email = userLogin.Email,
+                VerifiedAt = DateTime.UtcNow,
+            };
 
-            Assert.IsType<OkObjectResult>(result);
+            _servicesMock.Setup(u => u.GetUsuario())
+               .Returns(new List<Usuario> { usuario });
+
+            var result = _controller.olvidoContrasena(userLogin.Email);
+
+            Assert.IsType<ApplicationResponse<string>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName="Olvido Contraseña Usuario No Encontrado")]
-        public Task OvidoContrasenaUserNotFoundTest()
+
+        [Fact(DisplayName = "Reseteo de contraseña con token inexistente")]
+        public Task ResetPasswordTokenNoExisteTest()
         {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            var email = "milagrosB23@gmail.com";
+            var token = "no existo";
 
-            var result = _controller.olvidoContrasena(email);
+            Usuario usuario = new Cliente()
+            {
+                VerifiedAt = DateTime.UtcNow,
+                VerificationToken = token
+            };
 
-            Assert.IsType<ObjectResult>(result);
+            _servicesMock.Setup(u => u.GetUsuario())
+               .Returns(new List<Usuario> ());
+
+            var result = _controller.ResetPassword(new ResetPasswordDTO());
+
+            Assert.IsType<ApplicationResponse<string>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Fallo en el envio de token")]
-        public Task OlvidoContrasenaBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
-
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            var email = "cosa2la@gmail.com";
-
-            var result = _controller.olvidoContrasena(email);
-
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName="Olvido Contraseña error al guardar")]
-        public Task OvidoContrasenaBadRequestToSavePwdTest()
-        {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save());
-            var email = "cosa";
-
-            var result = _controller.olvidoContrasena(email);
-
-            Assert.IsType<BadRequestObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-//          RESETEO DE CONTRASENA
-
-       // [Fact(DisplayName="Reseteo de Contraseña")]
+        [Fact(DisplayName = "Reseteo de contraseña")]
         public Task ResetPasswordTest()
-        { 
-            var client_local = new Cliente()
         {
-            email = "prueba@gmail.com", 
-            passwordHash = new byte[32],
-            passwordSalt = new byte[32], 
-            VerifiedAt = DateTime.Today,
-            VerificationToken = "12Seso9#sassdKlOijm", 
-            PasswordResetToken = "Lsp34mAv$le",
-            ResetTokenExpires = DateTime.Now
-        };
-            
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            _servicesMock.Setup(u=>u.CreatePasswordHash(client_local,"123456789"))
-            .Returns(_clienteNuevo);
+            var token = "Existo";
 
-            var pwd = new ResetPasswordDTO()
+            ResetPasswordDTO pwdDto = new ResetPasswordDTO
             {
-                token = "12Seso9#sassdKlOijm",
-                Password = "3356*$sdsa",
-                confirmationpassword = "3356*$sdsa"
+                token = token,
             };
 
-            var result = _controller.ResetPassword(pwd);
-
-            Assert.IsType<OkObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName ="Reseto de contraseña, Usuario Vacio")]
-        public Task ResetPasswordUserNullTest()
-        {
-            ResetPasswordDTO user = null!;
-
-            var result = _controller.ResetPassword(user);
-
-            Assert.IsType<BadRequestObjectResult>(result);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Reseteo de contraseña, token invalido")]
-        public Task ResetPasswordTokenInvalidTest()
-        {
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-
-            var pwd =new ResetPasswordDTO()
+            Usuario usuario = new Cliente()
             {
-                token = "L4osjWso9we0fpsxk*",
-                Password = "3356*$sdsa",
-                confirmationpassword = "3356*$sdsa"
+                VerifiedAt = DateTime.UtcNow,
+                VerificationToken = token,
+                ResetTokenExpires = DateTime.UtcNow,
+                PasswordResetToken = token
             };
 
-            var result = _controller.ResetPassword(pwd);
+            _servicesMock.Setup(u => u.GetUsuario())
+               .Returns(new List<Usuario> { usuario });
 
-            Assert.IsType<ObjectResult>(result);
+            _servicesMock.Setup(u => u.CreatePasswordHash(It.IsAny<Cliente>(), It.IsAny<string>()))
+                .Returns(usuario);
+
+            var result = _controller.ResetPassword(pwdDto);
+
+            Assert.IsType<ApplicationResponse<string>>(result);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Fallo de reseteo de contrasena por mala peticion")]
-        public Task ResetPasswordBadRequest()
-        {
-            _controller.ModelState.AddModelError("400","");
 
-            var client_local = new Cliente()
-        {
-            email = "prueba@gmail.com", 
-            passwordHash = new byte[32],
-            passwordSalt = new byte[32], 
-            VerifiedAt = DateTime.Today,
-            VerificationToken = "12Seso9#sassdKlOijm", 
-            PasswordResetToken = "Lsp34mAv$le",
-            ResetTokenExpires = DateTime.Now
-        };
-            
-            _servicesMock.Setup(u=>u.GetUsuarios()).Returns(lista);
-            _servicesMock.Setup(u=>u.Save()).Returns(true);
-            _servicesMock.Setup(u=>u.CreatePasswordHash(client_local,"123456789"))
-            .Returns(_clienteNuevo);
 
-            var pwd = new ResetPasswordDTO()
-            {
-                token = "12Seso9#sassdKlOijm",
-                Password = "3356*$sdsa",
-                confirmationpassword = "3356*$sdsa"
-            };
+        //      [Fact(DisplayName = "Crear Usuario nulo")]
+        //      public Task CreateUserFailedNull()
+        //      {
+        //          _servicesMock.Setup(u => u.CreateUsuario(_clienteNuevo, It.IsAny<int>(), It.IsAny<int>()));
+        //          var tipoUser = 2;
+        //          RegistroDTO usuarioNuevo = null!;
 
-            var result = _controller.ResetPassword(pwd);
+        //          var result = _controller.CreateUsuario(It.IsAny<int>(), It.IsAny<int>(), usuarioNuevo, tipoUser);
 
-            Assert.False(_controller.ModelState.IsValid);
-            return Task.CompletedTask;
-        }
+        //          Assert.IsType<BadRequestObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Usuario ya Existe")]
+        //      public Task CreateUserAlreadyExists()
+        //      {
+        //          RegistroDTO registro = new RegistroDTO()
+        //          {
+        //              Email = "creaUser@gmail.com",
+        //              Password = "123osdaker*$5",
+        //              confirmationpassword = "123osdaker*$5"
+        //          };
+
+        //          _servicesMock.Setup(u => u.CreateUsuario(_clienteNuevo, It.IsAny<int>(), It.IsAny<int>()));
+        //          _servicesMock.Setup(u => u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
+        //          var tipoUser = 3;
+
+        //          var result = _controller.CreateUsuario(It.IsAny<int>(), It.IsAny<int>(), registro, tipoUser);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Fallo al crear Usuario")]
+        //      public Task CreateUserBadRequest()
+        //      {
+        //          _controller.ModelState.AddModelError("400", "");
+        //          var cargoid = 1;
+        //          var depid = 1;
+        //          var dto = new RegistroDTO()
+        //          {
+        //              Email = "prueba123@gmail.com",
+        //              Password = "12oasda*&qw2",
+        //              confirmationpassword = "12oasda*&qw2"
+        //          };
+
+        //          var registro = new RegistroDTO()
+        //          {
+        //              Email = "creaUser@gmail.com",
+        //              Password = "123osdaker*$5",
+        //              confirmationpassword = "123osdaker*$5"
+        //          };
+        //          var tipoUser = 3;
+
+        //          _servicesMock.Setup(u => u.CreateUsuario(It.IsAny<Usuario>(), It.IsAny<int>(), It.IsAny<int>()))
+        //          .Returns(true);
+        //          _servicesMock.Setup(u => u.GetUsuarioTrimToUpper(registro)).Returns(_clienteNuevo);
+
+        //          var result = _controller.CreateUsuario(cargoid, depid, dto, tipoUser);
+
+        //          Assert.False(_controller.ModelState.IsValid);
+        //          return Task.CompletedTask;
+        //      }
+
+
+
+
+        //      [Fact(DisplayName = "Inicio de Sesion Fallido Usuario esta vacio")]
+        //      public Task LoginFailedUserNullTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(It.IsAny<ICollection<Usuario>>());
+
+        //          UserLoginDTO user = null!;
+        //          var result = _controller.Login(user);
+
+        //          Assert.IsType<BadRequestObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Inicio Sesion Fallido por Usuario No Existe")]
+        //      public Task LoginFailedUserNotExistsTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+
+        //          var data = new UserLoginDTO() { Email = "UserNull@gmail", Password = "*****" };
+
+        //          var result = _controller.Login(data);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Fallo al Iniciar Sesion")]
+        //      public Task LoginFailedBadRequest()
+        //      {
+        //          _controller.ModelState.AddModelError("400", "");
+        //          _servicesMock.Setup(u => u.VerifyPasswordHash(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>()))
+        //          .Returns(true);
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+
+        //          UserLoginDTO user = new UserLoginDTO()
+        //          {
+        //              Email = "cosa",
+        //              Password = "ssss"
+        //          };
+
+        //          var result = _controller.Login(user);
+        //          Assert.False(_controller.ModelState.IsValid);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Inicio de Sesion Fallido por Verificacion Contraseña")]
+        //      public Task LoginFailedByVerifyPasswordTest()
+        //      {
+        //          _servicesMock.Setup(u => u.VerifyPasswordHash(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>()))
+        //          .Returns(false);
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+
+        //          UserLoginDTO user = new UserLoginDTO()
+        //          {
+        //              Email = "cosa",
+        //              Password = "ssss"
+        //          };
+
+        //          var result = _controller.Login(user);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Inicio de Sesion Fallido por Verificacion de Usuario")]
+        //      public Task LoginFailedByVerifyUserTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+        //          var user = new UserLoginDTO()
+        //          { Email = "cosa2", Password = "1234567890" };
+
+        //          var result = _controller.Login(user);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      VERIFICACION TOKEN
+        //    [Fact(DisplayName = "Verifica Token")]
+        //      public Task VerificarTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save()).Returns(true);
+        //          var token = "12Seso9#sassdKlOijm";
+        //          var result = _controller.Verificar(token);
+
+        //          Assert.IsType<OkObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Token Invalido")]
+        //      public Task VerificarTokenInvalidTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+        //          var token = "";
+
+        //          var result = _controller.Verificar(token);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Falla al Verificar token")]
+        //      public Task VerificarBadRequest()
+        //      {
+        //          _controller.ModelState.AddModelError("400", "");
+
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save()).Returns(true);
+
+        //          var token = "12Seso9#sassdKlOijm";
+        //          var result = _controller.Verificar(token);
+
+        //          Assert.False(_controller.ModelState.IsValid);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Token fallo al Guardar")]
+        //      public Task VerificarFailedSaveTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save()).Returns(false);
+
+        //          var token = "eossa";
+
+        //          var result = _controller.Verificar(token);
+
+        //          Assert.IsType<BadRequestObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      CONTRASENA OLVIDADA
+        //[Fact(DisplayName = "Contraseña olvidada")]
+        //      public Task OlvidoContrasenaTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save()).Returns(true);
+        //          var email = "cosa2la@gmail.com";
+
+        //          var result = _controller.olvidoContrasena(email);
+
+        //          Assert.IsType<OkObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Olvido Contraseña Usuario No Encontrado")]
+        //      public Task OvidoContrasenaUserNotFoundTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuario()).Returns(lista);
+        //          var email = "milagrosB23@gmail.com";
+
+        //          var result = _controller.olvidoContrasena(email);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Fallo en el envio de token")]
+        //      public Task OlvidoContrasenaBadRequest()
+        //      {
+        //          _controller.ModelState.AddModelError("400", "");
+
+        //          _servicesMock.Setup(u => u.GetUsuario()).Returns(lista);
+        //          _servicesMock.Setup(u => u.`()).Returns(true);
+        //          var email = "cosa2la@gmail.com";
+
+        //          var result = _controller.olvidoContrasena(email);
+
+        //          Assert.False(_controller.ModelState.IsValid);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Olvido Contraseña error al guardar")]
+        //      public Task OvidoContrasenaBadRequestToSavePwdTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuario()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save());
+        //          var email = "cosa";
+
+        //          var result = _controller.olvidoContrasena(email);
+
+        //          Assert.IsType<BadRequestObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      RESETEO DE CONTRASENA
+
+        //    [Fact(DisplayName = "Reseteo de Contraseña")]
+        //      public Task ResetPasswordTest()
+        //      {
+        //          var client_local = new Cliente()
+        //          {
+        //              email = "prueba@gmail.com",
+        //              passwordHash = new byte[32],
+        //              passwordSalt = new byte[32],
+        //              VerifiedAt = DateTime.Today,
+        //              VerificationToken = "12Seso9#sassdKlOijm",
+        //              PasswordResetToken = "Lsp34mAv$le",
+        //              ResetTokenExpires = DateTime.Now
+        //          };
+
+        //          _servicesMock.Setup(u => u.GetUsuario()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save()).Returns(true);
+        //          _servicesMock.Setup(u => u.CreatePasswordHash(client_local, "123456789"))
+        //          .Returns(_clienteNuevo);
+
+        //          var pwd = new ResetPasswordDTO()
+        //          {
+        //              token = "12Seso9#sassdKlOijm",
+        //              Password = "3356*$sdsa",
+        //              confirmationpassword = "3356*$sdsa"
+        //          };
+
+        //          var result = _controller.ResetPassword(pwd);
+
+        //          Assert.IsType<OkObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Reseto de contraseña, Usuario Vacio")]
+        //      public Task ResetPasswordUserNullTest()
+        //      {
+        //          ResetPasswordDTO user = null!;
+
+        //          var result = _controller.ResetPassword(user);
+
+        //          Assert.IsType<BadRequestObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Reseteo de contraseña, token invalido")]
+        //      public Task ResetPasswordTokenInvalidTest()
+        //      {
+        //          _servicesMock.Setup(u => u.GetUsuarios()).Returns(lista);
+
+        //          var pwd = new ResetPasswordDTO()
+        //          {
+        //              token = "L4osjWso9we0fpsxk*",
+        //              Password = "3356*$sdsa",
+        //              confirmationpassword = "3356*$sdsa"
+        //          };
+
+        //          var result = _controller.ResetPassword(pwd);
+
+        //          Assert.IsType<ObjectResult>(result);
+        //          return Task.CompletedTask;
+        //      }
+
+        //      [Fact(DisplayName = "Fallo de reseteo de contrasena por mala peticion")]
+        //      public Task ResetPasswordBadRequest()
+        //      {
+        //          _controller.ModelState.AddModelError("400", "");
+
+        //          var client_local = new Cliente()
+        //          {
+        //              email = "prueba@gmail.com",
+        //              passwordHash = new byte[32],
+        //              passwordSalt = new byte[32],
+        //              VerifiedAt = DateTime.Today,
+        //              VerificationToken = "12Seso9#sassdKlOijm",
+        //              PasswordResetToken = "Lsp34mAv$le",
+        //              ResetTokenExpires = DateTime.Now
+        //          };
+
+        //          _servicesMock.Setup(u => u.GetUsuario()).Returns(lista);
+        //          _servicesMock.Setup(u => u.Save()).Returns(true);
+        //          _servicesMock.Setup(u => u.CreatePasswordHash(client_local, "123456789"))
+        //          .Returns(_clienteNuevo);
+
+        //          var pwd = new ResetPasswordDTO()
+        //          {
+        //              token = "12Seso9#sassdKlOijm",
+        //              Password = "3356*$sdsa",
+        //              confirmationpassword = "3356*$sdsa"
+        //          };
+
+        //          var result = _controller.ResetPassword(pwd);
+
+        //          Assert.False(_controller.ModelState.IsValid);
+        //          return Task.CompletedTask;
+        //      }
 
 
     }

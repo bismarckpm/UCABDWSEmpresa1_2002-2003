@@ -7,10 +7,8 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public string? cuerpo { get; set; }
 
-        public string? tipo { get; set; }
-
-
-        //public List<Notification>? notifications { get; set; }
+        public int EstadoId { get; set; }
+        public Estado? estado { get; set; }
 
     }
 }

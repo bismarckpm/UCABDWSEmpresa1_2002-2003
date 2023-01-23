@@ -6,12 +6,13 @@ namespace ServicesDeskUCAB.DTO
     {
         public int id { get; set; }
         [Required(ErrorMessage = "Ingrese un Titulo para la Plantilla")]
-        public string? titulo { get; set; }
+        [StringLength(128)]
+        public string titulo { get; set; }
 
+        [Required(ErrorMessage = "Ingrese un cuerpo para la Plantilla")]
+        [StringLength(128)]
+        public string cuerpo { get; set; }
 
-        public string? cuerpo { get; set; }
-
-
-        public string? tipo { get; set; }
+        public int estadoId { get; set; }
     }
 }

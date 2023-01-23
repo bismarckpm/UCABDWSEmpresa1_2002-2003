@@ -7,19 +7,21 @@ using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-
+using ServicesDeskUCABWS.Exceptions;
+using static ServicesDeskUCABWS.Reponses.AplicationResponse;
+using System.Net;
 
 namespace ServicesDeskUCABWS.Controllers
 {
     [ApiController]
-    [Route("api/ModeloAprobacion")]
+    [Route("ModeloAprobacion/")]
     public class ModeloJerarquicoController : Controller
     {
         private readonly IModeloJerarquicoDAO _dao;
         private readonly ILogger<ModeloJerarquicoController> _log;
 
         private readonly IMapper _mapper;
-
+        const string message = "Solicitud Exitosa";
 
         public ModeloJerarquicoController(ILogger<ModeloJerarquicoController> logger, IModeloJerarquicoDAO dao, IMapper mapper)
         {
@@ -28,77 +30,141 @@ namespace ServicesDeskUCABWS.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("Jerarquico")]
-
-        public async Task<ActionResult> Post([FromBody] ModeloJerarquicoCreateDTO dto)
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que agrega un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="dto">Un Objeto ModeloJerarquicoDTO. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto creado
+        /// satisfactoriamente. </returns>
+        [HttpPost]
+        [Route("Jerarquico/")]
+        public ApplicationResponse<ModeloJerarquicoDTO> Post([FromBody] ModeloJerarquicoDTO dto)
         {
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
+            try
+            {
+                var p = ModeloJerarquicoMapper.DtoToEntity(dto);
+                response.Data = _dao.AgregarModeloJerarquicoDAO(p);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = message;
 
-            var ModeloJerarquico = _mapper.Map<ModeloJerarquico>(dto);
-            var result = await _dao.AgregarModeloJerarquicoDAO(ModeloJerarquico);
-            _log.LogInformation("ModeloJerarquico agregada con exito");
-            return Ok(result);
+            }catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+
+            }
+            return response;
         }
 
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que 
+        ///obtiene un listado de objetos ModeloJerarquico
+        /// </summary>
+        /// <returns>Un ApplicationResponse que contiene un
+        /// listado de objetos modelo jerarquico. </returns>
         [HttpGet]
-        public async Task<ActionResult<List<ModeloJerarquicoDTO>>> Get()
+        [Route("GetModeloJerarquico/")]
+        public ApplicationResponse<List<ModeloJCDTO>> GetModeloJerarquico()
         {
-          var result = await _dao.ConsultarModeloJerarquicosDAO();
-          if (result == null)
-          {
-            return BadRequest("No se encontraron los modelos paralelos");
-          }
-            _log.LogInformation("ModeloJerarquicos consultadas con exito");
-            return Ok(_mapper.Map<List<ModeloJerarquicoDTO>>(result));
+            var response = new ApplicationResponse<List<ModeloJCDTO>>();
+            try
+            {
+                response.Data= _dao.ConsultarModeloJerarquicosDAO();
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = message;
+
+            }catch(ServicesDeskUcabWsException ex)
+            {
+                response.Message = ex.Mensaje;
+                response.Success = false;
+                response.Exception = ex.Excepcion.ToString();
+
+            }
+            return response;
         }        
 
-        [HttpGet("Jerarquico/{id:int}", Name = "obtenerModeloJerarquico")]
-        public async Task<ActionResult<ModeloJerarquicoDTO>> Get(int id)
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que consulta un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto de
+        /// la consulta. </returns>
+        [HttpGet]
+        [Route("Jerarquico/{id}")]
+        public ApplicationResponse<ModeloJCDTO> ConsultaMJerarquicoPorId(int id)
         {
+            var response = new ApplicationResponse<ModeloJCDTO>();
+            try
+            {
+                response.Data = _dao.ObtenerModeloJerarquicoDAO(id);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = message;
 
-            if (id <= 0)
+            }catch(ServicesDeskUcabWsException ex)
             {
-                return BadRequest("El id debe ser mayor a 0");
+                response.Success = false;
+                response.Message = ex.Mensaje;
+                response.Exception = ex.Excepcion.ToString();
+
             }
-            var result = await _dao.ObtenerModeloJerarquicoDAO(id);
-            if (result.Value?.Id == id)
-            {
-                return Ok(_mapper.Map<ModeloJerarquicoDTO>(result.Value));  
-            }
-            return NotFound("No se encontro el ModeloJerarquico");
+            return response;
         }
 
-
-         [HttpPut("{id:int}")]
-         public async Task<ActionResult> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoCreateDTO dto, int id)
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que actualiza 
+        ///un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="dto">Un Objeto ModeloJerarquicoDTO. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto actualizado
+        /// satisfactoriamente. </returns>
+         [HttpPut]
+         [Route("ActualizaModeloJerarquico/")]
+         public ApplicationResponse<ModeloJerarquicoDTO> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoDTO dto)
          {
-             if (id <= 0)
-             {
-                 return BadRequest("El id debe ser mayor a 0");
-             }
-             var ModeloJerarquico = _mapper.Map<ModeloJerarquicoCreateDTO>(dto);
-             var result = await _dao.ActualizarModeloJerarquicoDAO(ModeloJerarquico, id);
-             if (result.Value!.Id == id)
-             {
-                 _log.LogInformation("ModeloJerarquico actualizada con exito");
-                 return result.Result;
-             }
-             else
-             {
-                 return NotFound("No se encontro la ModeloJerarquico");
-             }
-             
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
+            try
+            {                   
+                    response.Data =_dao.ActualizarModeloJerarquicoDAO(ModeloJerarquicoMapper.DtoToEntity(dto));;
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = message;
+
+            }catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+
+            }
+             return  response;
          }
 
-        [HttpDelete("Jerarquico/{id:int}")]
-        public async Task<ActionResult> EliminarModeloJerarquico([Required] int id)
+        /// <summary>
+        /// Llama un servicio de ModeloJerarquicoDAO que agrega un objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32. </param>
+        /// <returns>Un ApplicationResponse que contiene el objeto eliminado
+        /// satisfactoriamente. </returns>
+        [HttpDelete]
+        [Route("DeleteModeloJerarquico/{id}")]
+        public ApplicationResponse<ModeloJerarquicoDTO> EliminarModeloJerarquico([FromRoute] int id)
         {
-
-            if (id <= 0)
-            {
-                return BadRequest("El id debe ser mayor a 0");
-            }
-            var result = await _dao.EliminarModeloJerarquicoDAO(id);
-            return result;
+            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
+                try
+                {
+                    response.Data=  _dao.EliminarModeloJerarquicoDAO(id);
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = message;
+                    
+                }catch(ServicesDeskUcabWsException ex)
+                {
+                    response.Success = false;
+                    response.Message = ex.Mensaje;
+                    response.Exception = ex.Excepcion.ToString();
+                    
+                }
+                return response;
         }
     }
 }

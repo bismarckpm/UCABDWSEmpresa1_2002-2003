@@ -5,6 +5,7 @@ using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
 using System;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -17,6 +18,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this._context = context;
         }
 
+
+        //          SERVICIO DE CREAR CATEGORIA
         public CategoriaDTO AgregarCategoriaDAO(Categoria categ)
         {
             try
@@ -30,7 +33,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                         {
                             Id = a.id,
                             Nombre = a.nombre
-                            //FlujoAprobacion = a.flujoaprobacion
                         }
                     );
 
@@ -39,11 +41,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw new Exception("Transaccion Fallida", ex);
+                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al crear categoria.", ex);
             }
         }
 
+
+        //          SERVICIO DE CONSULTAR CATEGORIA
         public List<CategoriaDTO> ConsultarTodosCategoriasDAO()
         {
             try
@@ -62,11 +66,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al consultar la lista de categorias.", ex);
             }
         }
 
+
+        //          SERVICIO DE ACTUALIZAR CATEGORIA
         public CategoriaDTO ActualizarCategoriaDAO(Categoria categ)
         {
             try
@@ -79,11 +84,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (NullReferenceException ex)
             {
-                Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new NullReferenceException("Transaccion Fallo", ex)!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al actualizar una categoria.", ex);
             }
         }
 
+
+        //          SERVICIO DE ELIMINAR CATEGORIA
         public CategoriaDTO EliminarCategoriaDAO(int id)
         {
             try
@@ -98,11 +104,12 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[Mensaje]: " + ex.Message + " [Seguimiento]: " + ex.StackTrace);
-                throw new Exception("Transaccion Fallo", ex)!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al eliminar la categoria.", ex);
             }
         }
 
+
+        //          SERVICIO DE CONSULTAR CATEGORIA
         public CategoriaDTO ConsultaCategoriaDAO(int id)
         {
             try
@@ -114,8 +121,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                throw ex.InnerException!;
+                throw new ServicesDeskUcabWsException("Ha ocurrido un error al consultar la categoria.", ex);
             }
         }
     }

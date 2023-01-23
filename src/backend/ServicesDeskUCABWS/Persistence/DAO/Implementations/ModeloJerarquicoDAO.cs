@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using System.Collections.Generic;
+using ServicesDeskUCABWS.Exceptions;
 
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
@@ -25,159 +26,121 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this.mapper = map;
         }
 
-
-
-        public async Task<ActionResult<ModeloJerarquicoDTO>> AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
+        /// <summary>
+        /// Agregar Modelo Jerarquico
+        /// </summary>
+        /// <param name="modeloJerarquico"></param>
+        /// <returns>Un ModeloJerarquicoDTO</returns>
+        public ModeloJerarquicoDTO AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
         {
             try
             {
-                // Validar categoria 
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == modeloJerarquico.CategoriaId);
-                if (categoria == null)
-                {
-                    throw new Exception("No existe el registro de la categoria para el modelo paralelo");
-
-                }
-                modeloJerarquico.categoria = categoria;
-                // Validar orden
-                if (modeloJerarquico.orden == null)
-                {
-                    return new BadRequestResult();
-                }
-                var listCargos = new List<TipoCargo>();
-                // modeloJerarquico.orden.ForEach(async o =>
-                // {
-                //     var tipoCargo = await _context.TipoCargos.FirstOrDefaultAsync(tc => tc.id == o.id);
-                //     if (tipoCargo == null)
-                //     {
-                //         throw new Exception("Tipo de cargo no encontrado");
-                //     }
-                //     listCargos.Add(tipoCargo);
-                // });
-                foreach (var cargo in modeloJerarquico.orden)
-                {
-                    var tipoCargo = await _context.TipoCargos.FirstOrDefaultAsync(tc => tc.id == cargo.id);
-                    if (tipoCargo == null)
-                    {
-                        return new NotFoundResult();
-                    }
-                    listCargos.Add(tipoCargo);
-                }
-                modeloJerarquico.orden = listCargos;
-                // Guardar modelo
-                _context.ModeloJerarquicos.Add(modeloJerarquico);
-                await _context.DbContext.SaveChangesAsync();
-                return mapper.Map<ModeloJerarquicoDTO>(modeloJerarquico);
+               _context.ModeloJerarquicos.Add(modeloJerarquico);
+               _context.DbContext.SaveChanges();
+                var maper = ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
+              return maper;
             }
             catch (DbUpdateException ex)
             {
                 Console.WriteLine(ex.InnerException!.Message);
-                throw new Exception("Error al agregar el Modelo Jerarquico");
+                throw new ServicesDeskUcabWsException("Error al agregar el Modelo Jerarquico: " + ex.Message, ex);
             }
 
         }
 
-        public Task<List<ModeloJerarquico>> ConsultarModeloJerarquicosDAO()
+        /// <summary>
+        /// Agregar Modelo Jerarquico
+        /// </summary>
+        /// <returns>Un listado de ModeloJerarquicoDTO</returns>        
+        public List<ModeloJCDTO> ConsultarModeloJerarquicosDAO()
         {
             try
             {
-                return _context.ModeloJerarquicos.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al consultar los Modelos Jerarquicos");
-            }
-        }
-
-        public async Task<ActionResult<ModeloJerarquico>> ObtenerModeloJerarquicoDAO(int id)
-        {
-            try
-            {
-                var ModeloJerarquico = await _context.ModeloJerarquicos
-                                                     .Include(mj => mj.categoria)
-                                                     .FirstOrDefaultAsync(mj => mj.Id == id);
-                //var listCargos = await _context.TipoCargos.Where(tc => tc.ModeloJerarquicoId == id).ToListAsync();
-                
-                
-                if (ModeloJerarquico == null)
-                {
-                    throw new Exception("Error al consultar el modelo jerarquico");
-
-                }
-                //ModeloJerarquico.orden = listCargos;
-                return ModeloJerarquico;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al obtener el Modelo Jerarquico");
-            }
-        }
-
-        public async Task<ActionResult<ModeloJerarquico>> ActualizarModeloJerarquicoDAO(ModeloJerarquicoCreateDTO modeloJerarquico, int id)
-        {
-
-            try
-            {
-                var ModeloJerarquicoDB = await _context.ModeloJerarquicos.FindAsync(id);
-                if (ModeloJerarquicoDB == null)
-                {
-                    throw new NullReferenceException("No existe el modelo jerarquico a actualizar");
-                }
-                // Validar categoria 
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.id == modeloJerarquico.CategoriaId);
-                if (categoria == null)
-                {
-                    throw new NullReferenceException("No existe en el modelo jerarquico la categoria a actualizar");
-                }
-                // Validar orden
-                if (modeloJerarquico.orden == null)
-                {
-                    throw new NullReferenceException("No existe en el modelo jerarquico la lista de orden a actualizar");
-
-                }
-                foreach (var cargo in modeloJerarquico.orden)
-                {
-                    var cargoDB = await _context.TipoCargos.FirstOrDefaultAsync(c => c.id == cargo.id);
-                    if (cargoDB == null)
+                var data = _context.ModeloJerarquicos
+                .Include(c => c.categoria)
+                .Select(j => new ModeloJCDTO()
                     {
-                        throw new NullReferenceException("No existe en el modelo jerarquico el cargo a actualizar");
-
-                    }
-
-                }
-                // Actualizar modelo
-                ModeloJerarquicoDB.CategoriaId = modeloJerarquico.CategoriaId;
-                ModeloJerarquicoDB.orden = modeloJerarquico.orden;
-                await _context.DbContext.SaveChangesAsync();
-                return ModeloJerarquicoDB;
+                        id = j.id,
+                        Nombre = j.nombre,
+                        nombreCategoria = j.categoria!.nombre
+                    });
+                return data.ToList();
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al actualizar el Modelo Jerarquico", ex);
+                throw new ServicesDeskUcabWsException("Error al consultar los Modelos Jerarquicos" + ex.Message, ex);
             }
         }
 
-        /*
-        System.InvalidOperationException: The property 'ModeloJerarquico.Id' has a temporary value while attempting to 
-        change the entity's state to 'Deleted'. Either set a permanent value explicitly, or ensure that the database is configured to generate values for this property.
-        */
-        public async Task<ActionResult> EliminarModeloJerarquicoDAO(int id)
+        /// <summary>
+        /// Obtiene un Modelo Jerarquico por un id
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32</param>
+        /// <returns>Un objeto ModeloJerarquicoDTO</returns>
+        public ModeloJCDTO ObtenerModeloJerarquicoDAO(int id)
         {
             try
             {
-                var existe = await _context.ModeloJerarquicos.FindAsync(id);
-                if(existe == null)
-                {
-                    return new NotFoundResult();
-                }
-                _context.ModeloJerarquicos.Remove(existe);
-                await _context.DbContext.SaveChangesAsync();
+                var data = _context.ModeloJerarquicos
+                                    .Include(c => c.categoria)
+                                   .Select(m => new ModeloJCDTO()
+                                   {
+                                    id = m.id,
+                                    Nombre = m.nombre,
+                                    nombreCategoria = m.categoria!.nombre
+                                   });
 
-                return new OkResult();
+                return data.First();
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al eliminar el Modelo Jerarquico", ex);
+                throw new ServicesDeskUcabWsException("Error al obtener el Modelo Jerarquico", ex.InnerException!);
+            }
+        }
+
+        /// <summary>
+        /// Actualiza un Objeto ModeloJerarquico
+        /// </summary>
+        /// <param name="modeloJerarquico">Un objeto de tipo ModeloJerarquico</param>
+        /// <returns>Un Objeto ModeloJerarquicoDTO</returns>
+        public ModeloJerarquicoDTO ActualizarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico)
+        {
+            try
+            { 
+
+                _context.ModeloJerarquicos.Update(modeloJerarquico);
+                _context.DbContext.SaveChanges();
+
+                return ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
+            }
+            catch (Exception ex)
+            {
+                throw new ServicesDeskUcabWsException("Error al actualizar el Modelo Jerarquico, " + ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// Eliminar un Modelo Jerarquico por un id
+        /// </summary>
+        /// <param name="id">Un valor de tipo int32</param>
+        /// <returns>Un objeto de tipo ModeloJerarquicoDTO</returns>
+        public ModeloJerarquicoDTO EliminarModeloJerarquicoDAO(int id)
+        {
+            try
+            {
+                var modeloJerarquico = _context.ModeloJerarquicos
+                                                .Where(mj => mj.id == id)
+                                                .First();
+
+                _context.DbContext.Remove(modeloJerarquico); 
+
+                _context.DbContext.SaveChanges();
+                
+                return ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
+            }
+            catch (Exception ex)
+            {
+                throw new ServicesDeskUcabWsException("[Error al Eliminar] " + ex.Message, ex);
             }
         }
     }

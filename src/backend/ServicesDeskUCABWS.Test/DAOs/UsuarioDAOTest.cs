@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using ServicesDeskUCABWS.BussinessLogic.DTO;
+using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Implementations;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static Bogus.Person.CardAddress;
 
 namespace ServicesDeskUCABWS.Test.DAOs
 {
@@ -36,81 +38,49 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName = "Obtiene listado de Usuarios")]
         public Task ListaUsuariosTest()
         {
-            var lista = _dao.GetUsuarios();
+            var lista = _dao.GetUsuario();
             Assert.IsType<List<Usuario>>(lista);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Obtiene listado de Empleados")]
-        public Task ListaEmpleadosTest()
+        [Fact(DisplayName = "Excepcion Obtiene listado de Usuarios")]
+        public Task ListaUsuariosExceptionTest()
         {
-            var lista = _dao.GetEmpleados();
-            Assert.IsType<List<Empleado>>(lista);
+            _contextMock.Setup(c => c.Usuario).Throws(new Exception());
+            Assert.Throws<UsuarioExepcion>(() => _dao!.GetUsuario());
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Obtiene listado de Administradores")]
-        public Task ListaAdminsTest()
-        {
-            var lista = _dao.GetAdministradores();
-            Assert.IsType<List<administrador>>(lista);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Obtiene listado de Clientes")]
-        public Task ListaClientesTest()
-        {
-            var lista = _dao.GetClientes();
-            Assert.IsType<List<Cliente>>(lista);
-            return Task.CompletedTask;
-        }
-
-        [Fact(DisplayName = "Obtiene listado de Usuarios por Departamento")]
-        public Task ListaUsuariosPorDepartamentoTest()
+        [Fact(DisplayName = "Obtiene listado de Usuarios por Departamento id!=0")]
+        public Task ListaUsuariosPorDepartamentoNoId0Test()
         {
             var lista = _dao.GetUsuariosPorDepartamento(1);
             Assert.IsType<List<UsuarioDTO>>(lista);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Trim to Upper")]
-        public Task GetUserTrimToUpperTest()
+        [Fact(DisplayName = "Obtiene listado de Usuarios por Departamento id=0")]
+        public Task ListaUsuariosPorDepartamentoId0Test()
         {
-            var dto = new RegistroDTO()
-            {
-                Email = "prueba@gmail.com",
-                Password= "prueba",
-                confirmationpassword = "prueba"
-            };
-
-            var result = _dao.GetUsuarioTrimToUpper(dto);
-            Assert.IsType<Cliente>(result);
+            var lista = _dao.GetUsuariosPorDepartamento(0);
+            Assert.IsType<List<UsuarioDTO>>(lista);
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Cambio de clave validado")]
-        public Task ChangePasswordTest()
+        [Fact(DisplayName = "Excepcion Obtiene listado de Usuarios por Departamento")]
+        public Task ListaUsuariosPorDepartamentoExcepcionTest()
         {
-            var correo = "prueba@gmail.com";
-            var newPassword = "prueba";
-            var confirmationpassword = "prueba";
+            _contextMock.Setup(c => c.Usuario).Throws(new Exception());
 
-            var result = _dao.ChangePassword(correo, newPassword, confirmationpassword);
-
-            Assert.IsType<Cliente>(result);
+            Assert.Throws<UsuarioExepcion>(() => _dao!.GetUsuariosPorDepartamento(1));
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Cambio de clave Fallido")]
-        public Task ChangePasswordTestFail()
+        [Fact(DisplayName = "Obtiene Usuario por Email")]
+        public Task ObtienerUsuarioPorEmailTest()
         {
-            var correo = "prueba@gmail.com";
-            var newPassword = "prueba";
-            var confirmationpassword = "diferente";
-
-            var result = _dao.ChangePassword(correo, newPassword, confirmationpassword);
-
-            Assert.Null(result);
+            var resp = _dao.GetUsuarioPorEmail("prueba@gmail.com");
+            Assert.IsType<UsuarioDTO>(resp);
             return Task.CompletedTask;
         }
 
@@ -124,7 +94,41 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
             var result = _dao.CreateUsuario(user, cargoid, departamento);
 
-            Assert.True(result);
+            Assert.IsType<string>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Excepcion Crear Usuario")]
+        public Task CreateUserExcepcionTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Throws(new DbUpdateConcurrencyException());
+            var user = new Cliente();
+            var cargoid = 1;
+            var departamento = 1;
+
+            Assert.Throws<UsuarioExepcion>(() => _dao!.CreateUsuario(user, cargoid, departamento));
+            return Task.CompletedTask;
+        }
+
+
+        [Fact(DisplayName = "Actualizar Usuario")]
+        public Task UpdateUserTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            var user = new Cliente();
+
+            var result = _dao.UpdateU(user);
+
+            Assert.IsType<string>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Excepcion Actualizar Usuario")]
+        public Task UpdateUserExcepcionTest()
+        {
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Throws(new DbUpdateConcurrencyException());
+
+            Assert.Throws<UsuarioExepcion>(() => _dao!.UpdateU(null!));
             return Task.CompletedTask;
         }
 
@@ -137,6 +141,13 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var result = _dao.CreatePasswordHash(user, pwd);
 
             Assert.IsType<Cliente>(result);
+            return Task.CompletedTask;
+        }
+
+        [Fact(DisplayName = "Excepcion Crea Contraseña hash")]
+        public Task CreatePaswordHashExcepcionTest()
+        {
+            Assert.Throws<UsuarioExepcion>(() => _dao!.CreatePasswordHash(null!,null!));
             return Task.CompletedTask;
         }
 
@@ -156,15 +167,20 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Guardar context")]
-        public Task SaveTest()
+        [Fact(DisplayName = "Excepcion Verifica Contraseña hash")]
+        public Task VerifyPaswordHashExcepcionTest()
         {
 
-            var result = _dao.Save();
-
-            Assert.True(result);
+            Assert.Throws<UsuarioExepcion>(() => _dao!.VerifyPasswordHash(null!,null!, null!));
             return Task.CompletedTask;
+        }
 
+        [Fact(DisplayName = "Obtiene tipo Usuario")]
+        public Task ObtieneTipoUsuarioTest()
+        {
+            var resp = _dao.GetTipoUsuario(1);
+            Assert.NotNull(resp);
+            return Task.CompletedTask;
         }
     }
 }

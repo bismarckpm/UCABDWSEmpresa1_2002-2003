@@ -1,0 +1,47 @@
+@model dynamic
+@using ServicesDeskUCAB.DTO
+@{
+    ViewData["Title"] = "Gestion Modelo Jerarquico";
+}
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+<div class="modal fade" id="popUpEditar" tabindex="-1" role="dialog" aria-labelledby="popUpEditarTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Editar Modelo Jerarquico</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"onclick="location.href='@Url.Action("GestionMJerarquico", "ModeloJerarquico")'">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+          
+            <form asp-action="ActualizarModeloJerarquico" method="post">
+                    <input type="hidden" name="idmj" value="@Model.id">
+                <div class="modal-body">
+                    <div class="form-group">
+                    <span>Modelo Jerarquico: </span>
+                        <input type="text" name="nombre" class="form-control" placeholder="Actualice el nombre">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="categoria" name="categoriaid">
+                            @foreach (CategoriaDTO dto in Model.Categorias)
+                            {
+                                <option value="@dto.id">@dto.nombre</option>
+                            }
+                        </select>
+                    </div>                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionMJerarquico", "ModeloJerarquico")'">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Editar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

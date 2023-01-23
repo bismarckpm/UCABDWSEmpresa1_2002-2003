@@ -1,0 +1,28 @@
+@model dynamic
+@using ServicesDeskUCAB.DTO
+@section scripts{
+}
+@{
+    ViewData["Title"] = "Delegar Tickets";
+}
+
+            <form asp-action="Delegar"  method="post">
+            <input type="hidden" name="idticket" value="@Model.id" />
+            <div class="form-group">
+                <h1>Delegar Ticket</h1>
+                <label for="Usuario">Delegar Ticket a</label>
+                <select class="form-control" id="idAsignadoa" name="idAsignadoa">
+                    @foreach (EmpleadosDTO empleado in Model.Usuarios)
+
+                    {
+                        <option value="@empleado.id">Departamento: @empleado.dept  @empleado.email</option>
+
+                    }
+                </select>
+            </div>
+             <div class="botones">
+                <button type="submit" class="btn btn-success">Asginar</button>
+            </div>
+         
+        </form>
+       

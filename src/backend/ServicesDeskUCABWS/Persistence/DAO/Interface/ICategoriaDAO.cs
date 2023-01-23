@@ -5,14 +5,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface ICategoriaDAO
     {
-        CategoriaDTO AgregarCategoriaDAO(Categoria p);
+        public CategoriaDTO AgregarCategoriaDAO(Categoria p);
 
-        List<CategoriaDTO> ConsultarTodosCategoriasDAO();
+        public List<CategoriaDTO> ConsultarTodosCategoriasDAO();
 
-        CategoriaDTO ActualizarCategoriaDAO(Categoria p);
+        public CategoriaDTO ActualizarCategoriaDAO(Categoria p);
 
-        CategoriaDTO EliminarCategoriaDAO(int id);
+        public CategoriaDTO EliminarCategoriaDAO(int id);
 
-        CategoriaDTO ConsultaCategoriaDAO(int id);
+        public CategoriaDTO ConsultaCategoriaDAO(int id);
     }
 }

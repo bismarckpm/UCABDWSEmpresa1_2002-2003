@@ -2,26 +2,28 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using ServicesDeskUCAB.DTO;
 using System.Net.Http;
-
+using ServicesDeskUCAB.ResponseHandler;
+using ServicesDeskUCAB.Factory;
+using Newtonsoft.Json;
 
 namespace ServicesDeskUCAB.Controllers
 {
     public class EstadoController : Controller
     {
+        public const string URL = "https://localhost:7198/api/estados";
+        public string responseString = string.Empty;
         public async Task<IActionResult> GestionEstados()
         {
             try
             {
-                List<EstadoDTO> Estados = new List<EstadoDTO>();
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/api/estados");
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
-                {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    Estados = await JsonSerializer.DeserializeAsync<List<EstadoDTO>>(responseStream);
-                }
-                return View(Estados);
+                AplicationResponseHandler<List<EstadoDTO>> apiResponse = new AplicationResponseHandler<List<EstadoDTO>>();
+                HttpClient client = FactoryHttp.CreateClient();
+                HttpResponseMessage response = await client.GetAsync(URL);
+                responseString = await response.Content.ReadAsStringAsync();
+                apiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<EstadoDTO>>>(responseString);
+                if (apiResponse.Success) return View(apiResponse.Data);
+                //redireccionar a una pagina de error
+                return RedirectToAction("Error", "Error");
             }
             catch (Exception ex)
             {
@@ -46,19 +48,10 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
                 Estado.id = 0;
-                HttpClient client = new HttpClient();
-                var _client = await client.PostAsJsonAsync<EstadoDTO>("https://localhost:7198/api/estados", Estado);
+                HttpClient client =  FactoryHttp.CreateClient();
+                var _client = await client.PostAsJsonAsync<EstadoDTO>(URL, Estado);
                 // Si el estado se agrega correctamente, se redirige a la vista de gestión de estados
-                if (_client.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("GestionEstados");
-                }
-                else
-                {
-                    // Si el estado no se agrega correctamente, se redirige a la vista de agregar estado
-                    //return RedirectToAction("VentanaAgregarEstado");
-                    return RedirectToAction("GestionEstados");
-                }
+                return RedirectToAction("GestionEstados");
 
             }
             catch (Exception ex)
@@ -71,16 +64,15 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                EstadoDTO Estado = new EstadoDTO();
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7198/api/estados/" + id.ToString());
-                var _client = await client.SendAsync(request);
-                if (_client.IsSuccessStatusCode)
+                AplicationResponseHandler<EstadoDTO> apiResponse = new AplicationResponseHandler<EstadoDTO>();
+                HttpClient client =  FactoryHttp.CreateClient();
+                var response = await client.GetAsync( URL +"/"+id.ToString());
+                if (response.IsSuccessStatusCode)
                 {
-                    var responseStream = await _client.Content.ReadAsStreamAsync();
-                    Estado = await JsonSerializer.DeserializeAsync<EstadoDTO>(responseStream);
+                    responseString = await response.Content.ReadAsStringAsync();
+                    apiResponse =  JsonConvert.DeserializeObject<AplicationResponseHandler<EstadoDTO>>(responseString);
                 }
-                return View(Estado);
+                return View(apiResponse.Data);
             }
             catch (Exception ex)
             {
@@ -92,19 +84,9 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var _client = await client.PutAsJsonAsync("https://localhost:7198/api/estados/" + Estado.id.ToString(), Estado);
-                // Si el estado se edita correctamente, se redirige a la vista de gestión de estados
-                if (_client.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("GestionEstados");
-                }
-                else
-                {
-                    // Si el estado no se edita correctamente, se redirige a la vista de editar estado
-                    //return RedirectToAction("VentanaEditarEstado", new { id = Estado.id });
-                    return RedirectToAction("GestionEstados");
-                }
+                HttpClient client =  FactoryHttp.CreateClient();
+                var _client = await client.PutAsJsonAsync(URL+"/" + Estado.id.ToString(), Estado);
+                return RedirectToAction("GestionEstados");
             }
             catch (Exception ex)
             {
@@ -128,8 +110,8 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                HttpClient client = new HttpClient();
-                var _client = await client.DeleteAsync("https://localhost:7198/api/estados/" + id.ToString());
+                HttpClient client = FactoryHttp.CreateClient();
+                var _client = await client.DeleteAsync(URL+"/" + id.ToString());
                 return RedirectToAction("GestionEstados");
             }
             catch (Exception ex)

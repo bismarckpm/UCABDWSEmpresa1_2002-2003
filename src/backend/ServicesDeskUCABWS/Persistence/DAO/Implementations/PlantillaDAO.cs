@@ -26,26 +26,36 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
 
 
-        public async Task<ActionResult<PlantillaDTO>> AgregarPlantillaDAO(Plantilla Plantilla)
+        public async Task<PlantillaDTO> AgregarPlantillaDAO(Plantilla plantilla)
         {
             try
             {
-                _context.Plantillas.Add(Plantilla);
+                // validar que el estado exista
+                var estado = await _context.Estados.FirstOrDefaultAsync(x => x.id == plantilla.EstadoId);
+                if (estado == null)
+                {
+                    _logger.LogError("El estado no existe");
+                    throw new Exception("El estado con id: " + plantilla.EstadoId + " no existe");
+                }
+                var etiqueta = await _context.Etiquetas.FirstOrDefaultAsync(x => x.id == estado.EtiquetaId);
+                var cuerpo = "Estado: " + estado.nombre + " Etiqueta: " + etiqueta!.nombre;
+                plantilla.cuerpo = string.Format("{0}{2}{1}", plantilla.cuerpo, cuerpo, " || ");
+                _context.Plantillas.Add(plantilla);
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla agregada exitosamente en la base de datos");
-                return _mapper.Map<PlantillaDTO>(Plantilla);
+                return _mapper.Map<PlantillaDTO>(plantilla);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new PlantillaException("Error al agregar la plantilla", ex, _logger);
+                throw new PlantillaException(ex.Message, ex, _logger);
             }
         }
 
-        public Task<List<Plantilla>> ObtenerPlantillasDAO()
+        public Task<List<PlantillaDTO>> ObtenerPlantillasDAO()
         {
             try
             {
-                return _context.Plantillas.ToListAsync();
+                return _context.Plantillas.Select(x => _mapper.Map<PlantillaDTO>(x)).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,7 +64,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        public async Task<ActionResult<Plantilla>> ObtenerPlantillaDAO(int id)
+        public async Task<PlantillaDTO> ObtenerPlantillaDAO(int id)
         {
             try
             {
@@ -62,18 +72,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (Plantilla == null)
                 {
                     _logger.LogWarning("No se encontro la plantilla con id: " + id);
-                    return new NotFoundResult();
+                    throw new Exception("No se encontro la plantilla con id: " + id);
                 }
                 _logger.LogInformation("Plantilla encontrada exitosamente");
-                return Plantilla;
+                return _mapper.Map<PlantillaDTO>(Plantilla);
             }
             catch (Exception ex)
             {
-                throw new PlantillaException("Error al obtener la plantilla", ex, _logger);
+                throw new PlantillaException(ex.Message, ex, _logger);
             }
         }
 
-        public async Task<ActionResult> ActualizarPlantillaDAO(Plantilla plantilla, int id)
+        public async Task<PlantillaDTO> ActualizarPlantillaDAO(Plantilla plantilla, int id)
         {
             try
             {
@@ -82,25 +92,25 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (plantillaOld == null)
                 {
                     _logger.LogWarning("No se encontro la plantilla con id: " + id);
-                    return new NotFoundResult();
+                    throw new Exception("No se encontro la plantilla con id: " + id);
                 }
 
                 plantillaOld.titulo = plantilla.titulo;
                 plantillaOld.cuerpo = plantilla.cuerpo;
-                plantillaOld.tipo = plantilla.tipo;
+                plantillaOld.EstadoId = plantilla.EstadoId;
 
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla actualizada exitosamente");
-                return new OkResult();
+                return _mapper.Map<PlantillaDTO>(plantillaOld);
 
             }
             catch (Exception ex)
             {
-                throw new PlantillaException("Error al actualizar la plantilla", ex, _logger);
+                throw new PlantillaException(ex.Message, ex, _logger);
             }
         }
 
-        public async Task<ActionResult> EliminarPlantillaDAO(int id)
+        public async Task<Boolean> EliminarPlantillaDAO(int id)
         {
             try
             {
@@ -108,13 +118,13 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 if (existe == null)
                 {
                     _logger.LogWarning("No se encontro la plantilla con id: " + id);
-                    return new NotFoundResult();
+                    return false;
                 }
 
                 _context.Plantillas.Remove(existe);
                 await _context.DbContext.SaveChangesAsync();
                 _logger.LogInformation("Plantilla eliminada exitosamente");
-                return new OkResult();
+                return true;
             }
             catch (Exception ex)
             {

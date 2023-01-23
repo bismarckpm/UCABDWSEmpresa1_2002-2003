@@ -14,16 +14,19 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             this._configuration = configuration;
         }
-        public void SendEmail(EmailDTO emailDTO){
-               var email = new MimeMessage();
+
+        // SE REALIZA EL ENVÍO DEL CORREO EN EL SERVICIO DE CORREOS
+        public void SendEmail(EmailDTO emailDTO)
+        {
+            var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUsername").Value));
             email.To.Add(MailboxAddress.Parse(emailDTO.para));
-            email.Subject= emailDTO.asunto;
-            email.Body = new TextPart(MimeKit.Text.TextFormat.Html){Text = emailDTO.Cuerpo};
+            email.Subject = emailDTO.asunto;
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = emailDTO.Cuerpo };
             using var smtp = new SmtpClient();
-            smtp.ServerCertificateValidationCallback = (s,c,h,e) => true;
-            smtp.Connect(_configuration.GetSection("EmailHost").Value,587, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_configuration.GetSection("EmailUsername").Value,_configuration.GetSection("EmailPassword").Value);
+            smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            smtp.Connect(_configuration.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_configuration.GetSection("EmailUsername").Value, _configuration.GetSection("EmailPassword").Value);
             smtp.Send(email);
             smtp.Disconnect(true);
 

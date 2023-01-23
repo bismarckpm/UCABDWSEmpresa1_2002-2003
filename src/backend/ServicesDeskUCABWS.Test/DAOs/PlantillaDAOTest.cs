@@ -47,20 +47,20 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             // preparacion de los datos
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync(new Estado() { id = 1, nombre = "Activo" });
             var Plantilla = new Plantilla()
             {
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                EstadoId = 1
             };
 
             // prueba de la funcion
             var result = await _dao.AgregarPlantillaDAO(Plantilla);
-            var PlantillaResult = result.Value;
 
             // verificacion de la prueba
-            Assert.IsType<PlantillaDTO>(PlantillaResult);
+            Assert.IsType<PlantillaDTO>(result);
         }
 
         [Fact(DisplayName = "Crear una Plantilla con Excepcion")]
@@ -74,6 +74,25 @@ namespace ServicesDeskUCABWS.Test.DAOs
             await Assert.ThrowsAsync<PlantillaException>(() => _dao!.AgregarPlantillaDAO(new Plantilla()));
         }
 
+        [Fact(DisplayName = "Estado no existe")]
+        public async Task EstadoNoExisteTest()
+        {
+            // preparacion de los datos
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Estados.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Estado);
+            var Plantilla = new Plantilla()
+            {
+                id = 1,
+                titulo = "Plantilla 1",
+                cuerpo = "Descripcion de la plantilla 1",
+                EstadoId = 5
+            };
+
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao.AgregarPlantillaDAO(Plantilla));
+        }
+
+
+
         [Fact(DisplayName = "Consultar lista Plantillas")]
         public async Task ConsultarListPlantillasTest()
         {
@@ -83,7 +102,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
 
             // verificacion de la prueba
-            Assert.IsType<List<Plantilla>>(result);
+            Assert.IsType<List<PlantillaDTO>>(result);
             Assert.Equal(2, result.Count);
         }
 
@@ -108,18 +127,18 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                EstadoId = 1
             });
 
 
             var id = 1;
             // prueba de la funcion
             var result = await _dao.ObtenerPlantillaDAO(id);
-            var PlantillaResult = result.Value;
+
 
             // verificacion de la prueba
-            Assert.IsType<Plantilla>(PlantillaResult);
-            Assert.Equal(id, PlantillaResult!.id);
+            Assert.IsType<PlantillaDTO>(result);
+            Assert.Equal(id, result.id);
         }
 
         [Fact(DisplayName = "Consultar Plantilla por Id que no existe")]
@@ -132,11 +151,8 @@ namespace ServicesDeskUCABWS.Test.DAOs
 
             var id = 4;
             // prueba de la funcion
-            var result = await _dao.ObtenerPlantillaDAO(id);
 
-
-            // verificacion de la prueba
-            Assert.IsType<NotFoundResult>(result.Result);
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao.ObtenerPlantillaDAO(id));
         }
 
         [Fact(DisplayName = "Consultar Plantilla por Id con Excepcion")]
@@ -144,7 +160,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
         {
             // preparacion de los datos
             _servicesMock.Setup(c => c.ObtenerPlantillaDAO(It.IsAny<int>()))
-                .Throws(new Exception());
+                .ThrowsAsync(new Exception());
 
             // prueba de la funcion
             await Assert.ThrowsAsync<PlantillaException>(() => _dao.ObtenerPlantillaDAO(-1));
@@ -160,20 +176,20 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                EstadoId = 1
             });
             var Plantilla = new Plantilla()
             {
                 id = 1,
                 titulo = "modificada",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                EstadoId = 1
             };
             // prueba de la funcion
             var result = await _dao.ActualizarPlantillaDAO(Plantilla, Plantilla.id);
 
             // verificacion de la prueba
-            Assert.IsType<OkResult>(result);
+            Assert.IsType<PlantillaDTO>(result);
         }
 
         [Fact(DisplayName = "No existe Plantilla para actualizar")]
@@ -184,9 +200,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(e => e.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Plantilla);
             var Plantilla = new Plantilla();
             // prueba de la funcion
-            var result = await _dao.ActualizarPlantillaDAO(Plantilla, Plantilla.id);
-            // verificacion de la prueba
-            Assert.IsType<NotFoundResult>(result);
+            await Assert.ThrowsAsync<PlantillaException>(() => _dao.ActualizarPlantillaDAO(Plantilla, Plantilla.id));
         }
 
         [Fact(DisplayName = "Actualizar una Plantilla con Excepcion")]
@@ -211,14 +225,15 @@ namespace ServicesDeskUCABWS.Test.DAOs
                 id = 1,
                 titulo = "Plantilla 1",
                 cuerpo = "Descripcion de la plantilla 1",
-                tipo = "Solicitud"
+                EstadoId = 1
             });
             var id = 1;
+            Boolean expected = true;
             // prueba de la funcion
-            var result = await _dao.EliminarPlantillaDAO(id);
+            Boolean result = await _dao.EliminarPlantillaDAO(id);
 
-            // verificacion de result Ok
-            Assert.IsType<OkResult>(result);
+            // verificacion 
+            Assert.Equal<Boolean>(expected, result);
 
         }
 
@@ -229,11 +244,12 @@ namespace ServicesDeskUCABWS.Test.DAOs
             _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
             _contextMock.Setup(e => e.Plantillas.FindAsync(It.IsAny<int>())).ReturnsAsync(null as Plantilla);
             var id = 1;
+            Boolean expected = false;
             // prueba de la funcion
-            var result = await _dao.EliminarPlantillaDAO(id);
+            Boolean result = await _dao.EliminarPlantillaDAO(id);
 
-            // verificacion de result NotFound
-            Assert.IsType<NotFoundResult>(result);
+            // verificacion
+            Assert.Equal<Boolean>(expected, result);
         }
 
         [Fact(DisplayName = "Eliminar una Plantilla con Excepcion")]

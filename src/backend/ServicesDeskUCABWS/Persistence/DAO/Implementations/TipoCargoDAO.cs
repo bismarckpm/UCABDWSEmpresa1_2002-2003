@@ -5,6 +5,7 @@ using ServicesDeskUCABWS.BussinessLogic.Mapper;
 using Microsoft.EntityFrameworkCore;
 using ServicesDeskUCABWS.Persistence.Database;
 using System;
+using ServicesDeskUCABWS.Exceptions;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {
@@ -16,6 +17,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             this._context = context;
         }
+
+        // SE AGREGA UN TIPO  DE CARGO 
         public TipoCargoDTO AgregarTipoCargoDAO(TipoCargo tipo)
         {
             try
@@ -35,10 +38,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Error al Crear, detalles:", ex);
+                throw new ServicesDeskUcabWsException("Error al Crear, detalles: " + ex.Message, ex);
             }
         }
 
+        // SE CONSULTAN LOS TIPOS DE CARGO QUE EXISTEN EN EL SISTEMA
         public List<TipoCargoDTO> ConsultarTipoCargoDAO()
         {
             try
@@ -56,10 +60,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + " : " + ex.StackTrace);
-                throw new Exception("Error al Consultar: "+ex.Message,ex);
+                throw new ServicesDeskUcabWsException("Error al Consultar: "+ex.Message, ex);
             }
         }
 
+        // SE ACTUALIZA EL TIPO DE CARGO 
         public TipoCargoDTO ActualizarTipoCargoDAO(TipoCargo tipoCargo)
         {
             try
@@ -67,21 +72,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 _context.TipoCargos.Update(tipoCargo);
                 _context.DbContext.SaveChanges();
 
-                var data = _context.TipoCargos.Where(t => t.id == tipoCargo.id).Select(
-                    t=> new TipoCargoDTO
-                    {
-                        Id = t.id,
-                        Nombre = t.nombre
-                    }
-                );
-                return data.First();
+                return TipoCargoMapper.EntityToDTO(tipoCargo);
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
-                throw new Exception("Fallo al actualizar: " + tipoCargo.nombre, ex);
+                throw new Exception("Fallo al actualizar: " + tipoCargo.nombre + ", " + ex.Message, ex);
             } 
         } 
 
+        // SE ELIMINA EL TIPO DE CARGO MEDIANTE SU ID
         public TipoCargoDTO EliminarTipoCargoDAO(int id)
         {
             try
@@ -97,7 +95,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }catch(Exception ex)
             {
                     Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
-                    throw new Exception("Fallo al Eliminar por id: " + id, ex);
+                    throw new ServicesDeskUcabWsException("Fallo al Eliminar por id: " + id +", "+ex.Message, ex);
             }
         }               
     }

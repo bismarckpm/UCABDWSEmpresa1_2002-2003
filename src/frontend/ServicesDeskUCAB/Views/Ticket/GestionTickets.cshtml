@@ -1,58 +1,11 @@
-﻿@model List<ServicesDeskUCAB.DTO.TicketCDTO>
-
-@section scripts{
-
-    <!-- JS PARA TRAER LA VENTANA EMERGENTE DEL BOTON "CREAR PRIORIDAD" -->
-    <script>
-        $(function () {
-            var PlaceHolderElement = $('#PlaceHolderTicket');
-            $('#btnAgregar').click(function (event) {
-                var url = $(this).data('url');
-                $.get(url).done(function (data) {
-                    PlaceHolderElement.html(data);
-                    PlaceHolderElement.find('header').empty();
-                    PlaceHolderElement.find('footer').empty();
-                    PlaceHolderElement.find('.modal').modal('show');
-                })
-            })
-
-        })
-    </script>
-
-    <!-- JS PARA TRAER LA VENTANA EMERGENTE DE EDICION DE PRIORIDAD -->
-    <script>
-        $(function () {
-            var PlaceHolderElement = $('#PlaceHolderEditar');
-            $("#btnEditar, .btn-primary").click(function (event) {
-                var id = $(this).closest('tr').find('.id').text();
-                var url = $(this).data('url').replace("idPrioridad", id);
-                $.get(url).done(function (data) {
-                    PlaceHolderElement.html(data);
-                    PlaceHolderElement.find('header').empty();
-                    PlaceHolderElement.find('footer').empty();
-                    PlaceHolderElement.find('.modal').modal('show');
-                })
-            })
-
-        })
-    </script>
-
-}
-
+﻿@model List<ServicesDeskUCAB.DTO.TicketCDTO>  
 @{
-    ViewData["Title"] = "Gestion Tickets";
+    ViewBag.Title = "Tickect Gestion";
+   
 }
-
-<!-- DIVS CONTENEDORES DE LAS DIFERENTES VENTANAS EMERGENTES -->
-<div id="PlaceHolderTicket"></div>
-<div id="PlaceHolderEditar"></div>
-
-<!-- BOTON PARA ACCIONAR LA VENTANA EMERGENTE -->
-<button id=btnAgregar type="button" class="btn btn-warning btn-sm" data-toggle="ajax-modal" data-target="#popUpAgregar" data-url="@Url.Action("VentanaAgregarTicket")">
-    Crear Ticket
-</button>
-<br />
-<br/>
+ @Html.Partial("_MenuTicket")
+ @if (Context.Session.GetString("rol").ToUpper() != "CLIENTE"){
+<div class="table-responsive">
 
 <table class="table">
     <tr>
@@ -82,6 +35,9 @@
         </th>
         <th>
             Categoria
+        </th>
+        <th>
+            Departamento
         </th>
         <th>
             Acciones
@@ -119,11 +75,34 @@
                 @Html.DisplayFor(i => item.categoria)
             </td>
             <td>
-                <button id=btnEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarTicket","Ticket",new { id = "idTicket" })">
-                    Editar
-                </button>
+                @Html.DisplayFor(i => item.departamento)
             </td>
+            <td>
+                <a class="acciones" href="@Url.Action("CambiarEstado","Ticket",new { Tickectid = item.id })">
+                    Cambiar Estado
+                </a>
+                <a class="acciones" href="@Url.Action("AsignarTicket","Ticket",new { iddept =   item.departamentoid, Tickectid = item.id })">
+                    Asignar
+                </a>
+                <a class="acciones" href="@Url.Action("Delegar","Ticket",new { Tickectid = item.id })">
+                    Delegar Ticket
+                </a>
+                <a class="acciones" href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
+                    Merguear Ticket
+                </a>
+                 <a class="acciones" href="@Url.Action("Mergear","Ticket",new { Tickectid = item.id })">
+                    Ver Tickets Mergeados
+                </a>
+            </td>
+          
         </tr>
     }
 
+
 </table>
+</div>
+<p>@ViewBag.Error</p>  
+}
+ 
+
+

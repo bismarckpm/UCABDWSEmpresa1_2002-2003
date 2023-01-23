@@ -8,9 +8,9 @@ public class ModeloParaleloMapper : Profile
 {
     public ModeloParaleloMapper()
     {   
-        CreateMap<ModeloParaleloCreateDTO, ModeloParalelo>();
-        CreateMap<ModeloParalelo, ModeloParaleloCreateDTO>();
         CreateMap<ModeloParalelo, ModeloParaleloDTO>();
-        CreateMap<ModeloParaleloDTO, ModeloParalelo>();    
+        CreateMap<ModeloParaleloDTO, ModeloParalelo>(); 
+        CreateMap<ModeloParaleloCreateDTO, ModeloParalelo>(); 
+        CreateMap<ModeloParalelo, ModeloParaleloCreateDTO>();   
     }
 }

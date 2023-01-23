@@ -1,0 +1,82 @@
+@model List<ServicesDeskUCAB.DTO.TicketCDTO>  
+@{
+    ViewData["Title"] = " Tickets Mergeados";
+}
+  @Html.Partial("_MenuTicket");
+<div class="table-responsive">
+<table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Nombre
+        </th>
+        <th>
+            Fecha
+        </th>
+        <th>
+            Descripción
+        </th>
+        <th>
+            Origen
+        </th>
+        <th>
+            Destinatario
+        </th>
+        <th>
+            Prioridad
+        </th>
+        <th>
+            Estado
+        </th>
+        <th>
+            Categoria
+        </th>
+        <th>
+            Departamento
+        </th>
+     
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="id">
+                @Html.DisplayFor(i => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.creadopor)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.asginadoa)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.prioridad)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.estado)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.departamento)
+            </td>         
+        </tr>
+    }
+
+</table>
+</div>
+ <p>@ViewBag.Error</p>  
+
+

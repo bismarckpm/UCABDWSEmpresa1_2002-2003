@@ -7,8 +7,8 @@ namespace ServicesDeskUCAB.DTO
         public int id { get; set; }
         [Required(ErrorMessage = "Ingrese una Etiqueta")]
         [StringLength(50)]
-        public string? nombre { get; set; }
+        public string nombre { get; set; }
 
-        public string? descripcion { get; set; }
+        public string descripcion { get; set; }
     }
 }
