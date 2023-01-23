@@ -13,7 +13,8 @@ namespace ServicesDeskUCABWS.Persistence.Entity
 
         public int empleadoid{get;set;}
         public virtual Empleado Empleado{get;set;}    
-        public int estatus {get;set;}
+        public int estatusid {get;set;}
+        public virtual Estado Estado { get; set; }
 
     }
 

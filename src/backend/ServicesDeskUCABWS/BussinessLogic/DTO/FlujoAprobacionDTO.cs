@@ -3,6 +3,7 @@
     public class FlujoAprobacionDTO
     {
         public int ticketId { get; set; }
+        public int estadoId { get; set; }
 
     }
 }
