@@ -6,6 +6,7 @@ namespace ServicesDeskUCAB.DTO
     {
         public int id {get; set;}
         public string nombre {get; set;}
+        [Required(ErrorMessage = "Seleccione una categoria")]
         public int categoriaId {get; set;}
         public int cantidaddeaprobacion {get; set;}
     }

@@ -5,6 +5,8 @@ using System.Dynamic;
 using ServicesDeskUCAB.Factory;
 using Newtonsoft.Json;
 using ServicesDeskUCAB.ResponseHandler;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -37,24 +39,42 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-            List<CategoriaDTO> categorias = new List<CategoriaDTO>();
-            using(var clientMP = FactoryHttp.CreateClient())
-                {    
-                    /*var categoria = await clientMP.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
-                    string response = await categoria.Content.ReadAsStringAsync();
-                    categorias = JsonConvert.DeserializeObject<List<CategoriaDTO>>(value:response);
-                    dynamic model = new ExpandoObject();
-                    model.Categorias = categorias;
-                    return View(model);*/
-                    return View();
-                }
-            }catch(Exception ex)
-            {
-                throw new Exception(ex.Message + " || "+ex.StackTrace, ex.InnerException);
-            }
-        } 
+                AplicationResponseHandler<List<CategoriaDTO>> apiCategoria = new AplicationResponseHandler<List<CategoriaDTO>>();
+                using (var client = FactoryHttp.CreateClient())
+                {
+                    var categoria = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
+                    string response2 = await categoria.Content.ReadAsStringAsync();
+                    apiCategoria = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response2);
 
-        public async Task<IActionResult> AgregarMParalelo(ModeloParaleloDTO modeloParalelo)
+                    List<SelectListItem> listItemsCategoria = crearCategoriaDropDown(apiCategoria!.Data);
+
+                    var tuple = new Tuple<ModeloParaleloDTO, List<SelectListItem>>(new ModeloParaleloDTO(),listItemsCategoria);
+                    return View(tuple);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " || " + ex.StackTrace, ex.InnerException);
+            }
+        }
+
+        private static List<SelectListItem> crearCategoriaDropDown(List<CategoriaDTO> lista)
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            foreach (var item in lista)
+            {
+                listItems.Add(new SelectListItem
+                {
+                    Text = item.nombre,
+                    Value = item.id.ToString(),
+                });
+            }
+
+            return listItems;
+        }
+
+        public async Task<IActionResult> AgregarMParalelo([Bind(Prefix = "Item1")] ModeloParaleloDTO modeloParalelo)
         {
             try
             {
@@ -81,13 +101,14 @@ namespace ServicesDeskUCAB.Controllers
                     var request = await client.GetAsync("https://localhost:7198/ModeloAprobacion/Paralelo/" + id.ToString());
                     var responseStream = await request.Content.ReadAsStringAsync();
                     response = JsonConvert.DeserializeObject<ModeloParaleloDTO>(responseStream);
+
                     var categoria = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
-                    string request2 = await categoria.Content.ReadAsStringAsync();
-                    apiCategoria = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: request2);
-                    dynamic model = new ExpandoObject();
-                    model.modeloParalelo = response!;
-                    model.Categorias = apiCategoria!.Data;
-                    return View(response);
+                    string response2 = await categoria.Content.ReadAsStringAsync();
+                    apiCategoria = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response2);
+                    List<SelectListItem> listItemsCategoria = crearCategoriaDropDown(apiCategoria!.Data);
+
+                    var tuple = new Tuple<ModeloParaleloDTO, List<SelectListItem>>(response, listItemsCategoria);
+                    return View(tuple);
                 }
             }catch(Exception ex)
             {
@@ -95,7 +116,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         } 
 
-        public async Task<IActionResult> ActualizarModeloParalelo(ModeloParaleloDTO modeloParalelo)
+        public async Task<IActionResult> ActualizarModeloParalelo([Bind(Prefix = "Item1")] ModeloParaleloDTO modeloParalelo)
         {
             try
             {
