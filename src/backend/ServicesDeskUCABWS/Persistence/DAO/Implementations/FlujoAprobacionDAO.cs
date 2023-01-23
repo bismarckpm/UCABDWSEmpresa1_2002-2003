@@ -41,13 +41,44 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     Include(c => c.Estado).
                     Include(c=>c.creadopor).FirstOrDefault();
 
-                var Modelo = _context.ModeloAprobacion.Where(c => c.categoriaid == listaTickets.categoria.id).FirstOrDefault();    
+                var Modelo = _context.ModeloAprobacion.Where(c => c.categoriaid == listaTickets.categoria.id).FirstOrDefault();
 
+
+                //if (Modelo.Discriminator == "ModeloJerarquico")
+                //{
+                //var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();
+
+                //    foreach (ModeloJerarquicoCargos modelo in ModeloCargos)
+                //    {
+                //        var a = (from usua in _context.Usuario
+                //                 join dep in _context.Cargos on usua.cargo equals dep
+                //                 join tp in _context.TipoCargos on dep.tipoCargo equals tp
+                //                 where tp.id == modelo.TipoCargoid
+                //                 select new UsuarioDTO()
+                //                 {
+                //                     id = usua.id
+                //                 }).FirstOrDefault();
+                //        var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
+                //        FlujoAprobacion f = new FlujoAprobacion
+                //        {
+                //            empleadoid = a.id,
+                //            modeloid = modelo.Id,
+                //            ticketid = listaTickets.id,
+                //            ModeloAprobacion = Modelo,
+                //            estatus = 0
+                //        };
+                //        _context.FlujoAprobaciones.AddRange(f);
+
+                //    }
+                //    _context.DbContext.SaveChanges();
+
+
+                //}
 
                 if (Modelo.Discriminator == "ModeloJerarquico")
                 {
-                var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();
-
+                    var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();
+                    List<FlujoAprobacion> deps = new List<FlujoAprobacion>();
                     foreach (ModeloJerarquicoCargos modelo in ModeloCargos)
                     {
                         var a = (from usua in _context.Usuario
@@ -59,6 +90,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                                      id = usua.id
                                  }).FirstOrDefault();
                         var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
+
                         FlujoAprobacion f = new FlujoAprobacion
                         {
                             empleadoid = a.id,
@@ -67,9 +99,11 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                             ModeloAprobacion = Modelo,
                             estatus = 0
                         };
-                        _context.FlujoAprobaciones.AddRange(f);
+                        deps.Add(f);
+
 
                     }
+                    _context.FlujoAprobaciones.AddRange(deps);
                     _context.DbContext.SaveChanges();
 
 
