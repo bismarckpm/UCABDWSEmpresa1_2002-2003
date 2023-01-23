@@ -8,7 +8,9 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
     {
         public GrupoMapper()
         {
-            CreateMap<Grupo, GrupoDTO>().ReverseMap();
+            CreateMap<Grupo, GrupoDTO>();
+            CreateMap<GrupoDTO, Grupo>();
+            CreateMap<GrupoCreateDTO, Grupo>();
         }
     }
 }
