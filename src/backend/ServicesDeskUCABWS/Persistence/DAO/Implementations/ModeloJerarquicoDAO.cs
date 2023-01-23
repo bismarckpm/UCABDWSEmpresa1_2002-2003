@@ -83,6 +83,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             {
                 var data = _context.ModeloJerarquicos
                                     .Include(c => c.categoria)
+                                    .Where(m => m.id==id)
                                    .Select(m => new ModeloJCDTO()
                                    {
                                     id = m.id,

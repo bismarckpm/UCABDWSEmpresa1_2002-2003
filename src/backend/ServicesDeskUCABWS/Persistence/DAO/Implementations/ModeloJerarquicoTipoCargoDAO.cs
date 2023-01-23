@@ -34,7 +34,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new ServicesDeskUcabWsException(ex.Message, ex);
             }
         }
 
@@ -49,7 +49,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new ServicesDeskUcabWsException(ex.Message, ex);
             }
         }
 
@@ -68,7 +68,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new ServicesDeskUcabWsException(ex.Message, ex);
             }
         }
 
@@ -93,7 +93,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
             }catch(Exception ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new ServicesDeskUcabWsException(ex.Message, ex);
             }
         }
 
@@ -118,7 +118,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
            catch (Exception ex)
            {
             
-            throw new Exception(ex.Message, ex);
+            throw new ServicesDeskUcabWsException(ex.Message, ex);
            }
         }
     }
