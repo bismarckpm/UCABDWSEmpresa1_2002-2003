@@ -85,20 +85,19 @@ namespace ServicesDeskUCABWS.Test.Controllers
         }
 
 
-        //[Fact(DisplayName = "Actualizar Cargo")]
-        //public async void PutCargoControllerTest()
-        //{
+        [Fact(DisplayName = "Actualizar Cargo")]
+        public async void PutCargoControllerTest()
+        {
 
-        //    var dto = new CargoDTO() { Id = 1, Nombre = "Presidente", TipoCargoId = 1 };
-        //    var prueba = new Cargo() { id = 1, nombre = "Gerente", tipoCargoId = 1 };
+            var dto = new CargoDTO() { Id = 1, Nombre = "Presidente", TipoCargoId = 1 };
+            var prueba = new Cargo() { id = 1, nombre = "Gerente", tipoCargoId = 1 };
 
-        //    _servicesMock.Setup(x => x.ActualizarCargoDAO(prueba, 1)).ReturnsAsync(prueba);
-        //    // _servicesMock.Setup(x => x.ActualizarCargoDAO(prueba, 1)).ReturnsAsync(new ActionResult<Cargo> (prueba));
+            _servicesMock.Setup(x => x.ActualizarCargoDAO(It.IsAny<Cargo>(), It.IsAny<int>())).ReturnsAsync(new ActionResult<Cargo>(prueba));
 
-        //    var result = await _controller.ActualizarCargo(dto, 1);
+            var result = await _controller.ActualizarCargo(dto, 1);
 
-        //    Assert.IsType<OkObjectResult>(result);
-        //}
+            Assert.IsType<OkObjectResult>(result);
+        }
 
 
         /// <summary>

@@ -46,7 +46,13 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(m => m.AgregarModeloJerarquicoDAO(modeloJerarquico))
             .Returns(modeloJerarquicoDTO);
 
-            var dto = new ModeloJerarquicoDTO();
+            var dto = new ModeloJerarquicoDTO
+            {
+                id = 1,
+                CategoriaId = 1,
+                Nombre = "",
+                orden = new List<JerarquicoTipoCargoDTO>()
+            };
             var result = _controller.Post(dto);
 
             Assert.IsType<ApplicationResponse<ModeloJerarquicoDTO>>(result);
