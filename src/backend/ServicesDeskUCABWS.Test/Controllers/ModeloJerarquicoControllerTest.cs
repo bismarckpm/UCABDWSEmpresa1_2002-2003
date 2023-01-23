@@ -46,12 +46,12 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(m => m.AgregarModeloJerarquicoDAO(modeloJerarquico))
             .Returns(modeloJerarquicoDTO);
 
-            var dto = new ModeloJerarquicoDTO
+            var dto = new ModeloJIDTO
             {
                 id = 1,
                 CategoriaId = 1,
-                Nombre = "",
-                orden = new List<JerarquicoTipoCargoDTO>()
+                Nombre = ""
+                
             };
             var result = _controller.Post(dto);
 
@@ -97,9 +97,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             _servicesMock.Setup(m =>m.ActualizarModeloJerarquicoDAO(modeloJerarquico))
             .Returns(modeloJerarquicoDTO);
-            var dto = new ModeloJerarquicoDTO(){id = 1, Nombre = "prueba", 
-                                orden = new List<JerarquicoTipoCargoDTO>()
-                                };
+            var dto = new ModeloJIDTO();
             var result = _controller.ActualizarModeloJerarquico(dto);
 
             Assert.IsType<ApplicationResponse<ModeloJerarquicoDTO>>(result);
@@ -130,12 +128,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(e => e.AgregarModeloJerarquicoDAO(modeloJerarquico))
                 .Throws(new Exception());
 
-                var dto = new ModeloJerarquicoDTO()
-                            {
-                                Nombre = "Prueba de excepcion",
-                            };
-
-                var response = _controller.Post(dto);
+                var response = _controller.Post(null!);
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -146,7 +139,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task ConsultarModeloJerarquicoControllerExceptionTest()
         {
             _servicesMock.Setup(e => e.ConsultarModeloJerarquicosDAO())
-            .Throws(new ServicesDeskUcabWsException("",new ArgumentOutOfRangeException()));
+            .Throws(new ServicesDeskUcabWsException("",new Exception()));
 
             var response = _controller.GetModeloJerarquico();
 
@@ -175,7 +168,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(e => e.ActualizarModeloJerarquicoDAO(modeloJerarquico))
                         .Throws(new Exception());
 
-            var response = _controller.ActualizarModeloJerarquico(ErrorModelDTO());
+            var response = _controller.ActualizarModeloJerarquico(It.IsAny<ModeloJIDTO>());
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -225,9 +218,9 @@ namespace ServicesDeskUCABWS.Test.Controllers
             };
         }
 
-        private ModeloJerarquicoDTO  ErrorModelDTO()
+        private ModeloJIDTO  ErrorModelDTO()
         {
-            return new ModeloJerarquicoDTO();
+            return new ModeloJIDTO();
         }
                 
         #endregion

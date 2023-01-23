@@ -23,14 +23,13 @@ namespace ServicesDeskUCABWS.BussinessLogic.Mapper
             };
         }
 
-        public static ModeloJerarquico DtoToEntity(ModeloJerarquicoDTO dto)
+        public static ModeloJerarquico DtoToEntity(ModeloJIDTO dto)
         {
             return new ModeloJerarquico()
             {
                 id = dto.id,
                 nombre = dto.Nombre,
-                categoriaid = dto.CategoriaId,
-                Jeraruia = DtoToEntityList(dto.orden!)
+                categoriaid = dto.CategoriaId
             };
         }
 
