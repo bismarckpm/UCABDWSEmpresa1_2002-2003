@@ -7,15 +7,15 @@
         <form asp-action="RegistrarEmpleado"  method="post">
             <div class="form-group">
                 <label for="departamentos">Tipo de usuario</label>
-                <select class="form-control" id="tipou" name="tipou">  
+                <select class="form-control" id="tipousuario" name="tipousuario">  
                         <option value="1">Administrador</option>
                         <option value="2">Empleado</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="departamentos">Departamentos</label>
-                <select class="form-control" id="departamentos" name="departamentos">
-                    @foreach (DepartamentoDTO departamento in Model.Departamentos)
+                <label for="GrupoId">Departamentos</label>
+                <select class="form-control" id="GrupoId" name="GrupoId">
+                    @foreach (GrupoDTO departamento in Model.Departamentos)
 
                     {
                         <option value="@departamento.id">@departamento.nombre</option>
@@ -26,7 +26,7 @@
 
             <div class="form-group">
                 <label for="cargos">Cargos</label>
-                <select class="form-control" id="cargos" name="cargos">
+                <select class="form-control" id="cargoid" name="cargoid">
                     @foreach (CargoDTO cargo in Model.Cargos)
 
                     {
@@ -39,6 +39,10 @@
             <div class="form-group">
                 <label>E-mail</label>
                 <input type="email" name="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" name="nombre" class="form-control" placeholder="nombre">
             </div>
             <div class="form-group">
                 <label>contrasena</label>
