@@ -39,8 +39,8 @@ namespace ServicesDeskUCABWS.Controllers
             var response = new ApplicationResponse<FlujoAprobacionDTO>();
             try
             {
-                response.Data = await _flujoAprobacionDAO.AgregarFlujoDAO(dto);
-                    
+                // response.Data = await _flujoAprobacionDAO.AgregarFlujoDAO(dto);
+                response.Data = await _flujoAprobacionDAO.AgregarFlujoAprobacionDAO(dto);
                 response.Message = "Flujo agregado con exito";
                 response.StatusCode = HttpStatusCode.OK;
                 _log.LogInformation("Flujo agregado con exito");
