@@ -55,7 +55,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ticket = _context.Tickets.Where(c => c.id == tickectEstadoDTO.idticket).FirstOrDefault();
+                var ticket = _context.Tickets.Where(c => c.id == tickectEstadoDTO.idticket)
+                                    .Include(c => c.creadopor)
+                                    .FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.id == tickectEstadoDTO.idestado).FirstOrDefault();
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == tickectEstadoDTO.idestado).FirstOrDefault();
                 var email = new EmailDTO();
@@ -78,14 +80,17 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ticket = _context.Tickets.Where(c => c.id == asignarTicket.ticketid).FirstOrDefault();
+                var ticket = _context.Tickets.Where(c => c.id == asignarTicket.ticketid)
+                            .Include(c => c.creadopor)
+                            .Include(c => c.categoria)
+                            .FirstOrDefault();
                 ticket.asginadoa = _context.Usuario.Where(c => c.id == asignarTicket.asginadoa).FirstOrDefault();
                 ticket.prioridad = _context.Prioridades.Where(c => c.id == asignarTicket.prioridadid).FirstOrDefault();
                 ticket.Estado = _context.Estados.Where(c => c.nombre == "En proceso").FirstOrDefault();
                 var Plantilla = _context.Plantillas.Where(c => c.EstadoId == ticket.Estado.id).FirstOrDefault();
                 var email = new EmailDTO();
                 email.para = ticket.creadopor.email;
-                email.Cuerpo = Plantilla.cuerpo + "<br>" + "Asignado a: " + ticket.asginadoa.nombre + "<br> Prioridad: " + ticket.prioridad.nombre;
+                email.Cuerpo = Plantilla.cuerpo + "<br>" + ticket.asginadoa.nombre + "<br> Prioridad: " + ticket.prioridad.nombre;
                 email.asunto = "Tickect asginado " + Plantilla.titulo;
                 _emailRepository.SendEmail(email);
                 _context.Tickets.Update(ticket);
