@@ -14,6 +14,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             this._configuration = configuration;
         }
+
+        // SE REALIZA EL ENVÍO DEL CORREO EN EL SERVICIO DE CORREOS
         public void SendEmail(EmailDTO emailDTO)
         {
             var email = new MimeMessage();

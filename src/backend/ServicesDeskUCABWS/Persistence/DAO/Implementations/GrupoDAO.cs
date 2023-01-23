@@ -78,7 +78,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-
+        //  SERVICIO DE CONSULTAR LOS GRUPOS
         public async Task<List<GrupoResponseDTO>> ObtenerGruposDAO()
         {
 
@@ -102,6 +102,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
+        //          SERVICIO DE ACTUALIZAR LOS GRUPOS
         public async Task<GrupoDTO> ActualizarGrupoDAO(Grupo grupo, int id)
         {
 
@@ -136,6 +137,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
+        //          SERVICIO DE ELIMINAR LOS GRUPOS
         public async Task<Boolean> EliminarGrupoDAO(int id)
         {
             try

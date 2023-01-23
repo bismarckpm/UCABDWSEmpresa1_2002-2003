@@ -46,7 +46,8 @@ namespace ServicesDeskUCABWS.Test.Controllers
             _servicesMock.Setup(m => m.AgregarModeloJerarquicoDAO(modeloJerarquico))
             .Returns(modeloJerarquicoDTO);
 
-            var result = _controller.Post(ModelDTO());
+            var dto = new ModeloJerarquicoDTO();
+            var result = _controller.Post(dto);
 
             Assert.IsType<ApplicationResponse<ModeloJerarquicoDTO>>(result);
             return Task.CompletedTask;
@@ -59,11 +60,11 @@ namespace ServicesDeskUCABWS.Test.Controllers
         public Task GetModeloJerarquicoControllerTest()
         {
             _servicesMock.Setup(j => j.ConsultarModeloJerarquicosDAO())
-            .Returns(It.IsAny<List<ModeloJerarquicoDTO>>());
+            .Returns(It.IsAny<List<ModeloJCDTO>>());
 
             var result = _controller.GetModeloJerarquico();
 
-            Assert.IsType<ApplicationResponse<List<ModeloJerarquicoDTO>>>(result);
+            Assert.IsType<ApplicationResponse<List<ModeloJCDTO>>>(result);
             return Task.CompletedTask;
         }
 
@@ -78,7 +79,7 @@ namespace ServicesDeskUCABWS.Test.Controllers
 
             var result = _controller.ConsultaMJerarquicoPorId(It.IsAny<int>());
 
-            Assert.IsType<ApplicationResponse<ModeloJerarquicoDTO>>(result);
+            Assert.IsType<ApplicationResponse<ModeloJCDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -90,8 +91,10 @@ namespace ServicesDeskUCABWS.Test.Controllers
         {
             _servicesMock.Setup(m =>m.ActualizarModeloJerarquicoDAO(modeloJerarquico))
             .Returns(modeloJerarquicoDTO);
-
-            var result = _controller.ActualizarModeloJerarquico(ModelDTO());
+            var dto = new ModeloJerarquicoDTO(){id = 1, Nombre = "prueba", 
+                                orden = new List<JerarquicoTipoCargoDTO>()
+                                };
+            var result = _controller.ActualizarModeloJerarquico(dto);
 
             Assert.IsType<ApplicationResponse<ModeloJerarquicoDTO>>(result);
             return Task.CompletedTask;
@@ -206,14 +209,13 @@ namespace ServicesDeskUCABWS.Test.Controllers
             };
         }
 
-        private ModeloJerarquicoDTO ModelDTO()
+        private ModeloJCDTO ModelDTO()
         {
-            return new ModeloJerarquicoDTO()
+            return new ModeloJCDTO()
             {
-            id = 1,
-            Nombre = "Prueba Modelo",
-            CategoriaId = 1,
-            orden = new List<JerarquicoTipoCargoDTO>()
+                id = 1,
+                Nombre = "Prueba Modelo",
+                nombreCategoria = "prueba"
             };
         }
 

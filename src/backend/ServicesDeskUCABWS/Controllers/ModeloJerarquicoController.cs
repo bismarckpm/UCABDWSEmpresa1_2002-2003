@@ -66,9 +66,9 @@ namespace ServicesDeskUCABWS.Controllers
         /// listado de objetos modelo jerarquico. </returns>
         [HttpGet]
         [Route("GetModeloJerarquico/")]
-        public ApplicationResponse<List<ModeloJerarquicoDTO>> GetModeloJerarquico()
+        public ApplicationResponse<List<ModeloJCDTO>> GetModeloJerarquico()
         {
-            var response = new ApplicationResponse<List<ModeloJerarquicoDTO>>();
+            var response = new ApplicationResponse<List<ModeloJCDTO>>();
             try
             {
                 response.Data= _dao.ConsultarModeloJerarquicosDAO();
@@ -93,9 +93,9 @@ namespace ServicesDeskUCABWS.Controllers
         /// la consulta. </returns>
         [HttpGet]
         [Route("Jerarquico/{id}")]
-        public ApplicationResponse<ModeloJerarquicoDTO> ConsultaMJerarquicoPorId(int id)
+        public ApplicationResponse<ModeloJCDTO> ConsultaMJerarquicoPorId(int id)
         {
-            var response = new ApplicationResponse<ModeloJerarquicoDTO>();
+            var response = new ApplicationResponse<ModeloJCDTO>();
             try
             {
                 response.Data = _dao.ObtenerModeloJerarquicoDAO(id);

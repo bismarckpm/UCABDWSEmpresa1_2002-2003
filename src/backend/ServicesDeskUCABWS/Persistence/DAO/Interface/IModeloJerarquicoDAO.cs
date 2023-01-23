@@ -6,9 +6,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Interface
 {
     public interface IModeloJerarquicoDAO
     {
-        public List<ModeloJerarquicoDTO> ConsultarModeloJerarquicosDAO();
+        public List<ModeloJCDTO> ConsultarModeloJerarquicosDAO();
         public ModeloJerarquicoDTO AgregarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
-        public ModeloJerarquicoDTO ObtenerModeloJerarquicoDAO(int id);
+        public ModeloJCDTO ObtenerModeloJerarquicoDAO(int id);
         public ModeloJerarquicoDTO ActualizarModeloJerarquicoDAO(ModeloJerarquico modeloJerarquico);
         public ModeloJerarquicoDTO EliminarModeloJerarquicoDAO(int id);
     }

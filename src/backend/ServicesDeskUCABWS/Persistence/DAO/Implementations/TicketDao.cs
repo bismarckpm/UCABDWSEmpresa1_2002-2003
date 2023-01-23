@@ -50,7 +50,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
-
+        //          SERVICIO PARA QUE EL TICKET PUEDA CAMBIAR DE ESTADO
         public string CambiarEstado(TickectEstadoDTO tickectEstadoDTO)
         {
             try
@@ -76,6 +76,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
+        //          SERVICIO DE ASIGNACIÓN DE TICKET
         public string AsignarTicket(AsignarTicketDTO asignarTicket)
         {
             try
@@ -104,6 +105,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
+        //          SERVICIO PARA QUE UN TICKET PUEDA SER DELEGADO
         public string DelegarTicket(TickectDelegadoDTO delegadoDTO)
         {
             try
@@ -139,7 +141,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         }
 
 
-
+        //          SERVICIO PARA QUE LOS TICKETS PUEDAN ESTAR RELACIONADOS
         public string TikcetsRelacionados(TicketsRelacionadosDTO ticketsRelacionados)
         {
             try
@@ -159,6 +161,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
+
+        //          SERVICIO PARA ELIMINAR EL MERGE ENTRE TICKETS
         public string EliminarRelacionMerge(TicketsRelacionadosDTO ticketsRelacionados)
         {
             try
@@ -177,7 +181,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
 
 
-
+        //          SERVICIO DE CONSULTAR LISTA DE TICKETS
         public ICollection<TicketCDTO> GetTickets()
         {
             try
@@ -219,6 +223,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
               , ex.Message, ex);
             }
         }
+        //          SERVICIO DE CONSULTAR TICKETS DE UN DEPARTAMENTO
+
         public ICollection<TicketCDTO> GetTicketsDept(int idusu)
         {
             try
@@ -278,7 +284,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-
+        //          SERVICIO PARA VEER LOS TICKETS QUE ESTÁN MERGEADOS
         public ICollection<TicketCDTO> TicketsMergeados(int ticketid)
         {
             try
@@ -321,6 +327,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
               , ex.Message, ex);
             }
         }
+
+        //          SERVICIO DE CONSULTAR LOS TICKETS POR ID
         public TicketCDTO GetTicket(int ticketid)
         {
             try
@@ -359,6 +367,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE CONSULTAR TICKETS SEGÚN A QUIÉN ESTÉ ASIGNADO
         public ICollection<TicketCDTO> GetTicketporusuarioasignado(int usuarioasignado)
         {
             try
@@ -404,6 +413,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
 
         }
+        //          SERVICIO DE CONSULTAR QUIÉN CREÓ EL TICKET
 
         public ICollection<TicketCDTO> GetTicketCreadopor(int usuarioasignado)
         {
