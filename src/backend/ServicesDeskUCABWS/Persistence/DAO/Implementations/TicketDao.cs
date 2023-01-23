@@ -108,7 +108,9 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             try
             {
-                var ticket = _context.Tickets.Where(c => c.id == delegadoDTO.idticket).FirstOrDefault();
+                var ticket = _context.Tickets.Where(c => c.id == delegadoDTO.idticket).Include(c => c.creadopor)
+                            .Include(c => c.categoria).FirstOrDefault();
+                
                 ticket.asginadoa = _context.Usuario.Where(c => c.id == delegadoDTO.idAsignadoa).FirstOrDefault();
                 var dep = (from usua in _context.Usuario
                            join dep2 in _context.Departamentos on usua.Grupo.departamento equals dep2

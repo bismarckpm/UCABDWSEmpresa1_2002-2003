@@ -17,13 +17,14 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("api/etiquetas")]
     public class EtiquetaController : Controller
     {
+        //ACÁ SE REALIZA LA DECLARACION DE VARIABLES
         private readonly IEtiquetaDAO _dao;
         private readonly ILogger<EtiquetaController> _log;
 
         private readonly IMapper _mapper;
 
 
-
+        // ACÁ ESTÁN LOS CONSTRUCTORES
         public EtiquetaController(ILogger<EtiquetaController> logger, IEtiquetaDAO dao, IMapper mapper)
         {
             _log = logger;
@@ -31,6 +32,7 @@ namespace ServicesDeskUCABWS.Controllers
             _mapper = mapper;
         }
 
+        // ACÁ SE REALIZA EL ENDPOINT PARA CREAR LA ETIQUETA
         [HttpPost]
         public async Task<ApplicationResponse<EtiquetaDTO>> Post([FromBody] EtiquetaDTOCreate dto)
         {
@@ -55,6 +57,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA CONSULTAR TODAS LAS ETIQUETAS
         [HttpGet]
         public async Task<ApplicationResponse<List<EtiquetaDTO>>> Get()
         {
@@ -80,6 +83,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ACÁ SE ENCUENTRA EL ENDPOINT PARA CONSULTAR UNA ETIQUETA DADO EL ID
         [HttpGet("{id:int}", Name = "obtenerEtiqueta")]
         public async Task<ApplicationResponse<EtiquetaDTO>> Get([Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
@@ -112,7 +116,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
-
+        //ENDPOINT PARA ACTUALIZAR LA ETIQUETA
         [HttpPut("{id:int}")]
 
         public async Task<ApplicationResponse<EtiquetaDTO>> ActualizarEtiqueta(
@@ -147,6 +151,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA ELIMINAR LA ETIQUETA DADO EL ID
         [HttpDelete("{id:int}")]
         public async Task<ApplicationResponse<ActionResult>> EliminarEtiqueta([Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
