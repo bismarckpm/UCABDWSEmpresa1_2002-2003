@@ -14,23 +14,18 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                AplicationResponseHandler<List<ModeloJerarquicoDTO>> apiResponseH = new AplicationResponseHandler<List<ModeloJerarquicoDTO>>();
-                 List<ModeloJerarquicoDTO> listDto = new List<ModeloJerarquicoDTO>();
-                HttpClient clientMJerarquico = FactoryHttp.CreateClient();
+                AplicationResponseHandler<List<ModeloJCDTO>> apiResponseH = new AplicationResponseHandler<List<ModeloJCDTO>>();
+                
+                using(var clientMJerarquico = FactoryHttp.CreateClient())
+                {
+                       var ModeloJ = await clientMJerarquico.GetAsync("https://localhost:7198/ModeloAprobacion/GetModeloJerarquico/");
 
-                    var response = await clientMJerarquico.GetAsync("https://localhost:7198/ModeloAprobacion/GetModeloJerarquico/");
-                    
-                    if(response.IsSuccessStatusCode)
-                    {
-                        var responseStream = await response.Content.ReadAsStringAsync();
-                        apiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<List<ModeloJerarquicoDTO>>>(responseStream);
-                        listDto = apiResponseH!.Data;
-                    } else 
-                    {
-                        BadRequest();
-                    }
+                        var response = await ModeloJ.Content.ReadAsStringAsync();
 
-                return View(listDto);
+                        apiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<List<ModeloJCDTO>>>(response);
+
+                    return View(apiResponseH.Data);
+                }  
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message +" || "+ ex.StackTrace);
@@ -42,25 +37,20 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                 AplicationResponseHandler<List<CategoriaDTO>> ApiResponse = new AplicationResponseHandler<List<CategoriaDTO>>();
-                AplicationResponseHandler<List<TipoCargoDTO>> ApiResponseH = new AplicationResponseHandler<List<TipoCargoDTO>>();
+                AplicationResponseHandler<List<CategoriaDTO>> ApiResponse = new AplicationResponseHandler<List<CategoriaDTO>>();
+
                 List<CategoriaDTO> categorias = new List<CategoriaDTO>();
-                List<TipoCargoDTO> tipoCargos = new List<TipoCargoDTO>();
-                    
+                   
                 using(var clientMJ = FactoryHttp.CreateClient())
                 {
                    var categoria = await clientMJ.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
-                   var tipoCargo = await clientMJ.GetAsync("https://localhost:7198/TipoCargo/ConsultaTCargo/");
 
                         string response = await categoria.Content.ReadAsStringAsync();
-                        string response2 = await tipoCargo.Content.ReadAsStringAsync();
 
                        ApiResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response);
-                        ApiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<List<TipoCargoDTO>>>(value: response2);
-                        tipoCargos = ApiResponseH!.Data;
+
                         dynamic model = new ExpandoObject();
                         model.Categorias = ApiResponse!.Data;
-                        model.TipoCargos = tipoCargos;
 
                         return View(model);
                     
@@ -88,40 +78,34 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> VentanaEditarModeloJerarquico(int id)
+        public async Task<IActionResult> VentanaEditarModeloJerarquico(int idmj)
         {
             try
             {
                 AplicationResponseHandler<ModeloJerarquicoDTO> ApiResponseH = new AplicationResponseHandler<ModeloJerarquicoDTO>();
-                AplicationResponseHandler<List<TipoCargoDTO>> apiTipoCargo = new AplicationResponseHandler<List<TipoCargoDTO>>();
                 AplicationResponseHandler<List<CategoriaDTO>> apiCategoria = new AplicationResponseHandler<List<CategoriaDTO>>();
-                // List<TipoCargoDTO> listTipoCargos = new List<TipoCargoDTO>();
-                // List<CategoriaDTO> listCategorias = new List<CategoriaDTO>();
                 
                 using(var client = FactoryHttp.CreateClient())
                 {
-                    var response = await client.GetAsync("https://localhost:7198/ModeloAprobacion/Jerarquico/" + id.ToString());
+                    var response = await client.GetAsync("https://localhost:7198/ModeloAprobacion/Jerarquico/" + idmj.ToString());
                     var responseStream = await response.Content.ReadAsStringAsync();
                     ApiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<ModeloJerarquicoDTO>>(responseStream);
                     
 
                    var categoria = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
-                   var tipoCargo = await client.GetAsync("https://localhost:7198/TipoCargo/ConsultaTCargo/");
+        
 
                         string response2 = await categoria.Content.ReadAsStringAsync();
-                        string response3 = await tipoCargo.Content.ReadAsStringAsync();
-
+        
                         apiCategoria = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response2);
-                        apiTipoCargo = JsonConvert.DeserializeObject<AplicationResponseHandler<List<TipoCargoDTO>>>(value: response3);
-                        // listTipoCargos = apiTipoCargo!.Data;
-
+        
 
                     dynamic model = new ExpandoObject();
                         model.ModeloJerarquicos = ApiResponseH!.Data;
                         model.Categorias = apiCategoria!.Data;
-                        model.TipoCargos = apiTipoCargo!.Data;
+                        model.id = idmj;
 
-                return View(ApiResponseH!.Data);
+                return View(model);
                 }
 
             }catch(Exception ex)
@@ -130,6 +114,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         } 
 
+        [HttpPost]
         public async Task<IActionResult> ActualizarModeloJerarquico(ModeloJerarquicoDTO modeloJerarquico)
         {
             try
@@ -169,5 +154,7 @@ namespace ServicesDeskUCAB.Controllers
                 throw new Exception(ex.Message + " || "+ex.StackTrace, ex.InnerException);
             }
         }
+
+
     }
 }

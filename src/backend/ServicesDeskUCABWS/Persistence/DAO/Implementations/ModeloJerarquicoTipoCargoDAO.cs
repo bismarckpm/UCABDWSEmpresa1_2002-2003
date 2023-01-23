@@ -72,16 +72,21 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        public List<JerarquicoTipoCargoDTO> ListadoJerarquicoTipoCargoDAO()
+        public List<JerarquicoTCargoCDTO> ListadoJerarquicoTipoCargoDAO()
         {
             try
             {
-                var data = _context.ModeloJerarquicoCargos.Select(jc => new JerarquicoTipoCargoDTO()
+                var data = _context.ModeloJerarquicoCargos
+                .Include(m => m.jerarquico)
+                .Include(t=> t.TipoCargo)
+                .Select(jc => new JerarquicoTCargoCDTO()
                 {
                     Id = jc.Id,
-                    tipoCargoid = jc.TipoCargoid,
+                    orden = jc.orden,
+                    modelo = jc.jerarquico!.nombre,
+                    tipocargo = jc.TipoCargo!.nombre,
                     modelojerarquicoid = jc.modelojerarquicoid,
-                    orden = jc.orden
+                    tipoCargoid = jc.TipoCargoid
                 }).ToList();
 
                 return data;
@@ -92,18 +97,20 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        public JerarquicoTipoCargoDTO ObtenerJerarquicoTipoCargoDAO(int id)
+        public JerarquicoTCargoCDTO ObtenerJerarquicoTipoCargoDAO(int id)
         {
            try
            {
                 var data = _context.ModeloJerarquicoCargos
                 .Where(jc => jc.Id == id)
-                .Select(jc => new JerarquicoTipoCargoDTO()
+                .Select(jc => new JerarquicoTCargoCDTO()
                     {
                         Id = jc.Id,
                         tipoCargoid = jc.TipoCargoid,
                         modelojerarquicoid = jc.modelojerarquicoid,
-                        orden = jc.orden
+                        orden = jc.orden,
+                        modelo = jc.jerarquico!.nombre,
+                        tipocargo = jc.TipoCargo!.nombre
                     }).First();
 
                return data;     

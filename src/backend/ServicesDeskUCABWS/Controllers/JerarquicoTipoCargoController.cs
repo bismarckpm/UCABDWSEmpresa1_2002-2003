@@ -48,9 +48,9 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("ListJerarquicoTCargo/")]
-        public ApplicationResponse<List<JerarquicoTipoCargoDTO>> ObtenerListadoJerarquicoTCargo()
+        public ApplicationResponse<List<JerarquicoTCargoCDTO>> ObtenerListadoJerarquicoTCargo()
         {
-            ApplicationResponse<List<JerarquicoTipoCargoDTO>> response = new ApplicationResponse<List<JerarquicoTipoCargoDTO>>();
+            ApplicationResponse<List<JerarquicoTCargoCDTO>> response = new ApplicationResponse<List<JerarquicoTCargoCDTO>>();
             try
             {
                 response.Data = _dao.ListadoJerarquicoTipoCargoDAO();
@@ -67,9 +67,9 @@ namespace ServicesDeskUCABWS.Controllers
 
         [HttpGet]
         [Route("JerarquicoTCargo/{id}")]
-        public ApplicationResponse<JerarquicoTipoCargoDTO> ObtenerJerarquicoTCargo([FromRoute] int id)
+        public ApplicationResponse<JerarquicoTCargoCDTO> ObtenerJerarquicoTCargo([FromRoute] int id)
         {
-            ApplicationResponse<JerarquicoTipoCargoDTO> response = new ApplicationResponse<JerarquicoTipoCargoDTO>();
+            ApplicationResponse<JerarquicoTCargoCDTO> response = new ApplicationResponse<JerarquicoTCargoCDTO>();
             try
             {
                 response.Data = _dao.ObtenerJerarquicoTipoCargoDAO(id);

@@ -14,7 +14,7 @@ namespace ServicesDeskUCAB.Controllers
         {
             try
             {
-                    AplicationResponseHandler<List<JerarquicoTipoCargoDTO>> jResponse = new AplicationResponseHandler<List<JerarquicoTipoCargoDTO>>();
+                    AplicationResponseHandler<List<JerarquicoTCargoCDTO>> jResponse = new AplicationResponseHandler<List<JerarquicoTCargoCDTO>>();
                     HttpClient JClient = FactoryHttp.CreateClient();
                     
                     var response = await JClient.GetAsync("https://localhost:7198/JerarquicoTipoCargo/ListJerarquicoTCargo/");
@@ -22,7 +22,7 @@ namespace ServicesDeskUCAB.Controllers
                         if(response.IsSuccessStatusCode)
                         {
                             var responseStream = await response.Content.ReadAsStringAsync();
-                            jResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<JerarquicoTipoCargoDTO>>>(responseStream);
+                            jResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<JerarquicoTCargoCDTO>>>(responseStream);
 
                         }
                     return View(jResponse.Data);

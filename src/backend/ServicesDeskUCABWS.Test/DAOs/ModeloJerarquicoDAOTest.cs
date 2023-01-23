@@ -66,7 +66,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             var result =  _dao.ConsultarModeloJerarquicosDAO();
 
             // verificacion de la prueba
-            Assert.IsType<List<ModeloJerarquicoDTO>>(result);
+            Assert.IsType<List<ModeloJCDTO>>(result);
             return Task.CompletedTask;
         }
 
@@ -81,7 +81,7 @@ namespace ServicesDeskUCABWS.Test.DAOs
             // prueba de la funcion
             var result =  _dao.ObtenerModeloJerarquicoDAO(id);
             // verificacion de la prueba
-            Assert.IsType<ModeloJerarquicoDTO>(result);
+            Assert.IsType<ModeloJCDTO>(result);
             return Task.CompletedTask;
         }
 

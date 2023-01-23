@@ -1,4 +1,4 @@
-@model List<ServicesDeskUCAB.DTO.JerarquicoTipoCargoDTO>
+@model List<ServicesDeskUCAB.DTO.JerarquicoTCargoCDTO>
 @section scripts
 {
     <script>
@@ -84,10 +84,10 @@
                 @Html.DisplayFor(i => item.orden)
            </td> 
            <td>
-                @Html.DisplayFor(i => item.tipoCargoid)
+                @Html.DisplayFor(i => item.tipocargo)
            </td>
            <td>
-                @Html.DisplayFor(i => item.modelojerarquicoid)
+                @Html.DisplayFor(i => item.modelo)
            </td>
            <td>
             <button id="btnEditarJTC" type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarJerarquicoTCargo","JerarquicoTipoCargo",new {id = "idJerarquicoTc"})">
