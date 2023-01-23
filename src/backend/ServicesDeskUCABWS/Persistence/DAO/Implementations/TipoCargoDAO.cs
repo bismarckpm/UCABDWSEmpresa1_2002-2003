@@ -17,6 +17,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         {
             this._context = context;
         }
+
+        // SE AGREGA UN TIPO  DE CARGO 
         public TipoCargoDTO AgregarTipoCargoDAO(TipoCargo tipo)
         {
             try
@@ -40,6 +42,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        // SE CONSULTAN LOS TIPOS DE CARGO QUE EXISTEN EN EL SISTEMA
         public List<TipoCargoDTO> ConsultarTipoCargoDAO()
         {
             try
@@ -61,6 +64,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        // SE ACTUALIZA EL TIPO DE CARGO 
         public TipoCargoDTO ActualizarTipoCargoDAO(TipoCargo tipoCargo)
         {
             try
@@ -75,6 +79,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             } 
         } 
 
+        // SE ELIMINA EL TIPO DE CARGO MEDIANTE SU ID
         public TipoCargoDTO EliminarTipoCargoDAO(int id)
         {
             try

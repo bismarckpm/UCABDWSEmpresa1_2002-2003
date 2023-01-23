@@ -43,6 +43,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
+        //          SERVICIO DE CONSULTAR ETIQUETAS
         public Task<List<Etiqueta>> ConsultarEtiquetasDAO()
         {
             try
@@ -54,7 +55,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new EtiquetaException("Error al consultar las etiquetas", ex, _logger);
             }
         }
-
+        //          SERVICIO DE BUSCAR ETIQUETAS
         public async Task<Etiqueta> ObtenerEtiquetaDAO(int id)
         {
             try
@@ -74,6 +75,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE ACTUALIZAR ETIQUETAS
         public async Task<Etiqueta> ActualizarEtiquetaDAO(Etiqueta etiqueta, int id)
         {
 
@@ -101,6 +103,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
+        //          SERVICIO DE ELIMINAR ETIQUETAS
         public async Task<Boolean> EliminarEtiquetaDAO(int id)
         {
             try
