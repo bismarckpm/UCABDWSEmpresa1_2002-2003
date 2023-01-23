@@ -16,11 +16,12 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("/Tickets")]
     public class TicketController : Controller
     {
+        //DECLARACION DE VARIABLES
         public readonly ITicketDao _ticketDao;
         public readonly IMapper _mapper;
         private readonly ILogger<TicketController> _log;
-       
 
+        //CONSTRUCTOR
         public TicketController(ITicketDao ticketDao, IMapper mapper, ILogger<TicketController> logger)
         {
             _ticketDao=ticketDao;
@@ -29,6 +30,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA MOSTRAR LOS TICKETS
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
         public ApplicationResponse<ICollection<TicketCDTO>> GetCollection()
@@ -46,6 +48,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
+        //ENDPOINT PARA MOSTRAR LOS TICKETS QUE TIENEN UN USUARIO DE UN DEPARTAMENTO DADO EL ID
         [HttpGet("Tickects/{idusuario}")]
         public ApplicationResponse<ICollection<TicketCDTO>> GetTicketsPorDept([FromRoute] int idusuario)
         {
@@ -61,9 +64,9 @@ namespace ServicesDeskUCABWS.Controllers
             }
             return response;
         }
-        
-        
 
+
+        //ENDPOINT PARA CONSULTAR UN TICKET DADO EL ID
         [HttpGet("Tickect/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
         public ApplicationResponse<TicketCDTO> GetTicket([FromRoute] int id)
@@ -81,7 +84,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
-
+        //ENDPOINT PARA MOSTRAR LOS TICKETS QUE FUERON MERGEADOS DADO EL ID
         [HttpGet("TickectMergeados/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Ticket>))]
         public ApplicationResponse<ICollection<TicketCDTO>> GetTicketMergeados([FromRoute] int id)
@@ -99,7 +102,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
-
+        //ENDPOINT PARA MOSTRAR LOS TICKETS QUE FUERON ASIGNADOS DANDO EL ID DEL USUARIO
         [HttpGet("Tickect/asginado/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
         public ApplicationResponse<ICollection<TicketCDTO>> GetTicketasignados([FromRoute] int id)
@@ -117,6 +120,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
            
         }
+        //ENDPOINT PARA MOSTRAR QUIÉN CREÓ LOS TICKETS DADO EL ID
         [HttpGet("Tickect/creado/{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TicketCDTO>))]
         public ApplicationResponse<ICollection<TicketCDTO>> GetTicketCreado([FromRoute] int id)
@@ -134,8 +138,8 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
            
         }
-        
 
+        //ENDPOINT PARA CAMBIAR EL ESTADO DE  UN TICKET DADO EL ID
         [HttpPut("Estado/{ticketid}")]
         public ApplicationResponse<string> UpdateTickect(int ticketid, TickectEstadoDTO tickectEstado)
         {
@@ -153,6 +157,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
+        //ENDPOINT PARA CREAR UN TICKET
         [HttpPost]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TickectCreateDTO>))]
         [Route("CreateTicket")]
@@ -171,6 +176,8 @@ namespace ServicesDeskUCABWS.Controllers
             }
             return response;
         }
+        
+        //ENDPOINT PARA MERGEAR UN TICKET CON OTRO 
         [HttpPost]
         [Route("MergearTickets")]
          public ApplicationResponse<string> MergeTicket( [FromBody] TicketsRelacionadosDTO ticket)
@@ -188,6 +195,8 @@ namespace ServicesDeskUCABWS.Controllers
             }
             return response;
         }
+
+        //ENDPOINT PARA ELIMINAR UN MERGE DE TICKETS 
         [HttpDelete]
         [Route("EliminarMerge")]
          public ApplicationResponse<string> EliminarMerge([FromBody] TicketsRelacionadosDTO tickects )
@@ -206,6 +215,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
+        //ENDPOINT PARA ASIGNAR UN TICKET EN EL SISTEMA
         [HttpPut("AsignarTicket")]
         public ApplicationResponse<string> AsignarTicket(AsignarTicketDTO asignarTicket)
         {
@@ -223,7 +233,9 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
           
         }
-         [HttpPut("DelegarTicket/{ticketid}")]
+
+        //ENDPOINT PARA DELEGAR UN TICKET DADO EL ID
+        [HttpPut("DelegarTicket/{ticketid}")]
         public ApplicationResponse<string> DelegarTIcket(int ticketid, TickectDelegadoDTO delegadoDTO)
         {
               var response = new ApplicationResponse<string>();

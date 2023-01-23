@@ -15,12 +15,13 @@ namespace ServicesDeskUCABWS.Controllers
     [Route("api/plantillas")]
     public class PlantillaController : Controller
     {
+        //ACÁ SE DECLARAN LAS VARIABLES
         private readonly IPlantillaDAO _dao;
         private readonly ILogger<PlantillaController> _log;
 
         private readonly IMapper _mapper;
 
-
+        //ÁCÁ ESTÁ LOS CONSTRUCTORES
         public PlantillaController(ILogger<PlantillaController> logger, IPlantillaDAO dao, IMapper mapper)
         {
             _log = logger;
@@ -28,6 +29,7 @@ namespace ServicesDeskUCABWS.Controllers
             _mapper = mapper;
         }
 
+        //ACÁ SE CREAN LAS PLANTILLAS
         [HttpPost]
         public async Task<ApplicationResponse<PlantillaDTO>> Post([FromBody] PlantillaDTOCreate dto)
         {
@@ -52,6 +54,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA CONSULTAR LA LISTA DE TODAS LAS PLANTILLAS
         [HttpGet]
         public async Task<ApplicationResponse<List<PlantillaDTO>>> Get()
         {
@@ -76,6 +79,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
+        //ENDPOINT PARA CONSULTAR UNA PLANTILLA 
         [HttpGet("{id:int}", Name = "obtenerPlantilla")]
         public async Task<ApplicationResponse<PlantillaDTO>> Get([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
@@ -98,7 +102,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
-
+        //ENDPOINT PARA ACTUALIZAR LAS PLANTILLAS SEGÚN EL ID
 
         [HttpPut("{id:int}")]
 
@@ -126,6 +130,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
+        // ACÁ ESTÁ UN ENDPOINT PATA ELIMINAR LA PLANTILLA SEGÚN SEA EL ID
         [HttpDelete("{id:int}")]
         public async Task<ApplicationResponse<ActionResult>> EliminarPlantilla([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id de la etiqueta debe ser mayor a 0")] int id)
         {
