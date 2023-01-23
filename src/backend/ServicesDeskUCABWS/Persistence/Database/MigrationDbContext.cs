@@ -117,7 +117,9 @@ namespace ServicesDeskUCABWS.Persistence.Database
                 .HasOne(pt => pt.ticket)
                 .WithMany(t => t.TickectsRelacionadosPadre)
                 .HasForeignKey(pt => pt.Ticketid)
-                .OnDelete(DeleteBehavior.ClientNoAction);     
+                .OnDelete(DeleteBehavior.ClientNoAction)    ;       
+          
+                     
         }
 
 
