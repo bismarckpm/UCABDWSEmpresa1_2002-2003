@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Text;
 using ServicesDeskUCAB.Factory;
 using ServicesDeskUCAB.ResponseHandler;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -86,16 +87,28 @@ namespace ServicesDeskUCAB.Controllers
             try
             {
                 AplicationResponseHandler<JerarquicoTipoCargoDTO> jcResponse = new AplicationResponseHandler<JerarquicoTipoCargoDTO>();
-                AplicationResponseHandler<TipoCargoDTO> tcResponse = new AplicationResponseHandler<TipoCargoDTO>();
+                AplicationResponseHandler<List<TipoCargoDTO>> tcResponse = new AplicationResponseHandler<List<TipoCargoDTO>>();
+                AplicationResponseHandler<List<ModeloJCDTO>> mjcResponse = new AplicationResponseHandler<List<ModeloJCDTO>>();
 
                 using(var client = FactoryHttp.CreateClient())
                 {
                     var response1 = await client.GetAsync("https://localhost:7198/JerarquicoTipoCargo/JerarquicoTCargo/" + id.ToString());
                     var respStream = await response1.Content.ReadAsStringAsync();
 
-                    jcResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<JerarquicoTipoCargoDTO>>(respStream);
+                    var response2 = await client.GetAsync("https://localhost:7198/TipoCargo/ConsultaTCargo/");
+                    var resptcargo = await response2.Content.ReadAsStringAsync();
 
-                    return View(jcResponse.Data);
+                    var response3 = await client.GetAsync("https://localhost:7198/ModeloAprobacion/GetModeloJerarquico/");
+                    var resModelo = await response3.Content.ReadAsStringAsync();
+
+                    jcResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<JerarquicoTipoCargoDTO>>(respStream);
+                    tcResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<TipoCargoDTO>>>(resptcargo);
+                    mjcResponse = JsonConvert.DeserializeObject<AplicationResponseHandler<List<ModeloJCDTO>>>(resModelo);
+
+                    List<SelectListItem> listItemsTCargo = crearTipoCargoDropDown(tcResponse.Data);
+                    List<SelectListItem> listModelJ = crearModeloJerarquicoDropDown(mjcResponse.Data);
+                    var tuple = new Tuple<JerarquicoTipoCargoDTO, List<SelectListItem>, List<SelectListItem>>(jcResponse.Data, listItemsTCargo, listModelJ);
+                    return View(tuple);
                 }
 
             }catch(Exception ex)
@@ -145,6 +158,37 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
+        private static List<SelectListItem> crearTipoCargoDropDown(List<TipoCargoDTO> lista)
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            foreach (var item in lista)
+            {
+                listItems.Add(new SelectListItem
+                {
+                    Text = item.nombre,
+                    Value = item.id.ToString(),
+                });
+            }
+
+            return listItems;
+        }
+
+        private static List<SelectListItem> crearModeloJerarquicoDropDown(List<ModeloJCDTO> lista)
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            foreach (var item in lista)
+            {
+                listItems.Add(new SelectListItem
+                {
+                    Text = item.Nombre,
+                    Value = item.id.ToString(),
+                });
+            }
+
+            return listItems;
+        }
 
     }
 }

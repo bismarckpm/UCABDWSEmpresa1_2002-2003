@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Text;
 using ServicesDeskUCAB.Factory;
 using ServicesDeskUCAB.ResponseHandler;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ServicesDeskUCAB.Controllers
 {
@@ -78,7 +79,7 @@ namespace ServicesDeskUCAB.Controllers
             }
         }
 
-        public async Task<IActionResult> VentanaEditarModeloJerarquico(int idmj)
+        public async Task<IActionResult> VentanaEditarModeloJerarquico(int id)
         {
             try
             {
@@ -87,38 +88,51 @@ namespace ServicesDeskUCAB.Controllers
                 
                 using(var client = FactoryHttp.CreateClient())
                 {
-                    var response = await client.GetAsync("https://localhost:7198/ModeloAprobacion/Jerarquico/" + idmj.ToString());
+                    var response = await client.GetAsync("https://localhost:7198/ModeloAprobacion/Jerarquico/" + id.ToString());
                     var responseStream = await response.Content.ReadAsStringAsync();
                     ApiResponseH = JsonConvert.DeserializeObject<AplicationResponseHandler<ModeloJerarquicoDTO>>(responseStream);
-                    
-
-                   var categoria = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
+                   
+                    var categoria = await client.GetAsync("https://localhost:7198/Categoria/ConsultaCategorias");
         
-
-                        string response2 = await categoria.Content.ReadAsStringAsync();
+                    string response2 = await categoria.Content.ReadAsStringAsync();
         
-                        apiCategoria = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response2);
+                    apiCategoria = JsonConvert.DeserializeObject<AplicationResponseHandler<List<CategoriaDTO>>>(value: response2);
         
+                    List<SelectListItem> listItemsCategoria = crearCategoriaDropDown(apiCategoria!.Data);
 
-                    dynamic model = new ExpandoObject();
-                        model.ModeloJerarquicos = ApiResponseH!.Data;
-                        model.Categorias = apiCategoria!.Data;
-                        model.id = idmj;
+                    var tupla = new Tuple<ModeloJerarquicoDTO,List<SelectListItem>>(ApiResponseH!.Data, listItemsCategoria);
 
-                return View(model);
+                    return View(tupla);
                 }
 
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message + " || "+ ex.StackTrace, ex);
             }
-        } 
+        }
 
-        [HttpPost]
-        public async Task<IActionResult> ActualizarModeloJerarquico(ModeloJerarquicoDTO modeloJerarquico)
+        private static List<SelectListItem> crearCategoriaDropDown(List<CategoriaDTO> lista)
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            foreach (var item in lista)
+            {
+                listItems.Add(new SelectListItem
+                {
+                    Text = item.nombre,
+                    Value = item.id.ToString(),
+                });
+            }
+
+            return listItems;
+        }
+
+
+        public async Task<IActionResult> ActualizarModeloJerarquico([Bind(Prefix ="Item1")] ModeloJerarquicoDTO modeloJerarquico)
         {
             try
             {
+                
                     var client = FactoryHttp.CreateClient();
                     var _client = await client.PutAsJsonAsync<ModeloJerarquicoDTO>("https://localhost:7198/ModeloAprobacion/ActualizaModeloJerarquico/", modeloJerarquico);
 

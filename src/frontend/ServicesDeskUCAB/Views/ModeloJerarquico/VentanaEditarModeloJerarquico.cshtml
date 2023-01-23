@@ -1,5 +1,5 @@
-@model dynamic
-@using ServicesDeskUCAB.DTO
+@using ServicesDeskUCAB.DTO;
+@model Tuple<ModeloJerarquicoDTO, List<SelectListItem>>
 @{
     ViewData["Title"] = "Gestion Modelo Jerarquico";
 }
@@ -21,27 +21,24 @@
                 </button>
             </div>
           
-            <form asp-action="ActualizarModeloJerarquico" method="post">
-                    <input type="hidden" name="idmj" value="@Model.id">
+            @using (Html.BeginForm("ActualizarModeloJerarquico", "modeloJerarquico", FormMethod.Post))
+            {
                 <div class="modal-body">
                     <div class="form-group">
-                    <span>Modelo Jerarquico: </span>
-                        <input type="text" name="nombre" class="form-control" placeholder="Actualice el nombre">
+                        @Html.TextBoxFor(m => m.Item1.id, new { @Value = Model.Item1.id, @type="hidden"})
+                        <span>Modelo Jerarquico: </span>
+                        @Html.TextBoxFor(m => m.Item1.nombre, new { @Value = Model.Item1.nombre,@Class = "form-control" })
                     </div>
                     <div class="form-group">
-                        <select class="form-control" id="categoria" name="categoriaid">
-                            @foreach (CategoriaDTO dto in Model.Categorias)
-                            {
-                                <option value="@dto.id">@dto.nombre</option>
-                            }
-                        </select>
-                    </div>                    
+                        <span>Categoria: </span> @Html.DropDownListFor(m => m.Item1.categoriaId, Model.Item2,"Seleccione una categor�a",new {@Class = "form-select"})
+                            @Html.ValidationMessageFor(m => m.Item1.categoriaId, null, new {@Class = "text-danger"})
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.href='@Url.Action("GestionMJerarquico", "ModeloJerarquico")'">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Editar</button>
                 </div>
-            </form>
-
+            }
         </div>
     </div>
 </div>

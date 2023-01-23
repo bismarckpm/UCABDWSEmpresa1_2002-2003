@@ -85,7 +85,6 @@ namespace ServicesDeskUCABWS.Test.DAOs
             return Task.CompletedTask;
         }
 
-// Problema con la prueba al actualizar
         /// <summary>
         /// Actualiza Un modelo Jerarquico 
         /// </summary>
@@ -148,10 +147,10 @@ namespace ServicesDeskUCABWS.Test.DAOs
         [Fact(DisplayName = "Agregar un modelo jerarquico con excepcion ")]
         public Task CrearModeloJerarquicoTestException()
         {
-            _contextMock.Setup(m => m.DbContext.SaveChanges())
-            .Throws(new ServicesDeskUcabWsException("", new NullReferenceException()));
+            _contextMock.Setup(m => m.DbContext.Add(It.IsAny<ModeloJerarquico>()))
+            .Throws(new Exception());
 
-            Assert.Throws<ServicesDeskUcabWsException>(()=>_dao.AgregarModeloJerarquicoDAO(NewModeloJerarquico()));
+            Assert.Throws<ServicesDeskUcabWsException>(()=>_dao.AgregarModeloJerarquicoDAO(null!));
             return Task.CompletedTask;
         }
 

@@ -6,6 +6,7 @@ using ServicesDeskUCABWS.Exceptions;
 using ServicesDeskUCABWS.Persistence.DAO.Interface;
 using ServicesDeskUCABWS.Persistence.Database;
 using ServicesDeskUCABWS.Persistence.Entity;
+using System.Collections.Generic;
 
 namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 {

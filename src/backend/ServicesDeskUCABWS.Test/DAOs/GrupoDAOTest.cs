@@ -185,6 +185,33 @@ namespace ServicesDeskUCABWS.Test.DAOs
             Assert.IsType<GrupoDTO>(result);
         }
 
+        [Fact(DisplayName = "Actualizar No existe departamento")]
+        public async Task ActualizarGrupoNoExisteDepartamentoTest()
+        {
+
+            _contextMock.Setup(x => x.DbContext.SaveChanges()).Returns(1);
+            _contextMock.Setup(e => e.Grupo.FindAsync(It.IsAny<int>())).ReturnsAsync(new Grupo()
+            {
+                id = 1,
+                nombre = "Prueba",
+                departamentoid = 1
+            });
+            _contextMock.Setup(e => e.Departamentos.FindAsync(It.IsAny<int>())).ReturnsAsync(new Departamento()
+            {
+                id = 1,
+                nombre = "Prueba"
+            });
+            var Grupo = new Grupo()
+            {
+                id = 1,
+                nombre = "Test",
+                departamentoid = 9
+            };
+           _contextMock.Setup(e => e.Etiquetas.FindAsync(It.IsAny<int>())).ReturnsAsync((Etiqueta)null!);
+
+            await Assert.ThrowsAsync<GrupoException>(() => _dao.ActualizarGrupoDAO(Grupo, Grupo.id));
+        }
+
         //Test para actualizar un grupo con exception
         [Fact(DisplayName = "Actualizar Grupo con excepcion")]
         public async Task ActualizarGrupoExcepcionTest()
