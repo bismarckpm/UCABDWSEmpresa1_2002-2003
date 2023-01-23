@@ -23,10 +23,6 @@
                 </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1 ml-auto">
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
                         @if (Context.Session.GetString("rol").ToUpper() == "CLIENTE"){
                             <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="TicketsCreados">Tickets</a>
@@ -66,11 +62,19 @@
                                         <a class="nav-link dropdown-item" asp-area="" asp-controller="Plantilla" asp-action="GestionPlantillas">Plantillas</a>
                                     </div>
                                 </li>
+
+                                <li class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Modelos</a>
+                                    <div class="dropdown-menu">
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="ModeloJerarquico" asp-action="GestionMJerarquico">Modelo Jerarquico</a>
+                                        <a class="nav-link dropdown-item" asp-area="" asp-controller="ModeloParalelo" asp-action="GestionMParalelo">Modelo Paralelo</a>
+                                    </div>
+                                </li>
                             }
                     </ul>
                         <div class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Login"
-                           asp-action="Cerrar">Cerrar sesion</a>
+                           asp-action="Cerrar">Cerrar sesión</a>
                         </div>
                 </div>
             </div>

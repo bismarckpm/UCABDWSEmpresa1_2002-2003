@@ -35,7 +35,7 @@ namespace ServicesDeskUCAB.Controllers
                         HttpContext.Session.SetInt32("userid",user.id);
                         HttpContext.Session.SetString("email", user.Email);
                         HttpContext.Session.SetString("rol", user.Discriminator);
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("GestionTickets", "Ticket");
                     }
                      ViewBag.Error = json_respuesta["message"].ToString();
 
