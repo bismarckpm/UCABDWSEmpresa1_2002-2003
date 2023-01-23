@@ -41,13 +41,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                     Include(c => c.Estado).
                     Include(c=>c.creadopor).FirstOrDefault();
 
-<<<<<<< HEAD
                 var Modelo = _context.ModeloAprobacion.Where(c => c.categoriaid == listaTickets.categoria.id).FirstOrDefault();    
                 List<FlujoAprobacion> deps = new List<FlujoAprobacion>();
-=======
-                var Modelo = _context.ModeloAprobacion.Where(c => c.categoriaid == listaTickets.categoria.id).FirstOrDefault();
-
->>>>>>> 46f405efc3fcb381439454889b1ee67f74588563
 
                 //if (Modelo.Discriminator == "ModeloJerarquico")
                 //{
@@ -82,13 +77,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
                 if (Modelo.Discriminator == "ModeloJerarquico")
                 {
-<<<<<<< HEAD
                 var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();
                
-=======
-                    var ModeloCargos = _context.ModeloJerarquicoCargos.Where(c => c.modelojerarquicoid == Modelo.id).ToList();
-                    List<FlujoAprobacion> deps = new List<FlujoAprobacion>();
->>>>>>> 46f405efc3fcb381439454889b1ee67f74588563
                     foreach (ModeloJerarquicoCargos modelo in ModeloCargos)
                     {
                         var a = (from usua in _context.Usuario
@@ -99,22 +89,15 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                                  {
                                      id = usua.id
                                  }).FirstOrDefault();
-<<<<<<< HEAD
                         var emp = _context.Empleados.Where(c => c.id == a.id).FirstOrDefault();
                         var i = 1;
                         deps.Add(new FlujoAprobacion
-=======
-                        var emp = _context.Usuario.Where(c => c.id == a.id).FirstOrDefault();
-
-                        FlujoAprobacion f = new FlujoAprobacion
->>>>>>> 46f405efc3fcb381439454889b1ee67f74588563
                         {
                             Empleado = emp,
                             empleadoid = a.id,
                             modeloid = modelo.Id,
                             ticketid = listaTickets.id,
                             ModeloAprobacion = Modelo,
-<<<<<<< HEAD
                             estatus = 0, 
                             Ticket = listaTickets
                         });
@@ -145,19 +128,6 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                      _context.FlujoAprobaciones.AddRange(deps);
                       _context.DbContext.SaveChanges();
                     } 
-=======
-                            estatus = 0
-                        };
-                        deps.Add(f);
-
-
-                    }
-                    _context.FlujoAprobaciones.AddRange(deps);
-                    _context.DbContext.SaveChanges();
-
-
-                }
->>>>>>> 46f405efc3fcb381439454889b1ee67f74588563
                 return "Flujo creado";
             }
             catch (Exception ex)
