@@ -52,17 +52,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         /// Agregar Modelo Jerarquico
         /// </summary>
         /// <returns>Un listado de ModeloJerarquicoDTO</returns>        
-        public List<ModeloJerarquicoDTO> ConsultarModeloJerarquicosDAO()
+        public List<ModeloJCDTO> ConsultarModeloJerarquicosDAO()
         {
             try
             {
-                var data = _context.ModeloJerarquicos.Select(j => new ModeloJerarquicoDTO()
-                                                            {
-                                                                id = j.id,
-                                                                Nombre = j.nombre,
-                                                                CategoriaId = j.categoriaid,
-                                                                orden = ModeloJerarquicoMapper.EntityToDtoList(j.Jeraruia!)
-                                                            });
+                var data = _context.ModeloJerarquicos
+                .Include(c => c.categoria)
+                .Select(j => new ModeloJCDTO()
+                    {
+                        id = j.id,
+                        Nombre = j.nombre,
+                        nombreCategoria = j.categoria!.nombre
+                    });
                 return data.ToList();
             }
             catch (Exception ex)
@@ -76,18 +77,18 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
         /// </summary>
         /// <param name="id">Un valor de tipo int32</param>
         /// <returns>Un objeto ModeloJerarquicoDTO</returns>
-        public ModeloJerarquicoDTO ObtenerModeloJerarquicoDAO(int id)
+        public ModeloJCDTO ObtenerModeloJerarquicoDAO(int id)
         {
             try
             {
                 var data = _context.ModeloJerarquicos
-                                   .Select(m => new ModeloJerarquicoDTO()
+                                    .Include(c => c.categoria)
+                                   .Select(m => new ModeloJCDTO()
                                    {
                                     id = m.id,
                                     Nombre = m.nombre,
-                                    CategoriaId = m.categoriaid,
-                                    orden = ModeloJerarquicoMapper.EntityToDtoList(m.Jeraruia!)
-                                   }).Where(m => m.id == id);
+                                    nombreCategoria = m.categoria!.nombre
+                                   });
 
                 return data.First();
             }

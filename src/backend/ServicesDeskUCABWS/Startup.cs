@@ -63,6 +63,7 @@ namespace ServicesDeskUCABWS
             services.AddTransient<IModeloJerarquicoDAO, ModeloJerarquicoDAO>();
             services.AddTransient<IModeloParaleloDAO, ModeloParaleloDAO>();
             services.AddTransient<IFlujoAprobacionDAO, FlujoAprobacionDAO>();
+            services.AddTransient<IModeloJerarquicoTipoCargo, ModeloJerarquicoTipoCargoDAO>();
             services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;

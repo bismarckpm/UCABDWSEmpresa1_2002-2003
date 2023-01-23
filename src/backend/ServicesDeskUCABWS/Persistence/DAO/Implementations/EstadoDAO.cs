@@ -23,7 +23,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             _logger = logger;
         }
 
-
+        // agrega el estado
         public async Task<EstadoDTO> AgregarEstadoDAO(Estado estado)
         {
             try
@@ -48,7 +48,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-
+        // SERVICIO DE OBTENER LOS ESTADOS
         public async Task<EstadoResponseDTO> GetEstadoDAO(int id)
         {
             try
@@ -79,7 +79,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-
+        // SE OBTIENE UNA LISTA DE ESTADOS
         public async Task<List<EstadoResponseDTO>> GetEstadosDAO()
         {
 
@@ -104,6 +104,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
+        //          SERVICIO DE ACTUALIZAR ESTADOS
         public async Task<EstadoDTO> ActualizarEstadoDAO(Estado estado, int id)
         {
 
@@ -138,6 +139,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
+        //          SERVICIO DE ELIMINAR ESTADOS
         public async Task<Boolean> EliminarEstadoDAO(int id)
         {
             try

@@ -15,6 +15,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             this._context = context;
         }
 
+        //          SERVICIO PARA AGREGAR UN DEPARTAMENTO
         public DepartamentoDTO AgregarDepartamentoDAO(Departamento departamento)
         {
             try
@@ -40,6 +41,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE CONSULTAR LA LISTA DE DEPARTAMENTOS
         public List<DepartamentoDTO> ConsultarDepartamentosDAO()
         {
             try
@@ -62,6 +64,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE MODIFICAR DEPARTAMENTOS 
         public DepartamentoDTO ModificarDepartamentoDAO(Departamento departamento)
         {
             try
@@ -79,6 +82,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE ELIMINAR DEPARTAMENTOS
         public DepartamentoDTO EliminarDepartamentoDAO(int id)
         {
             try
@@ -98,6 +102,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        //          SERVICIO DE CONSULTAR UN DEPARTAMENTO POR ID
         public DepartamentoDTO ConsultaUnDepartamentoDAO(int id)
         {
             try

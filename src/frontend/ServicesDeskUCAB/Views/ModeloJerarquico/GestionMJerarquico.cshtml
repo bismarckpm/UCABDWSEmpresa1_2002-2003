@@ -1,4 +1,4 @@
-@model List<ServicesDeskUCAB.DTO.ModeloJerarquicoDTO>
+@model List<ServicesDeskUCAB.DTO.ModeloJCDTO>
 @section scripts
 {
     <script>
@@ -75,7 +75,7 @@
             Modelo Jerarquico
         </th>
         <th>
-            Orden
+            categoria
         </th>
         <th>
             Acciones
@@ -89,13 +89,10 @@
                 @Html.DisplayFor(i => item.id)
             </td>
             <td>
-                @Html.DisplayFor(i => item.nombre)
+                @Html.DisplayFor(i => item.Nombre)
             </td>
             <td>
-                @foreach (var orde in item.orden!)
-                {
-                    @Html.DisplayFor(i => orde.orden)
-                }
+                @Html.DisplayFor(i => item.nombreCategoria)
             </td>
             <td>
                 <button id=btnMjEditar type="button" class="btn btn-primary btn-sm" data-toggle="ajax-modal" data-target="#popUpEditar" data-url="@Url.Action("VentanaEditarModeloJerarquico","ModeloJerarquico",new {id = "idModeloJerarquico"})">
