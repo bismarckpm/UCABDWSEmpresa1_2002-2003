@@ -40,9 +40,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 var maper = ModeloJerarquicoMapper.EntityToDto(modeloJerarquico);
               return maper;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException!.Message);
                 throw new ServicesDeskUcabWsException("Error al agregar el Modelo Jerarquico: " + ex.Message, ex);
             }
 
