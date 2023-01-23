@@ -212,6 +212,9 @@ INSERT [dbo].[Etiquetas] ([id], [nombre], [descripcion]) VALUES (11, N'@EstadoMe
 INSERT [dbo].[Etiquetas] ([id], [nombre], [descripcion]) VALUES (12, N'@EstadoDelegado', N'Etiqueta para tickets delegados')
 INSERT [dbo].[Etiquetas] ([id], [nombre], [descripcion]) VALUES (13, N'@Fecha', N'Etiqueta para la fecha')
 INSERT [dbo].[Etiquetas] ([id], [nombre], [descripcion]) VALUES (14, N'@EnEsperaDeAprobacion', N'Etiqueta para tickets en espera de aprobacion')
+INSERT [dbo].[Etiquetas] ([id], [nombre], [descripcion]) VALUES (15, N'@EnProceso', N'Etiqueta para tickets en proceso')
+INSERT [dbo].[Etiquetas] ([id], [nombre], [descripcion]) VALUES (16, N'@Cerrado', N'Etiqueta para tickets cerrados')
+
 SET IDENTITY_INSERT [dbo].[Etiquetas] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Estados] ON 
@@ -220,6 +223,8 @@ INSERT [dbo].[Estados] ([id], [nombre], [EtiquetaId]) VALUES (1, N'En espera', 8
 INSERT [dbo].[Estados] ([id], [nombre], [EtiquetaId]) VALUES (2, N'Aprobado', 9)
 INSERT [dbo].[Estados] ([id], [nombre], [EtiquetaId]) VALUES (3, N'Rechazado', 10)
 INSERT [dbo].[Estados] ([id], [nombre], [EtiquetaId]) VALUES (4, N'En espera de aprobacion', 14)
+INSERT [dbo].[Estados] ([id], [nombre], [EtiquetaId]) VALUES (5, N'En proceso', 15)
+INSERT [dbo].[Estados] ([id], [nombre], [EtiquetaId]) VALUES (6, N'Cerrado', 16)
 SET IDENTITY_INSERT [dbo].[Estados] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Tickets] ON 
@@ -294,6 +299,9 @@ INSERT [dbo].[Plantillas] ([id], [titulo], [cuerpo], [Estadoid]) VALUES (1, N'Cr
 INSERT [dbo].[Plantillas] ([id], [titulo], [cuerpo], [Estadoid]) VALUES (2, N'Ticket aprobado', N'Se ha aprobado el ticket.', 2)
 INSERT [dbo].[Plantillas] ([id], [titulo], [cuerpo], [Estadoid]) VALUES (3, N'Ticket rechazado', N'Se ha rechazado el ticket.', 3)
 INSERT [dbo].[Plantillas] ([id], [titulo], [cuerpo], [Estadoid]) VALUES (4, N'Ticket en espera de aprobacion', N'El ticket esta en espera de aprobacion.', 4)
+INSERT [dbo].[Plantillas] ([id], [titulo], [cuerpo], [Estadoid]) VALUES (5, N'Ticket en proceso', N'El ticket esta en proceso.', 5)
+INSERT [dbo].[Plantillas] ([id], [titulo], [cuerpo], [Estadoid]) VALUES (6, N'Ticket cerrado', N'El ticket se ha cerrado.', 6)
+
 SET IDENTITY_INSERT [dbo].[Plantillas] OFF
 
 
