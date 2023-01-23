@@ -32,7 +32,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         
     
-
+        // SE OBTIENEN LOS USUARIOS POR DEPARTAMENTO, SEGPUN EL ID DEL DEPARTAMENTO
          public ICollection<UsuarioDTO> GetUsuariosPorDepartamento(int departamentoid){
              try
             {
@@ -66,12 +66,14 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        // SE CONSULTA QUÉ TIPO DE USUARIO ES 
         public Usuario GetTipoUsuario(int id)
         {
             var usuario = _context.Usuario.Where(u => u.id == id).First();
             return usuario;
         }
 
+        // AGREGAR  USUARIO
         public string CreateUsuario(Usuario usuario, int cargoid, int Grupoid){
             try
             {
@@ -87,6 +89,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        // ACTUALIZAR USUARIO
         public string UpdateU(Usuario usuario){
             try
             {
@@ -99,7 +102,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new UsuarioExepcion("Ha ocurrido un error al Actualizar el usuario ", ex.Message, ex);
             }
         }
-
+        
+        // SE CREA EL HASH DE CLAVE DEL USUSARIO
         public Usuario CreatePasswordHash(Usuario usuario,string clave )
         {
              try{
@@ -115,6 +119,8 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
                 throw new UsuarioExepcion("Ha ocurrido un error al crear el contrasena ", ex.Message, ex);
             }
         }
+
+        //SE VERIFICA EL HASH DE CLAVE DEL USUARIO
         public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             try{
@@ -132,6 +138,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
+        // SE BUSCA QUÉ USUARIO ESTÁ ASIGNADO A UN CORREO
         public UsuarioDTO GetUsuarioPorEmail(string email)
         {
             var usuario = _context.Usuario.Where(u => u.email == email)
