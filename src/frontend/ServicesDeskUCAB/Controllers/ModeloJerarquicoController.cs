@@ -62,15 +62,14 @@ namespace ServicesDeskUCAB.Controllers
             }
         } 
 
-        public async Task<IActionResult> AgregarMJerarquico(ModeloJerarquicoDTO modeloJerarquico, JerarquicoTipoCargoDTO jerarquicoTcargo)
+        public async Task<IActionResult> AgregarMJerarquico(ModeloJIDTO modeloJerarquico)
         {
             try
             {
                 modeloJerarquico.id = 0;
-                modeloJerarquico.orden!.Add(jerarquicoTcargo);
                var client = FactoryHttp.CreateClient();
 
-               var _client = await client.PostAsJsonAsync<ModeloJerarquicoDTO>("https://localhost:7198/ModeloAprobacion/Jerarquico/", modeloJerarquico);
+               var _client = await client.PostAsJsonAsync<ModeloJIDTO>("https://localhost:7198/ModeloAprobacion/Jerarquico/", modeloJerarquico);
 
                 return RedirectToAction("GestionMJerarquico");
             }catch(Exception ex)

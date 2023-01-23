@@ -38,7 +38,7 @@ namespace ServicesDeskUCABWS.Controllers
         /// satisfactoriamente. </returns>
         [HttpPost]
         [Route("Jerarquico/")]
-        public ApplicationResponse<ModeloJerarquicoDTO> Post([FromBody] ModeloJerarquicoDTO dto)
+        public ApplicationResponse<ModeloJerarquicoDTO> Post([FromBody] ModeloJIDTO dto)
         {
             var response = new ApplicationResponse<ModeloJerarquicoDTO>();
             try
@@ -121,7 +121,7 @@ namespace ServicesDeskUCABWS.Controllers
         /// satisfactoriamente. </returns>
          [HttpPut]
          [Route("ActualizaModeloJerarquico/")]
-         public ApplicationResponse<ModeloJerarquicoDTO> ActualizarModeloJerarquico([FromBody] ModeloJerarquicoDTO dto)
+         public ApplicationResponse<ModeloJerarquicoDTO> ActualizarModeloJerarquico([FromBody] ModeloJIDTO dto)
          {
             var response = new ApplicationResponse<ModeloJerarquicoDTO>();
             try
