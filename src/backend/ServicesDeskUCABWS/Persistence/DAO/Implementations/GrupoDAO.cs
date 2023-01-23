@@ -23,7 +23,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             _logger = logger;
         }
 
-
+        //CREAR UN GRUPO
         public async Task<GrupoDTO> AgregarGrupoDAO(Grupo grupo)
         {
             try
@@ -48,7 +48,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-
+        //CONSULTAR GRUPO MEDIANTE SU ID
         public async Task<GrupoResponseDTO> ObtenerGrupoByIdDAO(int id)
         {
             try
@@ -78,7 +78,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
             }
         }
 
-        //  SERVICIO DE CONSULTAR LOS GRUPOS
+        //CONSULTAR TODOS LOS LOS GRUPOS
         public async Task<List<GrupoResponseDTO>> ObtenerGruposDAO()
         {
 
@@ -102,7 +102,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        //          SERVICIO DE ACTUALIZAR LOS GRUPOS
+        //ACTUALIZAR LOS GRUPOS
         public async Task<GrupoDTO> ActualizarGrupoDAO(Grupo grupo, int id)
         {
 
@@ -137,7 +137,7 @@ namespace ServicesDeskUCABWS.Persistence.DAO.Implementations
 
         }
 
-        //          SERVICIO DE ELIMINAR LOS GRUPOS
+        //ELIMINAR LOS GRUPOS
         public async Task<Boolean> EliminarGrupoDAO(int id)
         {
             try

@@ -55,7 +55,7 @@ namespace ServicesDeskUCABWS.Controllers
             return response;
         }
 
-        //Consultar todos los Grupos
+        //CONSULTAR TODOS LOS GRUPOS
         [HttpGet]
         public async Task<ApplicationResponse<List<GrupoResponseDTO>>> Get()
         {
@@ -81,10 +81,8 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
-        //Consultar Grupo por Id
+        //CONSULTAR UN GRUPO MEDIANTE SU ID
         [HttpGet("{id:int}")]
-        //[HttpGet]
-        //[Route("/ConsultarGrupo/{id}")]
         public async Task<ApplicationResponse<GrupoResponseDTO>> Get([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id debe ser mayor a 0")] int id)
         {
             var response = new ApplicationResponse<GrupoResponseDTO>();
@@ -108,7 +106,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
-        //Actualizar Grupo
+        //ACTUALIZAR GRUPO
         [HttpPut("{id:int}")]
         public async Task<ApplicationResponse<GrupoDTO>> ActualizarGrupo(
                                         [FromBody] GrupoCreateDTO dto,
@@ -136,7 +134,7 @@ namespace ServicesDeskUCABWS.Controllers
 
         }
 
-        //Eliminar Grupo
+        //ELIMINAR GRUPO
         [HttpDelete("{id:int}")]
         public async Task<ApplicationResponse<ActionResult>> EliminarGrupo([FromRoute][Required][Range(1, int.MaxValue, ErrorMessage = "El id debe ser mayor a 0")] int id)
         {
